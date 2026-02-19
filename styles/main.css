@@ -956,7 +956,7 @@ a[href^="http"]:not(.project-row)::after {
 
 @media (max-width: 1150px) {
   body {
-    font-size: 15px;
+    font-size: 16px;
   }
 
   .site {
@@ -989,7 +989,7 @@ a[href^="http"]:not(.project-row)::after {
   }
 
   .sidebar__link {
-    font-size: 15px;
+    font-size: 16px;
     padding: 8px 0;
     border-bottom: 1px solid var(--border);
   }
@@ -1022,7 +1022,7 @@ a[href^="http"]:not(.project-row)::after {
 
   .theme-toggle,
   .hamburger {
-    font-size: 15px;
+    font-size: 16px;
   }
 
   .main {
@@ -1032,6 +1032,124 @@ a[href^="http"]:not(.project-row)::after {
 
   .section-heading {
     margin-top: 48px;
+  }
+
+  /* Font size 16px for all elements */
+  .page-title,
+  .page-subtitle,
+  .section-heading__text,
+  .about,
+  .writing-row__year,
+  .writing-row__title,
+  .writing-row__date,
+  .project-row__name,
+  .project-row__role,
+  .project-row__desc,
+  .reading-row__title,
+  .reading-row__author,
+  .reading-row__note,
+  .post__title,
+  .post__body,
+  .post__date,
+  .post__back {
+    font-size: 16px;
+  }
+
+  /* Remove all hover states */
+  .sidebar__link:hover {
+    color: var(--text-2);
+  }
+
+  .theme-toggle:hover {
+    color: var(--text-3);
+  }
+
+  .hamburger:hover {
+    color: var(--text-3);
+  }
+
+  .about a:hover {
+    text-decoration-color: var(--text-dim);
+  }
+
+  .writing-list:hover .writing-row__year,
+  .writing-list:hover .writing-row__title,
+  .writing-list:hover .writing-row__date {
+    color: unset;
+  }
+
+  .writing-row__year,
+  .writing-list:hover .writing-row__year,
+  .writing-list:hover .writing-row:hover .writing-row__year {
+    color: var(--text-3);
+  }
+
+  .writing-row__title,
+  .writing-list:hover .writing-row__title,
+  .writing-list:hover .writing-row:hover .writing-row__title {
+    color: var(--text);
+  }
+
+  .writing-row__date,
+  .writing-list:hover .writing-row__date,
+  .writing-list:hover .writing-row:hover .writing-row__date {
+    color: var(--text-3);
+  }
+
+  .project-list:hover .project-row__name,
+  .project-list:hover .project-row__desc {
+    color: unset;
+  }
+
+  .project-row__name,
+  .project-list:hover .project-row__name,
+  .project-list:hover .project-row:hover .project-row__name {
+    color: var(--text);
+  }
+
+  .project-row__desc,
+  .project-list:hover .project-row__desc,
+  .project-list:hover .project-row:hover .project-row__desc {
+    color: var(--text-2);
+  }
+
+  .reading-list:hover .reading-row__title,
+  .reading-list:hover .reading-row__year,
+  .reading-list:hover .reading-row__author,
+  .reading-list:hover .reading-row__note {
+    color: unset;
+  }
+
+  .reading-row__title,
+  .reading-list:hover .reading-row__title,
+  .reading-list:hover .reading-row:hover .reading-row__title {
+    color: var(--text);
+  }
+
+  .reading-row__year,
+  .reading-list:hover .reading-row__year,
+  .reading-list:hover .reading-row:hover .reading-row__year {
+    color: var(--text-3);
+  }
+
+  .reading-row__author,
+  .reading-list:hover .reading-row__author,
+  .reading-list:hover .reading-row:hover .reading-row__author {
+    color: var(--text-2);
+  }
+
+  .reading-row__note,
+  .reading-list:hover .reading-row__note,
+  .reading-list:hover .reading-row:hover .reading-row__note {
+    color: var(--text-3);
+  }
+
+  .post__body a:hover {
+    text-decoration-color: var(--text-dim);
+  }
+
+  .post__back:hover {
+    color: var(--text-3);
   }
 }
 
