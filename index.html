@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Palmeirim</title>
+  <meta name="description" content="Personal website of Tomás Thor Palmeirim." />
+  <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+  <div class="site">
+    <aside class="sidebar">
+      <div class="mobile-header">
+        <a href="index.html" class="mobile-header__name">Palmeirim</a>
+        <div class="mobile-header__actions">
+          <button class="theme-toggle mobile-theme" type="button" aria-label="Cycle theme">Theme</button>
+          <button class="hamburger" type="button" aria-label="Toggle navigation menu" aria-controls="site-nav" aria-expanded="false">Menu</button>
+        </div>
+      </div>
+      <div class="sidebar__name">Palmeirim</div>
+      <nav id="site-nav" class="sidebar__nav" aria-label="Primary">
+        <a href="index.html" class="sidebar__link active">About</a>
+        <a href="work.html" class="sidebar__link">Work</a>
+        <!-- <a href="writing.html" class="sidebar__link">Writing</a> -->
+        <a href="reading.html" class="sidebar__link">Reading</a>
+        <a href="contact.html" class="sidebar__link">Contact</a>
+        <button class="theme-toggle sidebar__theme" type="button" aria-label="Cycle theme">Theme</button>
+      </nav>
+      <div class="sidebar__footer">
+        <button class="theme-toggle" type="button" aria-label="Cycle theme">Theme</button>
+      </div>
+    </aside>
+
+    <main class="main">
+
+      <div class="about">
+        <p>I'm a designer and developer at <a href="https://muse.ai">muse.ai</a>.</p>
+
+        <p>You can reach me on <a href="https://x.com/0x_light">X</a> or <a href="mailto:tomaspalmeirim@gmail.com">tomaspalmeirim@gmail.com</a>.</p>
+      </div>
+
+      <!-- <div class="section-heading">
+        <span class="section-heading__text">Writing</span>
+        <div class="section-heading__rule"></div>
+      </div>
+
+      <div class="writing-list">
+        <a href="writing/tools-that-think-with-you.html" class="writing-row">
+          <span class="writing-row__year">2026</span>
+          <span class="writing-row__title">Tools that think with you</span>
+          <span class="writing-row__date">24/01</span>
+        </a>
+        <a href="writing/the-case-for-metaphors.html" class="writing-row">
+          <span class="writing-row__year">2025</span>
+          <span class="writing-row__title">The case for metaphors</span>
+          <span class="writing-row__date">08/12</span>
+        </a>
+        <a href="writing/the-fishermans-wife.html" class="writing-row">
+          <span class="writing-row__year">2025</span>
+          <span class="writing-row__title">The fisherman's wife</span>
+          <span class="writing-row__date">15/11</span>
+        </a>
+        <a href="writing/a-letter-concerning-the-weather.html" class="writing-row">
+          <span class="writing-row__year">2025</span>
+          <span class="writing-row__title">A letter concerning the weather</span>
+          <span class="writing-row__date">03/10</span>
+        </a>
+      </div> -->
+
+      <div class="section-heading">
+        <span class="section-heading__text">Work</span>
+        <div class="section-heading__rule"></div>
+      </div>
+
+      <div class="project-list">
+        <a href="https://sentry.is" class="project-row" target="_blank" rel="noopener noreferrer">
+          <div>
+            <span class="project-row__name">Sentry</span> <span class="project-row__role">Solo</span>
+            <div class="project-row__desc">Get the best of your timeline without opening Twitter.</div>
+          </div>
+        </a>
+        <a href="https://viewport.is" class="project-row" target="_blank" rel="noopener noreferrer">
+          <div>
+            <span class="project-row__name">Viewport</span> <span class="project-row__role">Solo</span>
+            <div class="project-row__desc">A simple portfolio tracker for Hyperliquid, Lighter, and on-chain assets.</div>
+          </div>
+        </a>
+        <a href="https://muse.ai/" class="project-row" target="_blank" rel="noopener noreferrer">
+          <div>
+            <span class="project-row__name">muse.ai</span> <span class="project-row__role">Product, Design, Dev</span>
+            <div class="project-row__desc">AI-powered video hosting with in-video search.</div>
+          </div>
+        </a>
+        <a href="https://threesigma.xyz/" class="project-row" target="_blank" rel="noopener noreferrer">
+          <div>
+            <span class="project-row__name">Three Sigma</span> <span class="project-row__role">Research</span>
+            <div class="project-row__desc">Code audits and economic risk consulting for crypto protocols.</div>
+          </div>
+        </a>
+        <a href="https://retryon.com/" class="project-row" target="_blank" rel="noopener noreferrer">
+          <div>
+            <span class="project-row__name">RetryOn</span> <span class="project-row__role">Design</span>
+            <div class="project-row__desc">A platform for generating fashion assets without photoshoots.</div>
+          </div>
+        </a>
+        <a href="https://unsu.com" class="project-row" target="_blank" rel="noopener noreferrer">
+          <div>
+            <span class="project-row__name">Unsu</span> <span class="project-row__role">Product, Design, Dev</span>
+            <div class="project-row__desc">A web-based crypto wallet anyone can use.</div>
+          </div>
+        </a>
+        <a href="https://stopburla.pt/" class="project-row" target="_blank" rel="noopener noreferrer">
+          <div>
+            <span class="project-row__name">Guardião</span> <span class="project-row__role">Design</span>
+            <div class="project-row__desc">Software that detects fraud patterns and alerts citizens to scams.</div>
+          </div>
+        </a>
+      </div>
+    </main>
+  </div>
+
+  <script src="scripts/main.js" defer></script>
+</body>
+</html>

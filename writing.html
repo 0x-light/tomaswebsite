@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Writing — Tomás Thor Palmeirim</title>
+  <meta name="description" content="Essays and notes by Tomás Thor Palmeirim." />
+  <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+  <div class="site">
+    <aside class="sidebar">
+      <div class="mobile-header">
+        <a href="index.html" class="mobile-header__name">Palmeirim</a>
+        <div class="mobile-header__actions">
+          <button class="theme-toggle mobile-theme" type="button" aria-label="Cycle theme">Theme</button>
+          <button class="hamburger" type="button" aria-label="Toggle navigation menu" aria-controls="site-nav" aria-expanded="false">Menu</button>
+        </div>
+      </div>
+      <div class="sidebar__name">Palmeirim</div>
+      <nav id="site-nav" class="sidebar__nav" aria-label="Primary">
+        <a href="index.html" class="sidebar__link">About</a>
+        <a href="work.html" class="sidebar__link">Work</a>
+        <!-- <a href="writing.html" class="sidebar__link active">Writing</a> -->
+        <a href="reading.html" class="sidebar__link">Reading</a>
+        <a href="contact.html" class="sidebar__link">Contact</a>
+        <button class="theme-toggle sidebar__theme" type="button" aria-label="Cycle theme">Theme</button>
+      </nav>
+      <div class="sidebar__footer">
+        <button class="theme-toggle" type="button" aria-label="Cycle theme">Theme</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <h1 class="page-title">Writing</h1>
+      <p class="page-subtitle">Essays and notes.</p>
+
+      <div class="writing-list">
+        <a href="writing/tools-that-think-with-you.html" class="writing-row">
+          <span class="writing-row__year">2026</span>
+          <span class="writing-row__title">Tools that think with you</span>
+          <span class="writing-row__date">24/01</span>
+        </a>
+        <a href="writing/the-case-for-metaphors.html" class="writing-row">
+          <span class="writing-row__year">2025</span>
+          <span class="writing-row__title">The case for metaphors</span>
+          <span class="writing-row__date">08/12</span>
+        </a>
+        <a href="writing/the-fishermans-wife.html" class="writing-row">
+          <span class="writing-row__year">2025</span>
+          <span class="writing-row__title">The fisherman's wife</span>
+          <span class="writing-row__date">15/11</span>
+        </a>
+        <a href="writing/a-letter-concerning-the-weather.html" class="writing-row">
+          <span class="writing-row__year">2025</span>
+          <span class="writing-row__title">A letter concerning the weather</span>
+          <span class="writing-row__date">03/10</span>
+        </a>
+      </div>
+    </main>
+  </div>
+
+  <script src="scripts/main.js" defer></script>
+</body>
+</html>

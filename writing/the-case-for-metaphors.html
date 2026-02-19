@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The case for metaphors — Palmeirim</title>
+  <meta name="description" content="Why metaphors aren't decoration — they're how we think about things we can't yet see." />
+  <link rel="icon" href="../public/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="../styles/main.css" />
+</head>
+<body>
+  <div class="site">
+    <aside class="sidebar">
+      <div class="mobile-header">
+        <a href="../index.html" class="mobile-header__name">Palmeirim</a>
+        <div class="mobile-header__actions">
+          <button class="theme-toggle mobile-theme" type="button" aria-label="Cycle theme">Theme</button>
+          <button class="hamburger" type="button" aria-label="Toggle navigation menu" aria-controls="site-nav" aria-expanded="false">Menu</button>
+        </div>
+      </div>
+      <div class="sidebar__name">Palmeirim</div>
+      <nav id="site-nav" class="sidebar__nav" aria-label="Primary">
+        <a href="../index.html" class="sidebar__link">About</a>
+        <a href="../work.html" class="sidebar__link">Work</a>
+        <!-- <a href="../writing.html" class="sidebar__link active">Writing</a> -->
+        <a href="../reading.html" class="sidebar__link">Reading</a>
+        <a href="../contact.html" class="sidebar__link">Contact</a>
+        <button class="theme-toggle sidebar__theme" type="button" aria-label="Cycle theme">Theme</button>
+      </nav>
+      <div class="sidebar__footer">
+        <button class="theme-toggle" type="button" aria-label="Cycle theme">Theme</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <article class="post">
+        <header class="post__header">
+          <h1 class="post__title">The case for metaphors</h1>
+          <time class="post__date" datetime="2025-12-08">8 December 2025</time>
+        </header>
+
+        <div class="post__body">
+          <p>We talk about software in metaphors so constantly that we've stopped noticing we're doing it. Pipelines. Containers. Threads. Bridges. Walls. Windows. Every one of these is a loan from the physical world, and every one shapes — quietly, powerfully — how we think about the thing it names.</p>
+
+          <p>There's a school of thought that says this is a problem. That metaphors are imprecise, that they carry unwanted connotations, that they mislead beginners and annoy experts. Better to be literal. Call things what they are.</p>
+
+          <p>But what are they? A function is not literally a function in the mathematical sense — it can have side effects, it can fail, it can never return. A "server" is not serving anyone in the way a waiter serves. Every technical term is already a metaphor; some have just been dead long enough that we've forgotten they were ever alive.</p>
+
+          <p>The interesting question isn't whether to use metaphors. It's which metaphors to choose, and what they make visible or invisible.</p>
+
+          <p>Consider "technical debt." The metaphor borrows from finance: you take a shortcut now, and you'll pay interest later. It's remarkably effective at communicating with people who control budgets. But it also smuggles in assumptions. Debt implies a known creditor, a calculable sum, a clear path to repayment. Most code problems aren't like that. They're more like rot, or erosion — slow, distributed, hard to point at. The financial metaphor makes the problem legible to managers but subtly misrepresents its nature.</p>
+
+          <p>Or consider "architecture." We speak of software architecture as though we're designing buildings. This gives us useful intuitions about foundations, load-bearing walls, and the cost of late changes. But buildings don't evolve after construction. They don't get refactored. The architecture metaphor biases us toward big upfront design and makes continuous reshaping feel like failure, when it might actually be the healthiest thing a codebase can do.</p>
+
+          <p>The metaphors we choose become the grooves our thinking runs in. Choose a metaphor from construction, and you'll plan in phases. Choose one from gardening, and you'll think in seasons, in pruning and patience. Choose one from ecology, and you'll pay attention to relationships between systems, to feedback loops and carrying capacity.</p>
+
+          <p>None of these is right. All of them are useful. The skill isn't finding the correct metaphor — it's holding several at once and noticing what each one reveals.</p>
+
+          <p>I've started to think that the quality of someone's thinking about software correlates with the richness of their metaphors. Not the cleverness — the richness. A person who can only talk about code in terms of code is trapped inside the system they're trying to understand. A person who can reach for biology, for urban planning, for cooking, for music — they have more ways in.</p>
+
+          <p>Metaphors aren't decoration. They're infrastructure.</p>
+        </div>
+
+        <a href="../writing.html" class="post__back">&larr; Back</a>
+      </article>
+    </main>
+  </div>
+
+  <script src="../scripts/main.js" defer></script>
+</body>
+</html>
