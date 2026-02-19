@@ -955,6 +955,10 @@ a[href^="http"]:not(.project-row)::after {
 /* ── Responsive ── */
 
 @media (max-width: 1150px) {
+  body {
+    font-size: 15px;
+  }
+
   .site {
     max-width: none;
     padding: 0 32px;
@@ -985,7 +989,7 @@ a[href^="http"]:not(.project-row)::after {
   }
 
   .sidebar__link {
-    font-size: 14px;
+    font-size: 15px;
     padding: 8px 0;
     border-bottom: 1px solid var(--border);
   }
@@ -1014,6 +1018,11 @@ a[href^="http"]:not(.project-row)::after {
     display: flex;
     align-items: center;
     gap: 16px;
+  }
+
+  .theme-toggle,
+  .hamburger {
+    font-size: 15px;
   }
 
   .main {
