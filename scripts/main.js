@@ -62,7 +62,8 @@
       adm3a: "ADM-3A",
       lcars: "LCARS",
       hal: "HAL",
-      bbcmicro: "BBC Micro"
+      bbcmicro: "BBC Micro",
+      coco: "CoCo"
     };
     if (upperCaseThemes[value]) {
       return upperCaseThemes[value];
@@ -248,4 +249,6 @@
   setupMobileMenu();
   setupThemeControls();
   setTheme(getInitialTheme());
+
+  console.log("Made with HTML, CSS, and JavaScript.\n\nby Tom\u00e1s");
 })();

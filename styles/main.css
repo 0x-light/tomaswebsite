@@ -6,8 +6,8 @@
 
   --text:        #1a1a1a;
   --text-rgb:    26, 26, 26;
-  --text-2:      rgba(var(--text-rgb), 0.55);
-  --text-3:      rgba(var(--text-rgb), 0.35);
+  --text-2:      rgba(var(--text-rgb), 0.6);
+  --text-3:      rgba(var(--text-rgb), 0.4);
 
   --text-dim:    rgba(var(--text-rgb), 0.2);
 
@@ -390,8 +390,8 @@ html.amstrad {
 }
 
 html.coco {
-  --bg: #0a4a0a;
-  --text: #ffa040; --text-rgb: 255,160,64;
+  --bg: #33ff33;
+  --text: #000000; --text-rgb: 0,0,0;
 }
 
 html.osborne {
@@ -606,6 +606,7 @@ a[href^="http"]:not(.project-row)::after {
   color: var(--text);
   letter-spacing: -0.01em;
   margin-bottom: 28px;
+  text-decoration: none;
 }
 
 .sidebar__nav {
@@ -842,12 +843,14 @@ a[href^="http"]:not(.project-row)::after {
 }
 
 .project-list:hover .project-row__name,
-.project-list:hover .project-row__desc {
+.project-list:hover .project-row__desc,
+.project-list:hover .project-row__role {
   color: var(--text-dim);
 }
 
 .project-list:hover .project-row:hover .project-row__name { color: var(--text); }
 .project-list:hover .project-row:hover .project-row__desc { color: var(--text-2); }
+.project-list:hover .project-row:hover .project-row__role { color: var(--text-3); }
 
 /* ── Reading list ── */
 
@@ -955,13 +958,10 @@ a[href^="http"]:not(.project-row)::after {
 /* ── Responsive ── */
 
 @media (max-width: 1150px) {
-  body {
-    font-size: 16px;
-  }
 
   .site {
     max-width: none;
-    padding: 0 32px;
+    padding: 0 20px;
   }
 
   .sidebar {
@@ -989,7 +989,6 @@ a[href^="http"]:not(.project-row)::after {
   }
 
   .sidebar__link {
-    font-size: 16px;
     padding: 8px 0;
     border-bottom: 1px solid var(--border);
   }
@@ -1020,11 +1019,6 @@ a[href^="http"]:not(.project-row)::after {
     gap: 16px;
   }
 
-  .theme-toggle,
-  .hamburger {
-    font-size: 16px;
-  }
-
   .main {
     margin: 0 auto;
     padding: 24px 0 80px;
@@ -1034,7 +1028,22 @@ a[href^="http"]:not(.project-row)::after {
     margin-top: 48px;
   }
 
-  /* Font size 16px for all elements */
+}
+
+@media (hover: none) {
+  body {
+    font-size: 16px;
+  }
+
+  .sidebar__link {
+    font-size: 16px;
+  }
+
+  .theme-toggle,
+  .hamburger {
+    font-size: 16px;
+  }
+
   .page-title,
   .page-subtitle,
   .section-heading__text,
@@ -1055,7 +1064,6 @@ a[href^="http"]:not(.project-row)::after {
     font-size: 16px;
   }
 
-  /* Remove all hover states */
   .sidebar__link:hover {
     color: var(--text-2);
   }
@@ -1097,7 +1105,8 @@ a[href^="http"]:not(.project-row)::after {
   }
 
   .project-list:hover .project-row__name,
-  .project-list:hover .project-row__desc {
+  .project-list:hover .project-row__desc,
+  .project-list:hover .project-row__role {
     color: unset;
   }
 
@@ -1111,6 +1120,12 @@ a[href^="http"]:not(.project-row)::after {
   .project-list:hover .project-row__desc,
   .project-list:hover .project-row:hover .project-row__desc {
     color: var(--text-2);
+  }
+
+  .project-row__role,
+  .project-list:hover .project-row__role,
+  .project-list:hover .project-row:hover .project-row__role {
+    color: var(--text-3);
   }
 
   .reading-list:hover .reading-row__title,
