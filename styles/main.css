@@ -1183,20 +1183,8 @@ a[href^="http"]:not(.project-row)::after {
 }
 
 @media (max-width: 1150px) {
-  .site {
-    min-height: 100svh;
-  }
-
-  .main {
-    min-height: calc(100svh - 68px);
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 20px;
-  }
-
   .weather-widget {
     display: block;
-    margin-top: auto;
     padding-top: 48px;
     font-size: 14px;
     color: var(--text-3);
