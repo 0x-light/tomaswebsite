@@ -311,10 +311,20 @@
     }, 60 * 1000);
   }
 
+  function setupMobileMinHeight() {
+    if (window.innerWidth > 1150) { return; }
+    var sidebar = document.querySelector(".sidebar");
+    var main = document.querySelector(".main");
+    if (!main) { return; }
+    var sidebarH = sidebar ? sidebar.getBoundingClientRect().height : 68;
+    main.style.minHeight = (window.innerHeight - sidebarH) + "px";
+  }
+
   setupNavigationState();
   setupMobileMenu();
   setupThemeControls();
   setTheme(getInitialTheme());
+  setupMobileMinHeight();
   setupWeatherWidget();
 
   console.log("Made with HTML, CSS, and JavaScript.\n\nby Tom\u00e1s");
