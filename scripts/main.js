@@ -245,10 +245,73 @@
     });
   }
 
+  function setupWeatherWidget() {
+    var WMO = {
+      0: "Clear",
+      1: "Mostly clear", 2: "Partly cloudy", 3: "Overcast",
+      45: "Foggy", 48: "Foggy",
+      51: "Drizzle", 53: "Drizzle", 55: "Drizzle",
+      61: "Rain", 63: "Rain", 65: "Heavy rain",
+      71: "Snow", 73: "Snow", 75: "Heavy snow",
+      80: "Showers", 81: "Showers", 82: "Heavy showers",
+      95: "Thunderstorm", 96: "Thunderstorm", 99: "Thunderstorm"
+    };
+
+    var el = document.createElement("div");
+    el.className = "weather-widget";
+    document.body.appendChild(el);
+
+    var cache = null;
+    var lastFetch = 0;
+    var CACHE_MS = 30 * 60 * 1000;
+
+    function lisbonTime() {
+      var parts = new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Europe/Lisbon",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      }).formatToParts(new Date());
+      var h = "", m = "";
+      parts.forEach(function (p) {
+        if (p.type === "hour") { h = p.value; }
+        if (p.type === "minute") { m = p.value; }
+      });
+      return h + ":" + m;
+    }
+
+    function render() {
+      if (!cache) { return; }
+      el.textContent = lisbonTime() + " · Lisbon · " + cache.condition + ", " + Math.round(cache.temp) + "°C";
+    }
+
+    function fetchWeather() {
+      fetch("https://api.open-meteo.com/v1/forecast?latitude=38.7167&longitude=-9.1333&current=temperature_2m,weather_code&temperature_unit=celsius&timezone=Europe/Lisbon")
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          cache = {
+            condition: WMO[data.current.weather_code] || "Clear",
+            temp: data.current.temperature_2m
+          };
+          lastFetch = Date.now();
+          render();
+        })
+        .catch(function () {});
+    }
+
+    fetchWeather();
+
+    setInterval(function () {
+      render();
+      if (Date.now() - lastFetch >= CACHE_MS) { fetchWeather(); }
+    }, 60 * 1000);
+  }
+
   setupNavigationState();
   setupMobileMenu();
   setupThemeControls();
   setTheme(getInitialTheme());
+  setupWeatherWidget();
 
   console.log("Made with HTML, CSS, and JavaScript.\n\nby Tom\u00e1s");
 })();
