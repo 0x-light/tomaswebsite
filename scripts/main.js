@@ -301,6 +301,8 @@
         .catch(function () {});
     }
 
+    // Show time immediately so height is reserved — no layout shift on fetch
+    el.textContent = lisbonTime() + " · Lisbon, Portugal · —";
     fetchWeather();
 
     setInterval(function () {
