@@ -284,7 +284,7 @@
 
     function render() {
       if (!cache) { return; }
-      el.textContent = lisbonTime() + " · Lisbon · " + cache.condition + ", " + Math.round(cache.temp) + "°C";
+      el.textContent = lisbonTime() + " · Lisbon, Portugal · " + cache.condition + ", " + Math.round(cache.temp) + "°C";
     }
 
     function fetchWeather() {
