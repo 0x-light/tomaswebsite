@@ -259,7 +259,9 @@
 
     var el = document.createElement("div");
     el.className = "weather-widget";
-    document.body.appendChild(el);
+    var main = document.querySelector(".main");
+    if (!main) { return; }
+    main.appendChild(el);
 
     var cache = null;
     var lastFetch = 0;
