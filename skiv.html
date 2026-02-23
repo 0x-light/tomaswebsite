@@ -322,6 +322,21 @@
       color: var(--text);
     }
 
+    @media (hover: none) {
+      .nav a:hover { color: var(--text-3); }
+      .theme-toggle:hover { color: var(--text-3); }
+      .hero a:hover { text-decoration-color: var(--text-dim); }
+      .hero .cta:hover { color: var(--text-2); text-decoration-color: var(--text-dim); }
+
+      .feature-list:hover .feature-row__name,
+      .feature-list:hover .feature-row__desc { color: unset; }
+      .feature-list:hover .feature-row:hover .feature-row__name { color: var(--text); }
+      .feature-list:hover .feature-row:hover .feature-row__desc { color: var(--text-2); }
+
+      .closing a:hover { text-decoration-color: var(--text-dim); }
+      .footer a:hover { color: var(--text-3); }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         transition-duration: 0.01ms !important;
