@@ -707,7 +707,7 @@ a[href^="http"]:not(.project-row)::after {
 .section-heading {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 17px;
   margin-top: 64px;
   margin-bottom: 20px;
 }
@@ -755,7 +755,7 @@ a[href^="http"]:not(.project-row)::after {
 .writing-row {
   display: grid;
   grid-template-columns: 48px 1fr auto;
-  gap: 16px;
+  gap: 17px;
   align-items: baseline;
   padding: 9px 0;
   border-bottom: 1px solid var(--border);
@@ -1016,7 +1016,7 @@ a[href^="http"]:not(.project-row)::after {
   .mobile-header__actions {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 17px;
   }
 
   .main {
@@ -1032,16 +1032,16 @@ a[href^="http"]:not(.project-row)::after {
 
 @media (hover: none) {
   body {
-    font-size: 16px;
+    font-size: 17px;
   }
 
   .sidebar__link {
-    font-size: 16px;
+    font-size: 17px;
   }
 
   .theme-toggle,
   .hamburger {
-    font-size: 16px;
+    font-size: 17px;
   }
 
   .page-title,
@@ -1061,7 +1061,7 @@ a[href^="http"]:not(.project-row)::after {
   .post__body,
   .post__date,
   .post__back {
-    font-size: 16px;
+    font-size: 17px;
   }
 
   .sidebar__link:hover {
@@ -1200,7 +1200,7 @@ a[href^="http"]:not(.project-row)::after {
 
 @media (max-width: 1150px) and (hover: none) {
   .weather-widget {
-    font-size: 16px;
+    font-size: 17px;
   }
 }
 
