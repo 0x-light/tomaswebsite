@@ -551,7 +551,7 @@ html {
 
 body {
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.7;
   color: var(--text);
   background: var(--bg);
@@ -619,7 +619,7 @@ a[href^="http"]:not(.project-row)::after {
 .sidebar__link {
   display: inline-block;
   padding: 4px 0;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-2);
   transition: color 0.15s;
 }
@@ -654,7 +654,7 @@ a[href^="http"]:not(.project-row)::after {
   cursor: pointer;
   padding: 0;
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-3);
   transition: color 0.15s;
 }
@@ -690,14 +690,14 @@ a[href^="http"]:not(.project-row)::after {
 /* ── Page header ── */
 
 .page-title {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
   color: var(--text);
   margin-bottom: 2px;
 }
 
 .page-subtitle {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-3);
   margin-bottom: 48px;
 }
@@ -713,7 +713,7 @@ a[href^="http"]:not(.project-row)::after {
 }
 
 .section-heading__text {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
   color: var(--text-3);
   flex-shrink: 0;
@@ -728,7 +728,7 @@ a[href^="http"]:not(.project-row)::after {
 /* ── About ── */
 
 .about {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.7;
   color: var(--text);
 }
@@ -766,19 +766,19 @@ a[href^="http"]:not(.project-row)::after {
 }
 
 .writing-row__year {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-3);
     transition: color 0.2s;
 }
 
 .writing-row__title {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text);
   transition: color 0.2s;
 }
 
 .writing-row__date {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-3);
     text-align: right;
   transition: color 0.2s;
@@ -812,7 +812,7 @@ a[href^="http"]:not(.project-row)::after {
 }
 
 .project-row__name {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text);
   transition: color 0.2s;
   text-decoration: underline;
@@ -828,7 +828,7 @@ a[href^="http"]:not(.project-row)::after {
 }
 
 .project-row__role {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-3);
   transition: color 0.2s;
   text-decoration: none;
@@ -836,7 +836,7 @@ a[href^="http"]:not(.project-row)::after {
 }
 
 .project-row__desc {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-2);
   margin-top: 2px;
   transition: color 0.2s;
@@ -869,7 +869,7 @@ a[href^="http"]:not(.project-row)::after {
 }
 
 .reading-row__title {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text);
   transition: color 0.2s;
 }
@@ -880,14 +880,14 @@ a[href^="http"]:not(.project-row)::after {
 }
 
 .reading-row__author {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-2);
   margin-top: 2px;
   transition: color 0.2s;
 }
 
 .reading-row__note {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-3);
   margin-top: 4px;
   font-style: italic;
@@ -913,7 +913,7 @@ a[href^="http"]:not(.project-row)::after {
 }
 
 .post__title {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
   color: var(--text);
   margin-bottom: 2px;
@@ -924,7 +924,7 @@ a[href^="http"]:not(.project-row)::after {
 }
 
 .post__body {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.7;
   color: var(--text);
 }
@@ -946,7 +946,7 @@ a[href^="http"]:not(.project-row)::after {
 .post__back {
   display: inline-block;
   margin-top: 48px;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-3);
   transition: color 0.15s;
 }
@@ -1193,7 +1193,7 @@ a[href^="http"]:not(.project-row)::after {
     display: block;
     margin-top: auto;
     padding-top: 48px;
-    font-size: 14px;
+    font-size: 16px;
     color: var(--text-3);
   }
 }
