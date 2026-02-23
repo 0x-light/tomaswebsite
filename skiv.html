@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Skiv — Video hosting with AI search</title>
   <meta name="description" content="Store, search, and share your videos. AI that understands what's in them." />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%23fff'/><polygon points='13,10 13,22 23,16' fill='%231a1a1a'/></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><style>circle{fill:%23fff}polygon{fill:%231a1a1a}@media(prefers-color-scheme:dark){circle{fill:%2309090B}polygon{fill:%23DEDEDE}}</style><circle cx='16' cy='16' r='15'/><polygon points='13,10 13,22 23,16'/></svg>" />
   <style>
     :root {
       --bg: #f8f8f7;
@@ -19,10 +19,12 @@
       --content-w: 560px;
     }
 
-    html.dark {
-      --bg: #000000;
-      --text: #DEDEDE;
-      --text-rgb: 222, 222, 222;
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #09090B;
+        --text: #DEDEDE;
+        --text-rgb: 222, 222, 222;
+      }
     }
 
     ::selection {
@@ -134,7 +136,7 @@
     .hero .cta {
       display: inline-block;
       margin-top: 32px;
-      color: var(--text-2);
+      color: var(--text);
       text-decoration: underline;
       text-decoration-color: var(--text-dim);
       transition: color 0.15s, text-decoration-color 0.15s;
@@ -305,26 +307,8 @@
       }
     }
 
-    /* ── Theme toggle ── */
-
-    .theme-toggle {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      font-family: var(--font);
-      font-size: inherit;
-      color: var(--text-3);
-      transition: color 0.15s;
-    }
-
-    .theme-toggle:hover {
-      color: var(--text);
-    }
-
     @media (hover: none) {
       .nav a:hover { color: var(--text-3); }
-      .theme-toggle:hover { color: var(--text-3); }
       .hero a:hover { text-decoration-color: var(--text-dim); }
       .hero .cta:hover { color: var(--text-2); text-decoration-color: var(--text-dim); }
 
@@ -350,10 +334,9 @@
     <header class="header">
       <a href="/" class="wordmark">▶ Skiv</a>
       <nav class="nav">
-        <a href="/pricing">Pricing</a>
-        <a href="/docs">Docs</a>
-        <button class="theme-toggle" type="button" aria-label="Toggle theme">Dark</button>
-        <a href="/login">Sign in</a>
+        <a href="https://muse.ai/pricing">Pricing</a>
+        <a href="https://muse.ai/docs">Docs</a>
+        <a href="https://muse.ai/login">Sign in</a>
       </nav>
     </header>
 
@@ -364,7 +347,7 @@
         <div class="muse-video-player" data-video="sLFaX4p" data-search="0" data-links="0" data-logo="0" data-title="0" data-autoplay="1" data-loop="1" data-volume="0" data-coverplayposition="center" data-width="576"></div><script src="https://muse.ai/static/js/embed-player.min.js"></script>
         <p class="dim" style="margin-top: 30px">Store everything from lectures to raw footage, and find exactly what you need by searching for what's in the video — speech, text, objects, actions, ideas.</p>
         <p class="dim">Used by universities, creators, and teams who need their video libraries to be searchable, private, and simple.</p>
-        <a href="/login" class="cta">Get started for free</a>
+        <a href="https://muse.ai/join" class="cta">Get started for free</a>
       </div>
 
       <div class="section-heading">
@@ -420,7 +403,7 @@
       <p class="trusted">Trusted by the NHS, Fortnum & Mason, New York University, Arizona State University, Toptal, <span class="trusted__highlight">and millions of users worldwide.</span></p>
 
       <div class="closing">
-        <p>Simple plans, no surprises. <a href="/pricing">See pricing</a> or <a href="/login">start for free</a>.</p>
+        <p>Simple plans, no surprises. <a href="https://muse.ai/pricing">See pricing</a> or <a href="https://muse.ai/join">start for free</a>.</p>
       </div>
 
     </main>
@@ -433,41 +416,6 @@
     </footer>
 
   </div>
-  <script>
-    (function () {
-      var root = document.documentElement;
-      var btn = document.querySelector('.theme-toggle');
-      var favicon = document.querySelector('link[rel="icon"]');
-      var stored = localStorage.getItem('theme');
 
-      function isDark() {
-        return root.classList.contains('dark');
-      }
-
-      function updateFavicon() {
-        var bg = isDark() ? '%2309090B' : '%23fff';
-        var fg = isDark() ? '%23DEDEDE' : '%231a1a1a';
-        favicon.href = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='" + bg + "'/><polygon points='13,10 13,22 23,16' fill='" + fg + "'/></svg>";
-      }
-
-      function apply(dark) {
-        root.classList.toggle('dark', dark);
-        btn.textContent = dark ? 'Light' : 'Dark';
-        btn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
-        localStorage.setItem('theme', dark ? 'dark' : 'light');
-        updateFavicon();
-      }
-
-      if (stored === 'dark') {
-        apply(true);
-      } else {
-        apply(false);
-      }
-
-      btn.addEventListener('click', function () {
-        apply(!isDark());
-      });
-    })();
-  </script>
 </body>
 </html>
