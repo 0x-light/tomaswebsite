@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Skiv — Video hosting with AI search</title>
+  <meta name="description" content="Store, search, and share your videos. AI that understands what's in them." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><style>circle{fill:%23fff}polygon{fill:%231a1a1a}@media(prefers-color-scheme:dark){circle{fill:%2309090B}polygon{fill:%23DEDEDE}}</style><circle cx='16' cy='16' r='15'/><polygon points='13,10 13,22 23,16'/></svg>" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/light/style.css" />
+  <style>
+
+    /* ── Tokens ── */
+
+    :root {
+      --bg:       #f8f8f7;
+      --text:     #000000;
+      --text-rgb: 26, 26, 26;
+      --text-2:   rgba(var(--text-rgb), 0.55);
+      --text-3:   rgba(var(--text-rgb), 0.35);
+      --text-dim: rgba(var(--text-rgb), 0.15);
+      --border:   rgba(var(--text-rgb), 0.1);
+      --font:     system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --wrap:     1120px;
+      --gutter:   24px;
+    }
+
+    [data-theme="dark"] {
+      --bg:       #000000;
+      --text:     #DEDEDE;
+      --text-rgb: 222, 222, 222;
+    }
+
+    /* ── Reset ── */
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    ::selection { background: var(--text); color: var(--bg); }
+
+    body {
+      font-family: var(--font);
+      font-size: 17px;
+      line-height: 1.65;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    a:focus-visible { outline: 2px solid var(--text-2); outline-offset: 2px; }
+
+    /* ── Wrap ── */
+
+    .wrap {
+      max-width: var(--wrap);
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+    }
+
+    /* ── Buttons ── */
+
+    .btn {
+      display: inline-block;
+      padding: 8px 10px;
+      border-radius: 0;
+      font-size: 18px;
+      font-family: inherit;
+      line-height: 1;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      border: none;
+    }
+
+    .btn:hover { opacity: 0.8; }
+
+    .btn--primary {
+      background: var(--text);
+      color: var(--bg);
+    }
+
+    [data-theme="light"] .btn--primary { background: #000000; color: #f8f8f7; }
+    [data-theme="dark"]  .btn--primary { background: #DEDEDE; color: #000000; }
+
+    .btn--ghost {
+      background: transparent;
+      color: var(--text-3);
+    }
+
+    .btn--ghost:hover { color: var(--text); opacity: 1; }
+
+    /* ── Header ── */
+
+    .header {
+      border-bottom: none;
+    }
+
+    .header .wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+
+    .wordmark {
+      font-size: 18px;
+      letter-spacing: -0.01em;
+    }
+
+    .nav { display: flex; align-items: center; gap: 8px; }
+
+    .nav a {
+      padding: 8px 10px;
+      color: var(--text-3);
+      font-size: 16px;
+      transition: color 0.15s;
+    }
+
+    .nav a:hover { color: var(--text); }
+
+    /* ── Theme toggle ── */
+
+    .theme-toggle { cursor: pointer; }
+
+    [data-theme="light"] .theme-toggle__light,
+    [data-theme="dark"]  .theme-toggle__dark { display: none; }
+
+    /* ── Mobile menu ── */
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 16px;
+      color: var(--text-3);
+      cursor: pointer;
+      padding: 8px 0;
+      transition: color 0.15s;
+    }
+
+    .menu-toggle:hover { color: var(--text); }
+    .menu-toggle__close { display: none; }
+    .menu-open .menu-toggle__open { display: none; }
+    .menu-open .menu-toggle__close { display: inline; }
+
+    /* ── Hero ── */
+
+    .hero {
+      padding: 80px 0 0;
+    }
+
+    .hero__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .hero__headline {
+      font-weight: normal;
+      line-height: 1.1;
+      letter-spacing: -0.035em;
+    }
+
+    .hero__sub {
+      color: var(--text-2);
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .hero__actions {
+      margin-top: 32px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .hero__video {
+      margin-top: 64px;
+    }
+
+    /* ── Proof strip ── */
+
+    .proof-strip {
+      margin-top: 64px;
+      padding: 20px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .proof-strip .wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .proof__ratings {
+      display: flex;
+      gap: 32px;
+      font-size: 16px;
+      color: var(--text-3);
+    }
+
+    .proof__ratings span { white-space: nowrap; }
+    .proof__star { color: var(--text-2); }
+
+    .proof__orgs {
+      font-size: 16px;
+      color: var(--text-3);
+    }
+
+    .proof__orgs strong {
+      color: var(--text-2);
+      font-weight: 500;
+    }
+
+    .proof__orgs .trusted__highlight {
+      color: var(--text);
+    }
+
+    /* ── Section label ── */
+
+    .section-label {
+      font-size: 16px;
+    }
+
+    /* ── Feature grid ── */
+
+    .features {
+      padding: 80px 0 0;
+    }
+
+    .features__head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+    }
+
+    .feature-cell {
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 24px;
+      transition: background 0.2s;
+    }
+
+    .feature-cell:hover {
+      background: rgba(var(--text-rgb), 0.03);
+    }
+
+    .feature-cell__icon {
+      font-size: 24px;
+      color: var(--text-3);
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .feature-cell__name {
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .feature-cell__desc {
+      font-size: 16px;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+
+    /* ── Steps ── */
+
+    .steps-section {
+      padding: 80px 0 0;
+    }
+
+    .steps-section__head {
+      margin-bottom: 32px;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+    }
+
+    .step-cell {
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 24px;
+    }
+
+    .step-cell__icon {
+      font-size: 24px;
+      color: var(--text-3);
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .step-cell__num {
+      font-size: 48px;
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+    }
+
+    .step-cell__title {
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .step-cell__desc {
+      font-size: 16px;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+
+    /* ── Use cases ── */
+
+    .usecases {
+      padding: 80px 0 0;
+    }
+
+    .usecases__head {
+      margin-bottom: 32px;
+    }
+
+    .usecase-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      border-top: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+    }
+
+    .usecase-cell {
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 24px;
+      transition: background 0.2s;
+    }
+
+    .usecase-cell:hover {
+      background: rgba(var(--text-rgb), 0.03);
+    }
+
+    .usecase-cell__icon {
+      font-size: 24px;
+      color: var(--text-3);
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .usecase-cell__name {
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .usecase-cell__desc {
+      font-size: 16px;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+
+    /* ── Quote ── */
+
+    .quote-section {
+      padding: 80px 0 0;
+    }
+
+    .quote-section .wrap {
+    }
+
+    .quote-section blockquote {
+      font-size: clamp(22px, 3vw, 32px);
+      font-weight: 400;
+      line-height: 1.45;
+      letter-spacing: -0.015em;
+    }
+
+    .quote-section cite {
+      display: block;
+      margin-top: 20px;
+      font-style: normal;
+      font-size: 16px;
+      color: var(--text-3);
+    }
+
+    /* ── Footer ── */
+
+    .footer {
+      margin-top: 80px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer__cta {
+      padding: 64px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .footer__cta h2 {
+      font-weight: normal;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+    }
+
+    .footer__cta-actions {
+      margin-top: 24px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .footer__cta-sub {
+      margin-top: 12px;
+      color: var(--text-3);
+      font-size: 14px;
+    }
+
+    .footer__nav {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      padding: 40px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .footer__nav-col h3 {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--text-3);
+      margin-bottom: 16px;
+    }
+
+    .footer__nav-col a {
+      display: block;
+      font-size: 15px;
+      color: var(--text-2);
+      padding: 4px 0;
+      transition: color 0.15s;
+    }
+
+    .footer__nav-col a:hover { color: var(--text); }
+
+    .footer__bottom {
+      padding: 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-3);
+      font-size: 14px;
+    }
+
+    .footer__bottom-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer__bottom-links a {
+      color: var(--text-3);
+      transition: color 0.15s;
+    }
+
+    .footer__bottom-links a:hover { color: var(--text); }
+
+    /* ── Responsive ── */
+
+    @media (max-width: 900px) {
+      .hero__grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+      .hero__right { padding-top: 0; }
+      .feature-grid { grid-template-columns: repeat(2, 1fr); }
+      .steps-grid { grid-template-columns: 1fr; }
+      .proof-strip .wrap { flex-direction: column; gap: 12px; align-items: flex-start; }
+      .footer__nav { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+    }
+
+    @media (max-width: 600px) {
+      :root { --gutter: 16px; }
+      .hero { padding: 48px 0 0; }
+      .hero__headline { font-size: 32px; }
+
+      /* Mobile menu */
+      .menu-toggle { display: block; }
+      .nav {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: var(--bg);
+        z-index: 100;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        padding: var(--gutter);
+        gap: 0;
+      }
+      .nav a {
+        font-size: 32px;
+        padding: 12px 0;
+        color: var(--text);
+        width: 100%;
+        border-bottom: 1px solid var(--border);
+      }
+      .nav a:first-child { border-top: 1px solid var(--border); }
+      .menu-open .nav { display: flex; }
+      .menu-open .menu-toggle { position: fixed; top: 18px; right: var(--gutter); z-index: 101; }
+
+      .feature-grid,
+      .usecase-grid { grid-template-columns: 1fr; }
+      .footer__nav { grid-template-columns: 1fr; gap: 32px; }
+      .footer__bottom { flex-direction: column; gap: 16px; align-items: flex-start; }
+      .hero__video,
+      .feature-grid,
+      .steps-grid,
+      .usecase-grid {
+        margin-left: calc(-1 * var(--gutter));
+        margin-right: calc(-1 * var(--gutter));
+        border-left: none;
+        border-right: none;
+      }
+      .feature-grid .feature-cell,
+      .steps-grid .step-cell,
+      .usecase-grid .usecase-cell {
+        border-left: none;
+        border-right: none;
+        padding-left: var(--gutter);
+        padding-right: var(--gutter);
+      }
+      .proof__ratings { gap: 16px; flex-wrap: wrap; }
+      .features,
+      .steps-section,
+      .usecases,
+      .quote-section { padding: 56px 0 0; }
+      .footer { margin-top: 56px; }
+    }
+
+    @media (hover: none) {
+      .btn:hover { opacity: 1; }
+      .btn--ghost:hover { color: var(--text-2); border-color: var(--border); }
+      .nav a:hover { color: var(--text-3); }
+      .feature-cell:hover,
+      .usecase-cell:hover { background: transparent; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0.01ms !important; }
+    }
+  </style>
+  <script>
+    (function () {
+      var s = localStorage.getItem('theme');
+      var d = s || (matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', d);
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="wrap">
+      <a href="/" class="wordmark">&#9654; Skiv</a>
+      <button class="menu-toggle" onclick="document.body.classList.toggle('menu-open')" aria-label="Menu">
+        <span class="menu-toggle__open">Menu</span>
+        <span class="menu-toggle__close">Close</span>
+      </button>
+      <nav class="nav">
+        <a href="https://muse.ai/pricing">Pricing</a>
+        <a href="https://muse.ai/docs">Docs</a>
+        <a href="#" onclick="toggleTheme();return false" class="theme-toggle"><span class="theme-toggle__dark">Dark</span><span class="theme-toggle__light">Light</span></a>
+        <a href="https://muse.ai/login">Sign in</a>
+        <a href="https://muse.ai/join">Get started</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="wrap">
+        <div class="hero__grid">
+          <div>
+            <h1 class="hero__headline">Video hosting with AI that understands your content.</h1>
+          </div>
+          <div class="hero__right">
+            <p class="hero__sub">Store everything from lectures to raw footage. Find exactly what you need by searching for what's <em>in</em> the video &mdash; speech, text, objects, actions, ideas.</p>
+            <div class="hero__actions">
+              <a href="https://muse.ai/join" class="btn btn--primary">Start for free →</a>
+            </div>
+          </div>
+        </div>
+        <div class="hero__video">
+          <div class="muse-video-player" data-video="sLFaX4p" data-search="0" data-links="0" data-logo="0" data-title="0" data-autoplay="1" data-loop="1" data-volume="0" data-coverplayposition="center" data-width="1120"></div>
+          <script src="https://muse.ai/static/js/embed-player.min.js"></script>
+        </div>
+      </div>
+    </section>
+
+    <!-- Proof strip -->
+    <div class="proof-strip">
+      <div class="wrap">
+        <p class="proof__orgs">Trusted by the NHS, Fortnum &amp; Mason, New York University, Arizona State University, Toptal, <span class="trusted__highlight">and millions of users worldwide.</span></p>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <section class="features">
+      <div class="wrap">
+        <div class="features__head">
+          <span class="section-label">Features</span>
+        </div>
+        <div class="feature-grid">
+          <a href="/search-inside-video" class="feature-cell">
+            <i class="ph-light ph-magnifying-glass feature-cell__icon"></i>
+            <div class="feature-cell__name">AI video search</div>
+            <div class="feature-cell__desc">Search inside your videos for speech, text, people, objects, and abstract ideas. Go beyond keywords.</div>
+          </a>
+          <a href="/video-hosting" class="feature-cell">
+            <i class="ph-light ph-cloud feature-cell__icon"></i>
+            <div class="feature-cell__name">Cloud storage</div>
+            <div class="feature-cell__desc">Ad-free, private-by-default hosting. Auto-generated subtitles, transcripts, and smart chapters.</div>
+          </a>
+          <a href="/player" class="feature-cell">
+            <i class="ph-light ph-play feature-cell__icon"></i>
+            <div class="feature-cell__name">Player</div>
+            <div class="feature-cell__desc">Fast, customizable HTML5 player with 4K, Chromecast, AirPlay, and in-video search built in.</div>
+          </a>
+          <a href="https://muse.ai/docs#embed-player" class="feature-cell">
+            <i class="ph-light ph-code feature-cell__icon"></i>
+            <div class="feature-cell__name">Embed</div>
+            <div class="feature-cell__desc">Embed videos or entire collections on your site. Style it your way, no coding required.</div>
+          </a>
+          <a href="/record-screen-camera-online" class="feature-cell">
+            <i class="ph-light ph-record feature-cell__icon"></i>
+            <div class="feature-cell__name">Record</div>
+            <div class="feature-cell__desc">Capture your screen or camera directly from the browser. No downloads, no extensions.</div>
+          </a>
+          <a href="https://muse.ai/docs#portals" class="feature-cell">
+            <i class="ph-light ph-storefront feature-cell__icon"></i>
+            <div class="feature-cell__name">Portals</div>
+            <div class="feature-cell__desc">Launch your own branded streaming service with subscriptions, tiers, and managed billing.</div>
+          </a>
+          <a href="/blog/ai-assistant" class="feature-cell">
+            <i class="ph-light ph-chat-circle feature-cell__icon"></i>
+            <div class="feature-cell__name">AI assistant</div>
+            <div class="feature-cell__desc">Chat with your video library. Ask questions, get answers grounded in your content with timestamps.</div>
+          </a>
+          <a href="/video-audio-transcription" class="feature-cell">
+            <i class="ph-light ph-subtitles feature-cell__icon"></i>
+            <div class="feature-cell__name">Transcription</div>
+            <div class="feature-cell__desc">Every video automatically transcribed. Edit, download, or display as interactive subtitles.</div>
+          </a>
+          <a href="https://muse.ai/api" class="feature-cell">
+            <i class="ph-light ph-terminal feature-cell__icon"></i>
+            <div class="feature-cell__name">API</div>
+            <div class="feature-cell__desc">Full programmatic access. Upload, analyze, search, and manage your library from your own code.</div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="steps-section">
+      <div class="wrap">
+        <div class="steps-section__head">
+          <span class="section-label">How it works</span>
+        </div>
+        <div class="steps-grid">
+          <div class="step-cell">
+            <div class="step-cell__num">01</div>
+            <div class="step-cell__title">Upload your videos</div>
+            <div class="step-cell__desc">Drag and drop, or use our API. Any format, any size. They're private by default.</div>
+          </div>
+          <div class="step-cell">
+            <div class="step-cell__num">02</div>
+            <div class="step-cell__title">AI does the rest</div>
+            <div class="step-cell__desc">Every video is analyzed for speech, on-screen text, objects, faces, actions, and abstract concepts.</div>
+          </div>
+          <div class="step-cell">
+            <div class="step-cell__num">03</div>
+            <div class="step-cell__title">Search, share, embed</div>
+            <div class="step-cell__desc">Find any moment instantly. Share a link, embed on your site, or build on top of our API.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Use cases -->
+    <section class="usecases">
+      <div class="wrap">
+        <div class="usecases__head">
+          <span class="section-label">Use cases</span>
+        </div>
+        <div class="usecase-grid">
+          <div class="usecase-cell">
+            <i class="ph-light ph-graduation-cap usecase-cell__icon"></i>
+            <div class="usecase-cell__name">Education</div>
+            <div class="usecase-cell__desc">Students search lectures for exactly what they need. Faculty organize years of footage in seconds. Embed course libraries on your LMS.</div>
+          </div>
+          <div class="usecase-cell">
+            <i class="ph-light ph-microphone-stage usecase-cell__icon"></i>
+            <div class="usecase-cell__name">Events &amp; conferences</div>
+            <div class="usecase-cell__desc">Make talks discoverable long after the event ends. Attendees search across every session to find the moments that matter.</div>
+          </div>
+          <div class="usecase-cell">
+            <i class="ph-light ph-film-slate usecase-cell__icon"></i>
+            <div class="usecase-cell__name">Creators &amp; media</div>
+            <div class="usecase-cell__desc">No competing recommendations. No ads on your content. Monetize with Portals, embed anywhere, own the experience.</div>
+          </div>
+          <div class="usecase-cell">
+            <i class="ph-light ph-users-three usecase-cell__icon"></i>
+            <div class="usecase-cell__name">Teams &amp; internal comms</div>
+            <div class="usecase-cell__desc">A searchable knowledge base for onboarding, demos, and company updates. Secure, collaborative, instantly retrievable.</div>
+          </div>
+          <div class="usecase-cell">
+            <i class="ph-light ph-chart-line-up usecase-cell__icon"></i>
+            <div class="usecase-cell__name">Sales &amp; marketing</div>
+            <div class="usecase-cell__desc">Branded player with your logo, custom CTAs, and detailed analytics. Integrates with your existing stack.</div>
+          </div>
+          <div class="usecase-cell">
+            <i class="ph-light ph-headphones usecase-cell__icon"></i>
+            <div class="usecase-cell__name">Podcasts &amp; audio</div>
+            <div class="usecase-cell__desc">Auto-transcripts, deep search, and a clean player. Let your audience find the exact conversation they're looking for.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quote -->
+    <section class="quote-section">
+      <div class="wrap">
+        <blockquote>&ldquo;We saved $100K and published 20,000 videos. Skiv replaced our entire video infrastructure.&rdquo;</blockquote>
+        <cite>Academia.edu</cite>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+
+      <div class="footer__cta">
+        <h2>Start for free.<br>Scale when you're ready.</h2>
+        <div class="footer__cta-actions">
+          <a href="https://muse.ai/join" class="btn btn--primary">Get started</a>
+          <a href="https://muse.ai/pricing" class="btn btn--ghost">See pricing</a>
+        </div>
+      </div>
+
+      <nav class="footer__nav">
+        <div class="footer__nav-col">
+          <h3>Product</h3>
+          <a href="/search-inside-video">AI Video Search</a>
+          <a href="/video-hosting">Cloud Storage</a>
+          <a href="/player">Player</a>
+          <a href="https://muse.ai/docs#portals">Portals</a>
+          <a href="https://muse.ai/api">API</a>
+        </div>
+        <div class="footer__nav-col">
+          <h3>Resources</h3>
+          <a href="https://muse.ai/docs">Documentation</a>
+          <a href="https://muse.ai/pricing">Pricing</a>
+          <a href="https://muse.ai/blog">Blog</a>
+          <a href="https://muse.ai/contact">Contact</a>
+        </div>
+        <div class="footer__nav-col">
+          <h3>Company</h3>
+          <a href="https://muse.ai/about">About</a>
+          <a href="https://muse.ai/opportunities">Careers</a>
+          <a href="https://muse.ai/integrations">Integrations</a>
+          <a href="https://muse.ai/referrals">Referrals</a>
+        </div>
+      </nav>
+
+      <div class="footer__bottom">
+        <span>&#9654; Skiv &mdash; Search &middot; Knowledge &middot; Internet &middot; Video</span>
+        <div class="footer__bottom-links">
+          <a href="https://muse.ai/terms">Terms</a>
+          <a href="https://muse.ai/privacy">Privacy</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <script>
+    function toggleTheme() {
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    }
+  </script>
+</body>
+</html>
