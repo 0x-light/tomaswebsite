@@ -673,6 +673,7 @@ a[href^="http"]:not(.project-row)::after {
   cursor: pointer;
   padding: 0;
   font-family: var(--font);
+  font-size: inherit;
   color: var(--text-3);
   transition: color 0.15s;
 }

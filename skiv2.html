@@ -137,14 +137,18 @@
       font-size: 16px;
       color: var(--text-3);
       cursor: pointer;
-      padding: 8px 0;
+      padding: 0;
       transition: color 0.15s;
     }
 
     .menu-toggle:hover { color: var(--text); }
-    .menu-toggle__close { display: none; }
-    .menu-open .menu-toggle__open { display: none; }
-    .menu-open .menu-toggle__close { display: inline; }
+    .menu-toggle[aria-expanded="true"] { color: var(--text); }
+
+    .header__actions {
+      display: none;
+      align-items: center;
+      gap: 17px;
+    }
 
     /* ── Hero ── */
 
@@ -485,37 +489,37 @@
       .steps-grid { grid-template-columns: 1fr; }
       .proof-strip .wrap { flex-direction: column; gap: 12px; align-items: flex-start; }
       .footer__nav { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+
+      /* Mobile menu */
+      .header .wrap {
+        height: auto;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      .header__actions { display: flex; }
+      .menu-toggle { display: block; }
+      .nav {
+        display: none;
+        flex-direction: column;
+        gap: 0;
+        width: 100%;
+        padding-top: 20px;
+      }
+      .nav a {
+        font-size: 16px;
+        padding: 12px 0;
+        color: var(--text-2);
+        width: 100%;
+        border-bottom: 1px solid var(--border);
+      }
+      .nav.open { display: flex; }
     }
 
     @media (max-width: 600px) {
       :root { --gutter: 16px; }
       .hero { padding: 48px 0 0; }
       .hero__headline { font-size: 32px; }
-
-      /* Mobile menu */
-      .menu-toggle { display: block; }
-      .nav {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: var(--bg);
-        z-index: 100;
-        flex-direction: column;
-        align-items: flex-start;
-        justify-content: center;
-        padding: var(--gutter);
-        gap: 0;
-      }
-      .nav a {
-        font-size: 32px;
-        padding: 12px 0;
-        color: var(--text);
-        width: 100%;
-        border-bottom: 1px solid var(--border);
-      }
-      .nav a:first-child { border-top: 1px solid var(--border); }
-      .menu-open .nav { display: flex; }
-      .menu-open .menu-toggle { position: fixed; top: 18px; right: var(--gutter); z-index: 101; }
 
       .feature-grid,
       .usecase-grid { grid-template-columns: 1fr; }
@@ -572,14 +576,13 @@
   <header class="header">
     <div class="wrap">
       <a href="/" class="wordmark">&#9654; Skiv</a>
-      <button class="menu-toggle" onclick="document.body.classList.toggle('menu-open')" aria-label="Menu">
-        <span class="menu-toggle__open">Menu</span>
-        <span class="menu-toggle__close">Close</span>
-      </button>
-      <nav class="nav">
+      <div class="header__actions">
+        <button class="menu-toggle" aria-label="Toggle navigation" aria-controls="site-nav" aria-expanded="false">Menu</button>
+      </div>
+      <nav id="site-nav" class="nav">
         <a href="https://muse.ai/pricing">Pricing</a>
         <a href="https://muse.ai/docs">Docs</a>
-        <a href="#" onclick="toggleTheme();return false" class="theme-toggle"><span class="theme-toggle__dark">Dark</span><span class="theme-toggle__light">Light</span></a>
+        <a href="#" onclick="toggleTheme();return false" class="theme-toggle nav__theme"><span class="theme-toggle__dark">Dark</span><span class="theme-toggle__light">Light</span></a>
         <a href="https://muse.ai/login">Sign in</a>
         <a href="https://muse.ai/join">Get started</a>
       </nav>
@@ -802,6 +805,17 @@
       document.documentElement.setAttribute('data-theme', next);
       localStorage.setItem('theme', next);
     }
+
+    (function () {
+      var btn = document.querySelector('.menu-toggle');
+      var nav = document.getElementById('site-nav');
+      if (!btn || !nav) return;
+      btn.addEventListener('click', function () {
+        var open = nav.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open);
+        btn.textContent = open ? 'Close' : 'Menu';
+      });
+    })();
   </script>
 </body>
 </html>
