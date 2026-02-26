@@ -1,45 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Skiv — Video hosting with AI search</title>
   <meta name="description" content="Store, search, and share your videos. AI that understands what's in them." />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><style>circle{fill:%23fff}polygon{fill:%231a1a1a}@media(prefers-color-scheme:dark){circle{fill:%2309090B}polygon{fill:%23DEDEDE}}</style><circle cx='16' cy='16' r='15'/><polygon points='13,10 13,22 23,16'/></svg>" />
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><style>circle{fill:%23fff}polygon{fill:%231a1a1a}@media(prefers-color-scheme:dark){circle{fill:%2309090B}polygon{fill:%23DEDEDE}}</style><circle cx='16' cy='16' r='15'/><polygon points='13,10 13,22 23,16'/></svg>" />
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/light/style.css" />
   <style>
-
     /* ── Tokens ── */
 
     :root {
-      --bg:       #f8f8f7;
-      --text:     #000000;
+      --bg: #f8f8f7;
+      --text: #000000;
       --text-rgb: 26, 26, 26;
-      --text-2:   rgba(var(--text-rgb), 0.75);
-      --text-3:   rgba(var(--text-rgb), 0.35);
+      --text-2: rgba(var(--text-rgb), 0.75);
+      --text-3: rgba(var(--text-rgb), 0.35);
       --text-dim: rgba(var(--text-rgb), 0.15);
-      --border:   rgba(var(--text-rgb), 0.1);
-      --font:     system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      --wrap:     1120px;
-      --gutter:   24px;
+      --border: rgba(var(--text-rgb), 0.1);
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --wrap: 1120px;
+      --gutter: 24px;
     }
 
     [data-theme="dark"] {
-      --bg:       #000000;
-      --text:     #DEDEDE;
+      --bg: #000000;
+      --text: #DEDEDE;
       --text-rgb: 222, 222, 222;
     }
 
     /* ── Reset ── */
 
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     html {
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
 
-    ::selection { background: var(--text); color: var(--bg); }
+    ::selection {
+      background: var(--text);
+      color: var(--bg);
+    }
 
     body {
       font-family: var(--font);
@@ -49,8 +59,15 @@
       background: var(--bg);
     }
 
-    a { color: inherit; text-decoration: none; }
-    a:focus-visible { outline: 2px solid var(--text-2); outline-offset: 2px; }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    a:focus-visible {
+      outline: 2px solid var(--text-2);
+      outline-offset: 2px;
+    }
 
     /* ── Wrap ── */
 
@@ -74,22 +91,34 @@
       border: none;
     }
 
-    .btn:hover { opacity: 0.8; }
+    .btn:hover {
+      opacity: 0.8;
+    }
 
     .btn--primary {
       background: var(--text);
       color: var(--bg);
     }
 
-    [data-theme="light"] .btn--primary { background: #000000; color: #f8f8f7; }
-    [data-theme="dark"]  .btn--primary { background: #DEDEDE; color: #000000; }
+    [data-theme="light"] .btn--primary {
+      background: #000000;
+      color: #f8f8f7;
+    }
+
+    [data-theme="dark"] .btn--primary {
+      background: #DEDEDE;
+      color: #000000;
+    }
 
     .btn--ghost {
       background: transparent;
       color: var(--text-3);
     }
 
-    .btn--ghost:hover { color: var(--text); opacity: 1; }
+    .btn--ghost:hover {
+      color: var(--text);
+      opacity: 1;
+    }
 
     /* ── Header ── */
 
@@ -109,23 +138,33 @@
       letter-spacing: -0.01em;
     }
 
-    .nav { display: flex; align-items: center; gap: 8px; }
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
     .nav a {
       padding: 8px 10px;
       color: var(--text-3);
-      font-size: 16px;
+      font-size: 18px;
       transition: color 0.15s;
     }
 
-    .nav a:hover { color: var(--text); }
+    .nav a:hover {
+      color: var(--text);
+    }
 
     /* ── Theme toggle ── */
 
-    .theme-toggle { cursor: pointer; }
+    .theme-toggle {
+      cursor: pointer;
+    }
 
     [data-theme="light"] .theme-toggle__light,
-    [data-theme="dark"]  .theme-toggle__dark { display: none; }
+    [data-theme="dark"] .theme-toggle__dark {
+      display: none;
+    }
 
     /* ── Mobile menu ── */
 
@@ -141,8 +180,13 @@
       transition: color 0.15s;
     }
 
-    .menu-toggle:hover { color: var(--text); }
-    .menu-toggle[aria-expanded="true"] { color: var(--text); }
+    .menu-toggle:hover {
+      color: var(--text);
+    }
+
+    .menu-toggle[aria-expanded="true"] {
+      color: var(--text);
+    }
 
     .header__actions {
       display: none;
@@ -198,7 +242,7 @@
     .proof-strip .wrap {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
     }
 
     .proof__ratings {
@@ -208,8 +252,13 @@
       color: var(--text-3);
     }
 
-    .proof__ratings span { white-space: nowrap; }
-    .proof__star { color: var(--text-2); }
+    .proof__ratings span {
+      white-space: nowrap;
+    }
+
+    .proof__star {
+      color: var(--text-2);
+    }
 
     .proof__orgs {
       font-size: 20px;
@@ -443,8 +492,7 @@
       padding: 80px 0 0;
     }
 
-    .quote-section .wrap {
-    }
+    .quote-section .wrap {}
 
     .quote-section blockquote {
       font-size: clamp(22px, 3vw, 32px);
@@ -459,6 +507,273 @@
       font-style: normal;
       font-size: 16px;
       color: var(--text-3);
+    }
+
+    /* ── Plans ── */
+
+    .plans {
+      padding: 80px 0 0;
+    }
+
+    .plans__head {
+      margin-bottom: 32px;
+    }
+
+    .plans__toggle {
+      display: inline-flex;
+      margin-bottom: 28px;
+      border: 1px solid var(--text);
+      overflow: hidden;
+    }
+
+    .plans__toggle-btn {
+      padding: 8px 10px;
+      font-size: 16px;
+      font-family: inherit;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      border: none;
+    }
+
+    .plans__toggle-btn.active {
+      background: var(--text);
+      color: var(--bg);
+    }
+
+    [data-theme="light"] .plans__toggle-btn.active {
+      background: #000000;
+      color: #f8f8f7;
+    }
+
+    [data-theme="dark"] .plans__toggle-btn.active {
+      background: #DEDEDE;
+      color: #000000;
+    }
+
+    .plans__toggle-btn:not(.active) {
+      background: transparent;
+      color: var(--text);
+    }
+
+    .plans__toggle-btn:hover {
+      opacity: 0.8;
+    }
+
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+    }
+
+    .plan-col {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 25px;
+      transition: background 0.2s;
+      position: relative;
+    }
+
+    .plan-col:last-child {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      grid-template-rows: auto auto auto auto;
+      gap: 0 40px;
+    }
+
+    .plan-col:last-child .plan-col__head {
+      grid-column: 1;
+    }
+
+    .plan-col:last-child .plan-col__desc {
+      grid-column: 1;
+      min-height: 0;
+      margin-bottom: 12px;
+    }
+
+    .plan-col:last-child .plan-col__pricing {
+      grid-column: 1;
+    }
+
+    .plan-col:last-child>.btn {
+      grid-column: 1;
+      justify-self: start;
+    }
+
+    .plan-col:last-child .plan-col__features {
+      grid-column: 2;
+      grid-row: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px 24px;
+      margin-top: 0;
+      align-content: center;
+    }
+
+    .plan-col:hover {
+      background: rgba(var(--text-rgb), 0.03);
+    }
+
+    .plan-col__head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .plan-col__name {
+      font-size: 20px;
+      letter-spacing: -0.02em;
+      line-height: normal;
+    }
+
+    .plan-col__badge {
+      display: none;
+      position: absolute;
+      top: 25px;
+      right: 25px;
+    }
+
+    .plan-col__desc {
+      display: block;
+      color: var(--text-2);
+      font-size: 15px;
+      line-height: 1.5;
+      margin-bottom: 16px;
+      min-height: 45px;
+    }
+
+    .plan-col__pricing {
+      margin-bottom: 20px;
+    }
+
+    .plan-col__price {
+      font-size: 32px;
+      font-weight: 400;
+      letter-spacing: -0.035em;
+      line-height: 1.2;
+    }
+
+    .plan-col__period {
+      font-size: 14px;
+      color: var(--text-3);
+      margin-top: 4px;
+    }
+
+    .plan-col>.btn {
+      width: fit-content;
+    }
+
+    .plan-col__features {
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      list-style: none;
+      flex: 1;
+    }
+
+    .plan-col__feature {
+      font-size: 15px;
+      color: var(--text-2);
+      padding: 3px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .plan-col__feature:last-child {}
+
+    .plan-col__feature::before {
+      content: "";
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      min-width: 16px;
+      background: currentColor;
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+      -webkit-mask-size: contain;
+      mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      opacity: 0.4;
+    }
+
+    /* ── Featured plan (Plus) ── */
+
+    .plan-col[data-featured] .plan-col__badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 3px 10px;
+      position: absolute;
+      top: 25px;
+      right: 25px;
+    }
+
+    [data-theme="light"] .plan-col[data-featured] {
+      background: var(--text);
+      color: #f8f8f7;
+      border-color: var(--text);
+    }
+
+    [data-theme="light"] .plan-col[data-featured] .plan-col__desc,
+    [data-theme="light"] .plan-col[data-featured] .plan-col__period {
+      color: rgba(248, 248, 247, 0.55);
+    }
+
+    [data-theme="light"] .plan-col[data-featured] .plan-col__feature {
+      color: rgba(248, 248, 247, 0.7);
+      border-color: rgba(248, 248, 247, 0.1);
+    }
+
+    [data-theme="light"] .plan-col[data-featured] .plan-col__badge {
+      background: #f8f8f7;
+      color: #1a1a1a;
+    }
+
+    [data-theme="light"] .plan-col[data-featured] .btn--primary {
+      background: #f8f8f7;
+      color: #1a1a1a;
+    }
+
+    [data-theme="light"] .plan-col[data-featured]:hover {
+      background: #222;
+    }
+
+    [data-theme="dark"] .plan-col[data-featured] {
+      background: #DEDEDE;
+      color: #000;
+      border-color: #DEDEDE;
+    }
+
+    [data-theme="dark"] .plan-col[data-featured] .plan-col__desc,
+    [data-theme="dark"] .plan-col[data-featured] .plan-col__period {
+      color: rgba(0, 0, 0, 0.5);
+    }
+
+    [data-theme="dark"] .plan-col[data-featured] .plan-col__feature {
+      color: rgba(0, 0, 0, 0.65);
+      border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    [data-theme="dark"] .plan-col[data-featured] .plan-col__badge {
+      background: #000;
+      color: #DEDEDE;
+    }
+
+    [data-theme="dark"] .plan-col[data-featured] .btn--primary {
+      background: #000;
+      color: #DEDEDE;
+    }
+
+    [data-theme="dark"] .plan-col[data-featured]:hover {
+      background: #CCC;
     }
 
     /* ── Footer ── */
@@ -514,7 +829,9 @@
       transition: color 0.15s;
     }
 
-    .footer__nav-col a:hover { color: var(--text); }
+    .footer__nav-col a:hover {
+      color: var(--text);
+    }
 
     .footer__bottom {
       padding: 24px 0;
@@ -535,7 +852,9 @@
       transition: color 0.15s;
     }
 
-    .footer__bottom-links a:hover { color: var(--text); }
+    .footer__bottom-links a:hover {
+      color: var(--text);
+    }
 
     /* ── Responsive ── */
 
@@ -544,11 +863,46 @@
         grid-template-columns: 1fr;
         gap: 32px;
       }
-      .hero__right { padding-top: 0; }
-      .feature-grid { grid-template-columns: repeat(2, 1fr); }
-      .steps-grid { grid-template-columns: 1fr; }
-      .proof-strip .wrap { flex-direction: column; gap: 12px; align-items: flex-start; }
-      .footer__nav { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+
+      .hero__right {
+        padding-top: 0;
+      }
+
+      .feature-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .proof-strip .wrap {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
+
+      .plans-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .plan-col:last-child {
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .plan-col:last-child .plan-col__features {
+        flex-direction: column;
+        gap: 0;
+        margin-top: 24px;
+      }
+
+
+
+      .footer__nav {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 32px;
+      }
 
       /* Mobile menu */
       .header .wrap {
@@ -557,8 +911,15 @@
         padding-bottom: 20px;
         flex-wrap: wrap;
       }
-      .header__actions { display: flex; }
-      .menu-toggle { display: block; }
+
+      .header__actions {
+        display: flex;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
       .nav {
         display: none;
         flex-direction: column;
@@ -566,6 +927,7 @@
         width: 100%;
         padding-top: 20px;
       }
+
       .nav a {
         font-size: 16px;
         padding: 12px 0;
@@ -573,29 +935,64 @@
         width: 100%;
         border-bottom: 1px solid var(--border);
       }
-      .nav.open { display: flex; }
+
+      .nav.open {
+        display: flex;
+      }
     }
 
     @media (max-width: 600px) {
-      :root { --gutter: 16px; }
-      .hero { padding: 48px 0 0; }
-      .hero__headline { font-size: 32px; }
+      :root {
+        --gutter: 16px;
+      }
+
+      .hero {
+        padding: 48px 0 0;
+      }
+
+      .hero__headline {
+        font-size: 32px;
+      }
 
       .feature-grid,
       .usecase-grid,
-      .showcase-grid { grid-template-columns: 1fr; }
+      .showcase-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .plans-grid {
+        grid-template-columns: 1fr;
+      }
+
       .showcase-grid {
         gap: 0;
         margin-left: calc(-1 * var(--gutter));
         margin-right: calc(-1 * var(--gutter));
       }
-      .showcase-cell__video { border: none; }
-      .showcase-cell:last-child { border-bottom: none; }
+
+      .showcase-cell__video {
+        border: none;
+      }
+
+      .showcase-cell:last-child {
+        border-bottom: none;
+      }
+
       .showcase-cell__body {
         padding: 16px var(--gutter) 24px;
       }
-      .footer__nav { grid-template-columns: repeat(2, 1fr); gap: 32px; }
-      .footer__bottom { flex-direction: column; gap: 16px; align-items: flex-start; }
+
+      .footer__nav {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 32px;
+      }
+
+      .footer__bottom {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+      }
+
       .hero__video,
       .feature-grid,
       .steps-grid,
@@ -605,6 +1002,7 @@
         border-left: none;
         border-right: none;
       }
+
       .feature-grid .feature-cell,
       .steps-grid .step-cell,
       .usecase-grid .usecase-cell {
@@ -613,26 +1011,57 @@
         padding-left: var(--gutter);
         padding-right: var(--gutter);
       }
-      .showcase-grid { gap: 32px; }
-      .proof__ratings { gap: 16px; flex-wrap: wrap; }
+
+      .showcase-grid {
+        gap: 32px;
+      }
+
+      .proof__ratings {
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
       .features,
       .showcase,
       .steps-section,
       .usecases,
-      .quote-section { padding: 56px 0 0; }
-      .footer { margin-top: 56px; }
+      .plans,
+      .quote-section {
+        padding: 56px 0 0;
+      }
+
+      .footer {
+        margin-top: 56px;
+      }
     }
 
     @media (hover: none) {
-      .btn:hover { opacity: 1; }
-      .btn--ghost:hover { color: var(--text-2); border-color: var(--border); }
-      .nav a:hover { color: var(--text-3); }
+      .btn:hover {
+        opacity: 1;
+      }
+
+      .btn--ghost:hover {
+        color: var(--text-2);
+        border-color: var(--border);
+      }
+
+      .nav a:hover {
+        color: var(--text-3);
+      }
+
       .feature-cell:hover,
-      .usecase-cell:hover { background: transparent; }
+      .usecase-cell:hover {
+        background: transparent;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { transition-duration: 0.01ms !important; }
+
+      *,
+      *::before,
+      *::after {
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
   <script>
@@ -643,6 +1072,7 @@
     })();
   </script>
 </head>
+
 <body>
 
   <!-- Header -->
@@ -650,14 +1080,16 @@
     <div class="wrap">
       <a href="/" class="wordmark">&#9654; Skiv</a>
       <div class="header__actions">
-        <button class="menu-toggle" aria-label="Toggle navigation" aria-controls="site-nav" aria-expanded="false">Menu</button>
+        <button class="menu-toggle" aria-label="Toggle navigation" aria-controls="site-nav"
+          aria-expanded="false">Menu</button>
       </div>
       <nav id="site-nav" class="nav">
         <a href="https://muse.ai/pricing">Pricing</a>
         <a href="https://muse.ai/docs">Docs</a>
-        <a href="#" onclick="toggleTheme();return false" class="theme-toggle nav__theme"><span class="theme-toggle__dark">Dark</span><span class="theme-toggle__light">Light</span></a>
+        <a href="#" onclick="toggleTheme();return false" class="theme-toggle nav__theme"><span
+            class="theme-toggle__dark">Dark</span><span class="theme-toggle__light">Light</span></a>
         <a href="https://muse.ai/login">Sign in</a>
-        <a href="https://muse.ai/join">Get started</a>
+        <a href="https://muse.ai/join">Get started →</a>
       </nav>
     </div>
   </header>
@@ -672,14 +1104,17 @@
             <h1 class="hero__headline">Video hosting with AI that understands your content.</h1>
           </div>
           <div class="hero__right">
-            <p class="hero__sub">Store everything from lectures to raw footage. Find exactly what you need by searching for what's <em>in</em> the video &mdash; speech, text, objects, actions, ideas.</p>
+            <p class="hero__sub">Store everything from lectures to raw footage. Find exactly what you need by searching
+              for what's <em>in</em> the video &mdash; speech, text, objects, actions, ideas.</p>
             <div class="hero__actions">
               <a href="https://muse.ai/join" class="btn btn--primary">Start for free →</a>
             </div>
           </div>
         </div>
         <div class="hero__video">
-          <div class="muse-video-player" data-video="sLFaX4p" data-search="0" data-links="0" data-logo="0" data-title="0" data-autoplay="1" data-loop="1" data-volume="0" data-coverplayposition="center" data-width="1120"></div>
+          <div class="muse-video-player" data-video="sLFaX4p" data-search="0" data-links="0" data-logo="0"
+            data-title="0" data-autoplay="1" data-loop="1" data-volume="0" data-coverplayposition="center"
+            data-width="1120"></div>
           <script src="https://muse.ai/static/js/embed-player.min.js"></script>
         </div>
       </div>
@@ -688,71 +1123,72 @@
     <!-- Proof strip -->
     <div class="proof-strip">
       <div class="wrap">
-        <p class="proof__orgs">Trusted by the NHS, Fortnum &amp; Mason, New York University, Arizona State University, Toptal, <span class="trusted__highlight">and millions of users worldwide.</span></p>
+        <p class="proof__orgs">Trusted by the NHS, Fortnum &amp; Mason, New York University, Arizona State University,
+          Toptal,<br><span class="trusted__highlight">and millions of users worldwide.</span></p>
       </div>
     </div>
 
     <!-- Features -->
-<!--    <section class="features">-->
-<!--      <div class="wrap">-->
-<!--        <div class="features__head">-->
-<!--          <span class="section-label">Features</span>-->
-<!--        </div>-->
-<!--        <div class="feature-grid">-->
-<!--          <a href="/search-inside-video" class="feature-cell">-->
-<!--            <i class="ph-light ph-magnifying-glass feature-cell__icon"></i>-->
-<!--            <div class="feature-cell__name">AI video search</div>-->
-<!--            <div class="feature-cell__desc">Search inside your videos for speech, text, people, objects, and abstract ideas. Go beyond keywords.</div>-->
-<!--          </a>-->
-<!--          <a href="/video-hosting" class="feature-cell">-->
-<!--            <i class="ph-light ph-cloud feature-cell__icon"></i>-->
-<!--            <div class="feature-cell__name">Cloud storage</div>-->
-<!--            <div class="feature-cell__desc">Ad-free, private-by-default hosting. Auto-generated subtitles, transcripts, and smart chapters.</div>-->
-<!--          </a>-->
-<!--          <a href="/player" class="feature-cell">-->
-<!--            <i class="ph-light ph-play feature-cell__icon"></i>-->
-<!--            <div class="feature-cell__name">Player</div>-->
-<!--            <div class="feature-cell__desc">Fast, customizable HTML5 player with 4K, Chromecast, AirPlay, and in-video search built in.</div>-->
-<!--          </a>-->
-<!--          <a href="https://muse.ai/docs#embed-player" class="feature-cell">-->
-<!--            <i class="ph-light ph-code feature-cell__icon"></i>-->
-<!--            <div class="feature-cell__name">Embed</div>-->
-<!--            <div class="feature-cell__desc">Embed videos or entire collections on your site. Style it your way, no coding required.</div>-->
-<!--          </a>-->
-<!--          <a href="/record-screen-camera-online" class="feature-cell">-->
-<!--            <i class="ph-light ph-record feature-cell__icon"></i>-->
-<!--            <div class="feature-cell__name">Record</div>-->
-<!--            <div class="feature-cell__desc">Capture your screen or camera directly from the browser. No downloads, no extensions.</div>-->
-<!--          </a>-->
-<!--          <a href="https://muse.ai/docs#portals" class="feature-cell">-->
-<!--            <i class="ph-light ph-storefront feature-cell__icon"></i>-->
-<!--            <div class="feature-cell__name">Portals</div>-->
-<!--            <div class="feature-cell__desc">Launch your own branded streaming service with subscriptions, tiers, and managed billing.</div>-->
-<!--          </a>-->
-<!--          <a href="/blog/ai-assistant" class="feature-cell">-->
-<!--            <i class="ph-light ph-chat-circle feature-cell__icon"></i>-->
-<!--            <div class="feature-cell__name">AI assistant</div>-->
-<!--            <div class="feature-cell__desc">Chat with your video library. Ask questions, get answers grounded in your content with timestamps.</div>-->
-<!--          </a>-->
-<!--          <a href="/video-audio-transcription" class="feature-cell">-->
-<!--            <i class="ph-light ph-subtitles feature-cell__icon"></i>-->
-<!--            <div class="feature-cell__name">Transcription</div>-->
-<!--            <div class="feature-cell__desc">Every video automatically transcribed. Edit, download, or display as interactive subtitles.</div>-->
-<!--          </a>-->
-<!--          <a href="https://muse.ai/api" class="feature-cell">-->
-<!--            <i class="ph-light ph-terminal feature-cell__icon"></i>-->
-<!--            <div class="feature-cell__name">API</div>-->
-<!--            <div class="feature-cell__desc">Full programmatic access. Upload, analyze, search, and manage your library from your own code.</div>-->
-<!--          </a>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </section>-->
+    <!--    <section class="features">-->
+    <!--      <div class="wrap">-->
+    <!--        <div class="features__head">-->
+    <!--          <span class="section-label">Features</span>-->
+    <!--        </div>-->
+    <!--        <div class="feature-grid">-->
+    <!--          <a href="/search-inside-video" class="feature-cell">-->
+    <!--            <i class="ph-light ph-magnifying-glass feature-cell__icon"></i>-->
+    <!--            <div class="feature-cell__name">AI video search</div>-->
+    <!--            <div class="feature-cell__desc">Search inside your videos for speech, text, people, objects, and abstract ideas. Go beyond keywords.</div>-->
+    <!--          </a>-->
+    <!--          <a href="/video-hosting" class="feature-cell">-->
+    <!--            <i class="ph-light ph-cloud feature-cell__icon"></i>-->
+    <!--            <div class="feature-cell__name">Cloud storage</div>-->
+    <!--            <div class="feature-cell__desc">Ad-free, private-by-default hosting. Auto-generated subtitles, transcripts, and smart chapters.</div>-->
+    <!--          </a>-->
+    <!--          <a href="/player" class="feature-cell">-->
+    <!--            <i class="ph-light ph-play feature-cell__icon"></i>-->
+    <!--            <div class="feature-cell__name">Player</div>-->
+    <!--            <div class="feature-cell__desc">Fast, customizable HTML5 player with 4K, Chromecast, AirPlay, and in-video search built in.</div>-->
+    <!--          </a>-->
+    <!--          <a href="https://muse.ai/docs#embed-player" class="feature-cell">-->
+    <!--            <i class="ph-light ph-code feature-cell__icon"></i>-->
+    <!--            <div class="feature-cell__name">Embed</div>-->
+    <!--            <div class="feature-cell__desc">Embed videos or entire collections on your site. Style it your way, no coding required.</div>-->
+    <!--          </a>-->
+    <!--          <a href="/record-screen-camera-online" class="feature-cell">-->
+    <!--            <i class="ph-light ph-record feature-cell__icon"></i>-->
+    <!--            <div class="feature-cell__name">Record</div>-->
+    <!--            <div class="feature-cell__desc">Capture your screen or camera directly from the browser. No downloads, no extensions.</div>-->
+    <!--          </a>-->
+    <!--          <a href="https://muse.ai/docs#portals" class="feature-cell">-->
+    <!--            <i class="ph-light ph-storefront feature-cell__icon"></i>-->
+    <!--            <div class="feature-cell__name">Portals</div>-->
+    <!--            <div class="feature-cell__desc">Launch your own branded streaming service with subscriptions, tiers, and managed billing.</div>-->
+    <!--          </a>-->
+    <!--          <a href="/blog/ai-assistant" class="feature-cell">-->
+    <!--            <i class="ph-light ph-chat-circle feature-cell__icon"></i>-->
+    <!--            <div class="feature-cell__name">AI assistant</div>-->
+    <!--            <div class="feature-cell__desc">Chat with your video library. Ask questions, get answers grounded in your content with timestamps.</div>-->
+    <!--          </a>-->
+    <!--          <a href="/video-audio-transcription" class="feature-cell">-->
+    <!--            <i class="ph-light ph-subtitles feature-cell__icon"></i>-->
+    <!--            <div class="feature-cell__name">Transcription</div>-->
+    <!--            <div class="feature-cell__desc">Every video automatically transcribed. Edit, download, or display as interactive subtitles.</div>-->
+    <!--          </a>-->
+    <!--          <a href="https://muse.ai/api" class="feature-cell">-->
+    <!--            <i class="ph-light ph-terminal feature-cell__icon"></i>-->
+    <!--            <div class="feature-cell__name">API</div>-->
+    <!--            <div class="feature-cell__desc">Full programmatic access. Upload, analyze, search, and manage your library from your own code.</div>-->
+    <!--          </a>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </section>-->
 
     <!-- Showcase -->
     <section class="showcase">
       <div class="wrap">
         <div class="showcase__head">
-          <span class="section-label">See it in action</span>
+          <span class="section-label">Everything you need</span>
         </div>
         <div class="showcase-grid">
 
@@ -763,7 +1199,8 @@
             <div class="showcase-cell__body">
               <div class="showcase-cell__label">Storage</div>
               <div class="showcase-cell__title">Your video library, without the mess.</div>
-              <div class="showcase-cell__desc">AI-generated subtitles, smart chapters, and transcripts — all automatic. Ad-free, private by default, accessible from any device.</div>
+              <div class="showcase-cell__desc">AI-generated subtitles, smart chapters, and transcripts — all automatic.
+                Ad-free, private by default, accessible from any device.</div>
             </div>
           </div>
 
@@ -774,7 +1211,8 @@
             <div class="showcase-cell__body">
               <div class="showcase-cell__label">Search</div>
               <div class="showcase-cell__title">Find any moment. In any video.</div>
-              <div class="showcase-cell__desc">Search for what's said, written, or shown. Abstract ideas work too — "tense moment", "whiteboard diagram", "person in red jacket."</div>
+              <div class="showcase-cell__desc">Search for what's said, written, or shown. Abstract ideas work too —
+                "tense moment", "whiteboard diagram", "person in red jacket."</div>
             </div>
           </div>
 
@@ -785,7 +1223,8 @@
             <div class="showcase-cell__body">
               <div class="showcase-cell__label">AI Assistant</div>
               <div class="showcase-cell__title">Ask your library a question.</div>
-              <div class="showcase-cell__desc">Get timestamped answers grounded in your own content. Chat your way to the exact clip instead of scrubbing.</div>
+              <div class="showcase-cell__desc">Get timestamped answers grounded in your own content. Chat your way to
+                the exact clip instead of scrubbing.</div>
             </div>
           </div>
 
@@ -796,7 +1235,8 @@
             <div class="showcase-cell__body">
               <div class="showcase-cell__label">Portals</div>
               <div class="showcase-cell__title">Launch your own streaming service.</div>
-              <div class="showcase-cell__desc">Branded, gated, subscription-ready. Set your own tiers and pricing — we handle billing, accounts, and the rest.</div>
+              <div class="showcase-cell__desc">Branded, gated, subscription-ready. Set your own tiers and pricing — we
+                handle billing, accounts, and the rest.</div>
             </div>
           </div>
 
@@ -807,7 +1247,8 @@
             <div class="showcase-cell__body">
               <div class="showcase-cell__label">Embed</div>
               <div class="showcase-cell__title">Put your videos anywhere.</div>
-              <div class="showcase-cell__desc">Embed a single video or your entire library on any site. Fully styled to match your brand — AI search included.</div>
+              <div class="showcase-cell__desc">Embed a single video or your entire library on any site. Fully styled to
+                match your brand — AI search included.</div>
             </div>
           </div>
 
@@ -818,7 +1259,8 @@
             <div class="showcase-cell__body">
               <div class="showcase-cell__label">Record</div>
               <div class="showcase-cell__title">Record and share in seconds.</div>
-              <div class="showcase-cell__desc">Screen, camera, or both — straight from your browser. No downloads. Auto-transcribed, chaptered, and ready to share instantly.</div>
+              <div class="showcase-cell__desc">Screen, camera, or both — straight from your browser. No downloads.
+                Auto-transcribed, chaptered, and ready to share instantly.</div>
             </div>
           </div>
 
@@ -836,17 +1278,20 @@
           <div class="step-cell">
             <div class="step-cell__num">01</div>
             <div class="step-cell__title">Upload your videos</div>
-            <div class="step-cell__desc">Drag and drop, or use our API. Any format, any size. They're private by default.</div>
+            <div class="step-cell__desc">Drag and drop, or use our API. Any format, any size. They're private by
+              default.</div>
           </div>
           <div class="step-cell">
             <div class="step-cell__num">02</div>
             <div class="step-cell__title">AI does the rest</div>
-            <div class="step-cell__desc">Every video is analyzed for speech, on-screen text, objects, faces, actions, and abstract concepts.</div>
+            <div class="step-cell__desc">Every video is analyzed for speech, on-screen text, objects, faces, actions,
+              and abstract concepts.</div>
           </div>
           <div class="step-cell">
             <div class="step-cell__num">03</div>
             <div class="step-cell__title">Search, share, embed</div>
-            <div class="step-cell__desc">Find any moment instantly. Share a link, embed on your site, or build on top of our API.</div>
+            <div class="step-cell__desc">Find any moment instantly. Share a link, embed on your site, or build on top of
+              our API.</div>
           </div>
         </div>
       </div>
@@ -862,32 +1307,38 @@
           <div class="usecase-cell">
             <i class="ph-light ph-graduation-cap usecase-cell__icon"></i>
             <div class="usecase-cell__name">Education</div>
-            <div class="usecase-cell__desc">Students search lectures for exactly what they need. Faculty organize years of footage in seconds. Embed course libraries on your LMS.</div>
+            <div class="usecase-cell__desc">Students search lectures for exactly what they need. Faculty organize years
+              of footage in seconds. Embed course libraries on your LMS.</div>
           </div>
           <div class="usecase-cell">
             <i class="ph-light ph-microphone-stage usecase-cell__icon"></i>
             <div class="usecase-cell__name">Events &amp; conferences</div>
-            <div class="usecase-cell__desc">Make talks discoverable long after the event ends. Attendees search across every session to find the moments that matter.</div>
+            <div class="usecase-cell__desc">Make talks discoverable long after the event ends. Attendees search across
+              every session to find the moments that matter.</div>
           </div>
           <div class="usecase-cell">
             <i class="ph-light ph-film-slate usecase-cell__icon"></i>
             <div class="usecase-cell__name">Creators &amp; media</div>
-            <div class="usecase-cell__desc">No competing recommendations. No ads on your content. Monetize with Portals, embed anywhere, own the experience.</div>
+            <div class="usecase-cell__desc">No competing recommendations. No ads on your content. Monetize with Portals,
+              embed anywhere, own the experience.</div>
           </div>
           <div class="usecase-cell">
             <i class="ph-light ph-users-three usecase-cell__icon"></i>
             <div class="usecase-cell__name">Teams &amp; internal comms</div>
-            <div class="usecase-cell__desc">A searchable knowledge base for onboarding, demos, and company updates. Secure, collaborative, instantly retrievable.</div>
+            <div class="usecase-cell__desc">A searchable knowledge base for onboarding, demos, and company updates.
+              Secure, collaborative, instantly retrievable.</div>
           </div>
           <div class="usecase-cell">
             <i class="ph-light ph-chart-line-up usecase-cell__icon"></i>
             <div class="usecase-cell__name">Sales &amp; marketing</div>
-            <div class="usecase-cell__desc">Branded player with your logo, custom CTAs, and detailed analytics. Integrates with your existing stack.</div>
+            <div class="usecase-cell__desc">Branded player with your logo, custom CTAs, and detailed analytics.
+              Integrates with your existing stack.</div>
           </div>
           <div class="usecase-cell">
             <i class="ph-light ph-headphones usecase-cell__icon"></i>
             <div class="usecase-cell__name">Podcasts &amp; audio</div>
-            <div class="usecase-cell__desc">Auto-transcripts, deep search, and a clean player. Let your audience find the exact conversation they're looking for.</div>
+            <div class="usecase-cell__desc">Auto-transcripts, deep search, and a clean player. Let your audience find
+              the exact conversation they're looking for.</div>
           </div>
         </div>
       </div>
@@ -896,8 +1347,112 @@
     <!-- Quote -->
     <section class="quote-section">
       <div class="wrap">
-        <blockquote>&ldquo;We saved $100K and published 20,000 videos. Skiv replaced our entire video infrastructure.&rdquo;</blockquote>
+        <blockquote>&ldquo;We saved $100K and published 20,000 videos. Skiv replaced our entire video
+          infrastructure.&rdquo;</blockquote>
         <cite>Academia.edu</cite>
+      </div>
+    </section>
+
+    <!-- Plans -->
+    <section class="plans" id="plans">
+      <div class="wrap">
+        <div class="plans__head">
+          <span class="section-label">Plans</span>
+        </div>
+        <div class="plans__toggle">
+          <button class="plans__toggle-btn active" data-cycle="yearly">Yearly (50% off)</button>
+          <button class="plans__toggle-btn" data-cycle="monthly">Monthly</button>
+        </div>
+        <div class="plans-grid">
+
+          <div class="plan-col">
+            <div class="plan-col__head">
+              <div class="plan-col__name">Basic</div>
+            </div>
+            <p class="plan-col__desc">Everything you need to host and share videos with AI search.</p>
+            <div class="plan-col__pricing">
+              <div class="plan-col__price"><span class="plan-price-val" data-monthly="16" data-yearly="8">$8</span> / mo
+              </div>
+              <div class="plan-col__period" data-yearly-only>billed yearly</div>
+            </div>
+            <a href="https://muse.ai/join" class="btn btn--primary">Start free &rarr;</a>
+            <ul class="plan-col__features">
+              <li class="plan-col__feature">80 GB storage</li>
+              <li class="plan-col__feature">1 seat</li>
+              <li class="plan-col__feature">Unlimited embeds</li>
+              <li class="plan-col__feature">4K playback</li>
+              <li class="plan-col__feature">Portals</li>
+              <li class="plan-col__feature">Email support</li>
+            </ul>
+          </div>
+
+          <div class="plan-col" data-featured>
+            <div class="plan-col__head">
+              <div class="plan-col__name">Plus</div>
+              <span class="plan-col__badge">Popular</span>
+            </div>
+            <p class="plan-col__desc">More storage, privacy controls, and advanced player customization.</p>
+            <div class="plan-col__pricing">
+              <div class="plan-col__price"><span class="plan-price-val" data-monthly="40" data-yearly="20">$20</span> /
+                mo</div>
+              <div class="plan-col__period" data-yearly-only>billed yearly</div>
+            </div>
+            <a href="https://muse.ai/join" class="btn btn--primary">Start free &rarr;</a>
+            <ul class="plan-col__features">
+              <li class="plan-col__feature">Everything in Basic</li>
+              <li class="plan-col__feature">200 GB storage</li>
+              <li class="plan-col__feature">3 seats</li>
+              <li class="plan-col__feature">Geo-restricted playback</li>
+              <li class="plan-col__feature">Expiring links</li>
+              <li class="plan-col__feature">Call-to-action overlays</li>
+              <li class="plan-col__feature">Original file storage</li>
+              <li class="plan-col__feature">Custom player styling</li>
+              <li class="plan-col__feature">Enhanced privacy &amp; security</li>
+            </ul>
+          </div>
+
+          <div class="plan-col">
+            <div class="plan-col__head">
+              <div class="plan-col__name">Pro</div>
+            </div>
+            <p class="plan-col__desc">For teams that need scale, integrations, and priority support.</p>
+            <div class="plan-col__pricing">
+              <div class="plan-col__price"><span class="plan-price-val" data-monthly="100" data-yearly="50">$50</span> /
+                mo</div>
+              <div class="plan-col__period" data-yearly-only>billed yearly</div>
+            </div>
+            <a href="https://muse.ai/join" class="btn btn--primary">Start free &rarr;</a>
+            <ul class="plan-col__features">
+              <li class="plan-col__feature">Everything in Plus</li>
+              <li class="plan-col__feature">1 TB storage</li>
+              <li class="plan-col__feature">10 seats</li>
+              <li class="plan-col__feature">VAST ad support</li>
+              <li class="plan-col__feature">Delegated uploads</li>
+              <li class="plan-col__feature">Priority support</li>
+              <li class="plan-col__feature">Custom extensions</li>
+              <li class="plan-col__feature">Custom integrations</li>
+            </ul>
+          </div>
+
+          <div class="plan-col">
+            <div class="plan-col__head">
+              <div class="plan-col__name">Enterprise</div>
+            </div>
+            <p class="plan-col__desc">Unlimited storage, seats, and a dedicated account manager.</p>
+            <div class="plan-col__pricing">
+              <div class="plan-col__price">Custom</div>
+            </div>
+            <a href="https://muse.ai/contact" class="btn btn--primary">Contact us &rarr;</a>
+            <ul class="plan-col__features">
+              <li class="plan-col__feature">Everything in Pro</li>
+              <li class="plan-col__feature">Unlimited storage</li>
+              <li class="plan-col__feature">Unlimited seats</li>
+              <li class="plan-col__feature">Custom applications</li>
+              <li class="plan-col__feature">Dedicated account manager</li>
+            </ul>
+          </div>
+
+        </div>
       </div>
     </section>
 
@@ -909,7 +1464,7 @@
       <div class="footer__cta">
         <h2>Start for free.<br>Scale when you're ready.</h2>
         <div class="footer__cta-actions">
-          <a href="https://muse.ai/join" class="btn btn--primary">Get started</a>
+          <a href="https://muse.ai/join" class="btn btn--primary">Get started →</a>
           <a href="https://muse.ai/pricing" class="btn btn--ghost">See pricing</a>
         </div>
       </div>
@@ -960,7 +1515,7 @@
 
     function updateShowcaseVideos() {
       var dark = document.documentElement.getAttribute('data-theme') === 'dark';
-      document.querySelectorAll('.showcase-cell__video').forEach(function(v) {
+      document.querySelectorAll('.showcase-cell__video').forEach(function (v) {
         var src = dark ? v.dataset.dark : v.dataset.light;
         if (v.getAttribute('src') !== src) {
           v.setAttribute('src', src);
@@ -980,6 +1535,26 @@
         btn.textContent = open ? 'Close' : 'Menu';
       });
     })();
+
+    // Plans billing toggle
+    (function () {
+      var btns = document.querySelectorAll('.plans__toggle-btn');
+      if (!btns.length) return;
+      btns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          btns.forEach(function (b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          var yearly = btn.dataset.cycle === 'yearly';
+          document.querySelectorAll('.plan-price-val').forEach(function (el) {
+            el.textContent = '$' + (yearly ? el.dataset.yearly : el.dataset.monthly);
+          });
+          document.querySelectorAll('[data-yearly-only]').forEach(function (el) {
+            el.style.display = yearly ? '' : 'none';
+          });
+        });
+      });
+    })();
   </script>
 </body>
+
 </html>
