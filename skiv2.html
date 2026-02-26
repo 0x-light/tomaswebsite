@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>Skiv — Video hosting with AI search</title>
   <meta name="description" content="Store, search, and share your videos. AI that understands what's in them." />
   <link rel="icon"
@@ -647,6 +647,11 @@
       min-height: 0;
     }
 
+    .plan-col--enterprise .btn {
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
     .plan-col:hover {
       background: rgba(var(--text-rgb), 0.03);
     }
@@ -1064,13 +1069,11 @@
     }
 
     @media (hover: none) {
-      .btn:hover {
-        opacity: 1;
-      }
-
+      .btn:hover,
       .btn--ghost:hover {
-        color: var(--text-2);
-        border-color: var(--border);
+        opacity: 1;
+        color: inherit;
+        background: transparent;
       }
 
       .nav a:hover {
@@ -1078,8 +1081,12 @@
       }
 
       .feature-cell:hover,
-      .usecase-cell:hover {
+      .usecase-cell:hover,
+      .plan-col:hover,
+      .footer__nav-col a:hover {
         background: transparent;
+        color: inherit;
+        opacity: 1;
       }
     }
 
@@ -1689,10 +1696,24 @@
       var btn = document.querySelector('.menu-toggle');
       var nav = document.getElementById('site-nav');
       if (!btn || !nav) return;
-      btn.addEventListener('click', function () {
+
+      function closeMenu() {
+        nav.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.textContent = 'Menu';
+      }
+
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
         var open = nav.classList.toggle('open');
         btn.setAttribute('aria-expanded', open);
         btn.textContent = open ? 'Close' : 'Menu';
+      });
+
+      document.addEventListener('click', function (e) {
+        if (nav.classList.contains('open') && !nav.contains(e.target) && e.target !== btn) {
+          closeMenu();
+        }
       });
     })();
 
