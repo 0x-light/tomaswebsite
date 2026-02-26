@@ -228,7 +228,48 @@
 
     .hero__video {
       margin-top: 64px;
+      position: relative;
     }
+
+    /* Main player sits above the glow */
+    .hero__video > .muse-video-player {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Transparent overlay to block hover interactions on the player */
+    .hero__video-blocker {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      cursor: default;
+    }
+
+    /* Theme-switch the hero videos */
+    [data-theme="dark"] .hero__light-only,
+    [data-theme="light"] .hero__dark-only {
+      display: none;
+    }
+
+    /* ── Video glow ── */
+
+    /* Hero: a second muse.ai embed, blurred behind the main player */
+    .hero__video-glow {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      transform: scale(1.12);
+      filter: blur(50px) saturate(1.5);
+      opacity: 0.5;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    [data-theme="dark"] .hero__video-glow {
+      opacity: 0.75;
+    }
+
+
 
     /* ── Proof strip ── */
 
@@ -399,7 +440,8 @@
     }
 
     .showcase-cell {
-      overflow: hidden;
+      position: relative;
+      /* no overflow:hidden — let the video glow bleed out */
     }
 
     .showcase-cell__video {
@@ -451,16 +493,26 @@
     }
 
     .usecase-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      border-top: 1px solid var(--border);
-      border-left: 1px solid var(--border);
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+      margin-right: calc(-1 * var(--gutter));
+      padding-right: var(--gutter);
+    }
+
+    .usecase-grid::-webkit-scrollbar {
+      display: none;
     }
 
     .usecase-cell {
-      border-right: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 28px 24px;
+      flex: 0 0 340px;
+      border: 1px solid var(--border);
+      padding: 32px 28px;
+      scroll-snap-align: start;
       transition: background 0.2s;
     }
 
@@ -469,15 +521,16 @@
     }
 
     .usecase-cell__icon {
-      font-size: 24px;
+      font-size: 28px;
       color: var(--text-3);
-      margin-bottom: 14px;
+      margin-bottom: 18px;
       display: block;
     }
 
     .usecase-cell__name {
       font-weight: 500;
-      margin-bottom: 6px;
+      font-size: 18px;
+      margin-bottom: 8px;
     }
 
     .usecase-cell__desc {
@@ -577,41 +630,21 @@
       position: relative;
     }
 
-    .plan-col:last-child {
+
+
+    /* Enterprise: full-width banner row */
+    .plan-col--enterprise {
       grid-column: 1 / -1;
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      grid-template-rows: auto auto auto auto;
-      gap: 0 40px;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+      padding: 28px 25px;
     }
 
-    .plan-col:last-child .plan-col__head {
-      grid-column: 1;
-    }
-
-    .plan-col:last-child .plan-col__desc {
-      grid-column: 1;
+    .plan-col--enterprise .plan-col__desc {
+      margin-bottom: 0;
       min-height: 0;
-      margin-bottom: 12px;
-    }
-
-    .plan-col:last-child .plan-col__pricing {
-      grid-column: 1;
-    }
-
-    .plan-col:last-child>.btn {
-      grid-column: 1;
-      justify-self: start;
-    }
-
-    .plan-col:last-child .plan-col__features {
-      grid-column: 2;
-      grid-row: 1 / -1;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2px 24px;
-      margin-top: 0;
-      align-content: center;
     }
 
     .plan-col:hover {
@@ -886,19 +919,6 @@
         grid-template-columns: repeat(2, 1fr);
       }
 
-      .plan-col:last-child {
-        flex-direction: column;
-        gap: 0;
-      }
-
-      .plan-col:last-child .plan-col__features {
-        flex-direction: column;
-        gap: 0;
-        margin-top: 24px;
-      }
-
-
-
       .footer__nav {
         grid-template-columns: repeat(2, 1fr);
         gap: 32px;
@@ -955,13 +975,23 @@
       }
 
       .feature-grid,
-      .usecase-grid,
       .showcase-grid {
         grid-template-columns: 1fr;
       }
 
       .plans-grid {
         grid-template-columns: 1fr;
+        margin-left: calc(-1 * var(--gutter));
+        margin-right: calc(-1 * var(--gutter));
+        border-left: none;
+        border-right: none;
+      }
+
+      .plans-grid .plan-col {
+        border-left: none;
+        border-right: none;
+        padding-left: var(--gutter);
+        padding-right: var(--gutter);
       }
 
       .showcase-grid {
@@ -995,8 +1025,7 @@
 
       .hero__video,
       .feature-grid,
-      .steps-grid,
-      .usecase-grid {
+      .steps-grid {
         margin-left: calc(-1 * var(--gutter));
         margin-right: calc(-1 * var(--gutter));
         border-left: none;
@@ -1004,8 +1033,7 @@
       }
 
       .feature-grid .feature-cell,
-      .steps-grid .step-cell,
-      .usecase-grid .usecase-cell {
+      .steps-grid .step-cell {
         border-left: none;
         border-right: none;
         padding-left: var(--gutter);
@@ -1062,7 +1090,105 @@
       *::after {
         transition-duration: 0.01ms !important;
       }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
     }
+
+    /* ── Scroll reveal ── */
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* ── Shader effects (testing toolbar) ── */
+
+    .fx-toolbar {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: flex;
+      gap: 2px;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 5px;
+      border-radius: 10px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+      font-family: var(--font);
+    }
+
+    .fx-toolbar button {
+      font-family: inherit;
+      font-size: 12px;
+      padding: 7px 14px;
+      border: none;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .fx-toolbar button:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .fx-toolbar button.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    /* Ensure hero__video can host overlays */
+    .hero__video {
+      overflow: visible;
+    }
+
+    .hero__video::after {
+      display: none;
+    }
+
+    /* ── 1. CRT scanlines ── */
+    body.fx-crt .hero__video {
+      border-radius: 6px;
+    }
+
+    body.fx-crt .hero__video::after {
+      content: '';
+      display: block;
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 1px,
+          rgba(0, 0, 0, 0.06) 1px,
+          rgba(0, 0, 0, 0.06) 3px
+        );
+      pointer-events: none;
+    }
+
+
   </style>
   <script>
     (function () {
@@ -1074,6 +1200,12 @@
 </head>
 
 <body>
+
+  <!-- Shader effects toolbar (testing) -->
+  <div class="fx-toolbar">
+    <button class="active" data-fx="">Normal</button>
+    <button data-fx="fx-crt">CRT</button>
+  </div>
 
   <!-- Header -->
   <header class="header">
@@ -1097,7 +1229,7 @@
   <main>
 
     <!-- Hero -->
-    <section class="hero">
+    <section class="hero reveal">
       <div class="wrap">
         <div class="hero__grid">
           <div>
@@ -1112,9 +1244,21 @@
           </div>
         </div>
         <div class="hero__video">
-          <div class="muse-video-player" data-video="sLFaX4p" data-search="0" data-links="0" data-logo="0"
-            data-title="0" data-autoplay="1" data-loop="1" data-volume="0" data-coverplayposition="center"
-            data-width="1120"></div>
+          <div class="hero__video-blocker" aria-hidden="true"></div>
+          <div class="hero__video-glow" aria-hidden="true">
+            <div class="muse-video-player hero__dark-only" data-video="sLFaX4p" data-search="0" data-links="0"
+              data-logo="0" data-title="0" data-autoplay="1" data-loop="1" data-volume="0"
+              data-width="1120"></div>
+            <div class="muse-video-player hero__light-only" data-video="aKZ2mjn" data-search="0" data-links="0"
+              data-logo="0" data-title="0" data-autoplay="1" data-loop="1" data-volume="0"
+              data-width="1120"></div>
+          </div>
+          <div class="muse-video-player hero__dark-only" data-video="sLFaX4p" data-search="0" data-links="0"
+            data-logo="0" data-title="0" data-autoplay="1" data-loop="1" data-volume="0"
+            data-coverplayposition="center" data-width="1120"></div>
+          <div class="muse-video-player hero__light-only" data-video="aKZ2mjn" data-search="0" data-links="0"
+            data-logo="0" data-title="0" data-autoplay="1" data-loop="1" data-volume="0"
+            data-coverplayposition="center" data-width="1120"></div>
           <script src="https://muse.ai/static/js/embed-player.min.js"></script>
         </div>
       </div>
@@ -1185,7 +1329,7 @@
     <!--    </section>-->
 
     <!-- Showcase -->
-    <section class="showcase">
+    <section class="showcase reveal">
       <div class="wrap">
         <div class="showcase__head">
           <span class="section-label">Everything you need</span>
@@ -1269,7 +1413,7 @@
     </section>
 
     <!-- How it works -->
-    <section class="steps-section">
+    <section class="steps-section reveal">
       <div class="wrap">
         <div class="steps-section__head">
           <span class="section-label">How it works</span>
@@ -1298,7 +1442,7 @@
     </section>
 
     <!-- Use cases -->
-    <section class="usecases">
+    <section class="usecases reveal">
       <div class="wrap">
         <div class="usecases__head">
           <span class="section-label">Use cases</span>
@@ -1345,7 +1489,7 @@
     </section>
 
     <!-- Quote -->
-    <section class="quote-section">
+    <section class="quote-section reveal">
       <div class="wrap">
         <blockquote>&ldquo;We saved $100K and published 20,000 videos. Skiv replaced our entire video
           infrastructure.&rdquo;</blockquote>
@@ -1354,7 +1498,7 @@
     </section>
 
     <!-- Plans -->
-    <section class="plans" id="plans">
+    <section class="plans reveal" id="plans">
       <div class="wrap">
         <div class="plans__head">
           <span class="section-label">Plans</span>
@@ -1434,22 +1578,12 @@
             </ul>
           </div>
 
-          <div class="plan-col">
-            <div class="plan-col__head">
+          <div class="plan-col plan-col--enterprise">
+            <div>
               <div class="plan-col__name">Enterprise</div>
-            </div>
-            <p class="plan-col__desc">Unlimited storage, seats, and a dedicated account manager.</p>
-            <div class="plan-col__pricing">
-              <div class="plan-col__price">Custom</div>
+              <p class="plan-col__desc">Unlimited storage, unlimited seats, dedicated account manager, and custom applications.</p>
             </div>
             <a href="https://muse.ai/contact" class="btn btn--primary">Contact us &rarr;</a>
-            <ul class="plan-col__features">
-              <li class="plan-col__feature">Everything in Pro</li>
-              <li class="plan-col__feature">Unlimited storage</li>
-              <li class="plan-col__feature">Unlimited seats</li>
-              <li class="plan-col__feature">Custom applications</li>
-              <li class="plan-col__feature">Dedicated account manager</li>
-            </ul>
           </div>
 
         </div>
@@ -1515,7 +1649,8 @@
 
     function updateShowcaseVideos() {
       var dark = document.documentElement.getAttribute('data-theme') === 'dark';
-      document.querySelectorAll('.showcase-cell__video').forEach(function (v) {
+      // Selector covers both originals and glow clones (clones inherit data attributes)
+      document.querySelectorAll('[data-dark][data-light]').forEach(function (v) {
         var src = dark ? v.dataset.dark : v.dataset.light;
         if (v.getAttribute('src') !== src) {
           v.setAttribute('src', src);
@@ -1523,7 +1658,32 @@
       });
     }
 
-    document.addEventListener('DOMContentLoaded', updateShowcaseVideos);
+    // Scroll reveal via IntersectionObserver
+    function initReveal() {
+      if (!('IntersectionObserver' in window)) {
+        document.querySelectorAll('.reveal').forEach(function (el) {
+          el.classList.add('is-visible');
+        });
+        return;
+      }
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+      document.querySelectorAll('.reveal').forEach(function (el) {
+        observer.observe(el);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      updateShowcaseVideos();
+      initReveal();
+    });
 
     (function () {
       var btn = document.querySelector('.menu-toggle');
@@ -1552,6 +1712,31 @@
             el.style.display = yearly ? '' : 'none';
           });
         });
+      });
+    })();
+
+    // ── Shader effects toolbar toggle ──
+    (function () {
+      var allFx = ['fx-crt'];
+      var toolbar = document.querySelector('.fx-toolbar');
+      if (!toolbar) return;
+
+      toolbar.addEventListener('click', function (e) {
+        var btn = e.target.closest('button[data-fx]');
+        if (!btn) return;
+
+        // Remove all fx classes from body
+        allFx.forEach(function (cls) { document.body.classList.remove(cls); });
+
+        // Toggle active state on buttons
+        toolbar.querySelectorAll('button').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+
+        // Apply selected effect (empty string = none)
+        var fx = btn.dataset.fx;
+        if (fx) {
+          document.body.classList.add(fx);
+        }
       });
     })();
   </script>
