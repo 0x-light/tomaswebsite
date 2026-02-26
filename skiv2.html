@@ -59,6 +59,7 @@
       line-height: 1.65;
       color: var(--text);
       background: var(--bg);
+      overflow-x: clip;
     }
 
     a {
@@ -93,8 +94,10 @@
       border: none;
     }
 
-    .btn:hover {
-      opacity: 0.8;
+    @media (hover: hover) {
+      .btn:hover {
+        opacity: 0.8;
+      }
     }
 
     .btn--primary {
@@ -117,9 +120,11 @@
       color: var(--text-3);
     }
 
-    .btn--ghost:hover {
-      color: var(--text);
-      opacity: 1;
+    @media (hover: hover) {
+      .btn--ghost:hover {
+        color: var(--text);
+        opacity: 1;
+      }
     }
 
     /* ── Header ── */
@@ -153,8 +158,10 @@
       transition: color 0.15s;
     }
 
-    .nav a:hover {
-      color: var(--text);
+    @media (hover: hover) {
+      .nav a:hover {
+        color: var(--text);
+      }
     }
 
     /* ── Theme toggle ── */
@@ -182,8 +189,10 @@
       transition: color 0.15s;
     }
 
-    .menu-toggle:hover {
-      color: var(--text);
+    @media (hover: hover) {
+      .menu-toggle:hover {
+        color: var(--text);
+      }
     }
 
     .menu-toggle[aria-expanded="true"] {
@@ -237,6 +246,11 @@
     .hero__video > .muse-video-player {
       position: relative;
       z-index: 1;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    [data-theme="dark"] .hero__video > .muse-video-player {
+      border-color: rgba(255, 255, 255, 0.1);
     }
 
     /* Transparent overlay to block hover interactions on the player */
@@ -357,8 +371,10 @@
       transition: background 0.2s;
     }
 
-    .feature-cell:hover {
-      background: rgba(var(--text-rgb), 0.03);
+    @media (hover: hover) {
+      .feature-cell:hover {
+        background: rgba(var(--text-rgb), 0.03);
+      }
     }
 
     .feature-cell__icon {
@@ -511,8 +527,10 @@
       transition: background 0.2s;
     }
 
-    .usecase-cell:hover {
-      background: rgba(var(--text-rgb), 0.07);
+    @media (hover: hover) {
+      .usecase-cell:hover {
+        background: rgba(var(--text-rgb), 0.07);
+      }
     }
 
     .usecase-cell__icon {
@@ -605,8 +623,10 @@
       color: var(--text);
     }
 
-    .plans__toggle-btn:hover {
-      opacity: 0.8;
+    @media (hover: hover) {
+      .plans__toggle-btn:hover {
+        opacity: 0.8;
+      }
     }
 
     .plans-grid {
@@ -638,8 +658,10 @@
       min-height: 0;
     }
 
-    .plan-col:hover {
-      background: rgba(var(--text-rgb), 0.03);
+    @media (hover: hover) {
+      .plan-col:hover {
+        background: rgba(var(--text-rgb), 0.03);
+      }
     }
 
     .plan-col__name {
@@ -759,8 +781,10 @@
       color: #1a1a1a;
     }
 
-    [data-theme="light"] .plan-col[data-featured]:hover {
-      background: #222;
+    @media (hover: hover) {
+      [data-theme="light"] .plan-col[data-featured]:hover {
+        background: #222;
+      }
     }
 
     [data-theme="dark"] .plan-col[data-featured] {
@@ -789,8 +813,10 @@
       color: #DEDEDE;
     }
 
-    [data-theme="dark"] .plan-col[data-featured]:hover {
-      background: #CCC;
+    @media (hover: hover) {
+      [data-theme="dark"] .plan-col[data-featured]:hover {
+        background: #CCC;
+      }
     }
 
     /* ── Footer ── */
@@ -846,8 +872,10 @@
       transition: color 0.15s;
     }
 
-    .footer__nav-col a:hover {
-      color: var(--text);
+    @media (hover: hover) {
+      .footer__nav-col a:hover {
+        color: var(--text);
+      }
     }
 
     .footer__bottom {
@@ -869,8 +897,10 @@
       transition: color 0.15s;
     }
 
-    .footer__bottom-links a:hover {
-      color: var(--text);
+    @media (hover: hover) {
+      .footer__bottom-links a:hover {
+        color: var(--text);
+      }
     }
 
     /* ── Responsive ── */
@@ -1071,28 +1101,7 @@
       }
     }
 
-    @media (hover: none) {
-      .btn:hover {
-        opacity: 1;
-      }
 
-      .btn--ghost:hover {
-        color: var(--text-2);
-        border-color: var(--border);
-      }
-
-      .nav a:hover {
-        color: var(--text-3);
-      }
-
-      .feature-cell:hover {
-        background: transparent;
-      }
-
-      .usecase-cell:hover {
-        background: rgba(var(--text-rgb), 0.04);
-      }
-    }
 
     @media (prefers-reduced-motion: reduce) {
 
@@ -1141,9 +1150,11 @@
       white-space: nowrap;
     }
 
-    .fx-toolbar button:hover {
-      color: #fff;
-      background: rgba(255, 255, 255, 0.08);
+    @media (hover: hover) {
+      .fx-toolbar button:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.08);
+      }
     }
 
     .fx-toolbar button.active {
