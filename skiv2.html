@@ -3,11 +3,11 @@
 
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Skiv — Video hosting with AI search</title>
   <meta name="description" content="Store, search, and share your videos. AI that understands what's in them." />
   <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><style>circle{fill:%23fff}polygon{fill:%231a1a1a}@media(prefers-color-scheme:dark){circle{fill:%2309090B}polygon{fill:%23DEDEDE}}</style><circle cx='16' cy='16' r='15'/><polygon points='13,10 13,22 23,16'/></svg>" />
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><style>circle{fill:%23fff}polygon{fill:%231a1a1a}@media(prefers-color-scheme:dark){circle{fill:%2309090B}polygon{fill:%23DEDEDE}}</style><circle cx='16' cy='16' r='15'/><polygon points='13,10 13,22 23,16'/></svg>" />
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/light/style.css" />
   <style>
     /* ── Tokens ── */
@@ -20,6 +20,7 @@
       --text-3: rgba(var(--text-rgb), 0.35);
       --text-dim: rgba(var(--text-rgb), 0.15);
       --border: rgba(var(--text-rgb), 0.1);
+      --card-bg: rgba(var(--text-rgb), 0.04);
       --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
       --wrap: 1120px;
       --gutter: 24px;
@@ -29,6 +30,7 @@
       --bg: #000000;
       --text: #DEDEDE;
       --text-rgb: 222, 222, 222;
+      --card-bg: rgba(255, 255, 255, 0.06);
     }
 
     /* ── Reset ── */
@@ -44,7 +46,6 @@
     html {
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      overflow-x: hidden;
     }
 
     ::selection {
@@ -58,7 +59,6 @@
       line-height: 1.65;
       color: var(--text);
       background: var(--bg);
-      overflow-x: hidden;
     }
 
     a {
@@ -267,7 +267,8 @@
       overflow: hidden;
     }
 
-    .hero__video-glow * {
+    .hero__video-glow *,
+    .hero__video-glow iframe {
       pointer-events: none !important;
     }
 
@@ -414,7 +415,7 @@
       font-weight: 600;
       letter-spacing: -0.04em;
       line-height: 1;
-      color: var(--text-dim);
+      color: var(--text-3);
       margin-bottom: 16px;
     }
 
@@ -499,31 +500,19 @@
     }
 
     .usecase-grid {
-      display: flex;
-      gap: 16px;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      padding-bottom: 4px;
-      margin-right: calc(-1 * var(--gutter));
-      padding-right: var(--gutter);
-    }
-
-    .usecase-grid::-webkit-scrollbar {
-      display: none;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
     }
 
     .usecase-cell {
-      flex: 0 0 340px;
-      border: 1px solid var(--border);
-      padding: 32px 28px;
-      scroll-snap-align: start;
+      background: rgba(var(--text-rgb), 0.04);
+      padding: 28px 24px;
       transition: background 0.2s;
     }
 
     .usecase-cell:hover {
-      background: rgba(var(--text-rgb), 0.03);
+      background: rgba(var(--text-rgb), 0.07);
     }
 
     .usecase-cell__icon {
@@ -581,7 +570,8 @@
     .plans__toggle {
       display: inline-flex;
       margin-bottom: 28px;
-      border: 1px solid var(--text);
+      padding: 4px;
+      background: var(--card-bg);
       overflow: hidden;
     }
 
@@ -601,8 +591,8 @@
     }
 
     [data-theme="light"] .plans__toggle-btn.active {
-      background: #000000;
-      color: #f8f8f7;
+      background: var(--bg);
+      color: var(--gutter);
     }
 
     [data-theme="dark"] .plans__toggle-btn.active {
@@ -622,18 +612,16 @@
     .plans-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      border-top: 1px solid var(--border);
-      border-left: 1px solid var(--border);
+      gap: 12px;
     }
 
     .plan-col {
       display: flex;
       flex-direction: column;
-      border-right: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
       padding: 25px;
       transition: background 0.2s;
       position: relative;
+      background: var(--card-bg);
     }
 
 
@@ -641,7 +629,6 @@
     /* Enterprise: full-width banner row */
     .plan-col--enterprise {
       grid-column: 1 / -1;
-      justify-content: space-between;
       gap: 20px;
       padding: 20px;
     }
@@ -651,19 +638,8 @@
       min-height: 0;
     }
 
-    .plan-col--enterprise .btn {
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
     .plan-col:hover {
       background: rgba(var(--text-rgb), 0.03);
-    }
-
-    .plan-col__head {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
     }
 
     .plan-col__name {
@@ -932,6 +908,10 @@
         gap: 32px;
       }
 
+      .usecase-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
       /* Mobile menu */
       .header .wrap {
         height: auto;
@@ -985,6 +965,26 @@
       .feature-grid,
       .showcase-grid {
         grid-template-columns: 1fr;
+      }
+
+      .usecase-grid {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 4px;
+        margin-right: calc(-1 * var(--gutter));
+        padding-right: var(--gutter);
+      }
+
+      .usecase-grid::-webkit-scrollbar {
+        display: none;
+      }
+
+      .usecase-cell {
+        flex: 0 0 280px;
+        scroll-snap-align: start;
       }
 
       .plans-grid {
@@ -1072,24 +1072,25 @@
     }
 
     @media (hover: none) {
-      .btn:hover,
-      .btn--ghost:hover {
+      .btn:hover {
         opacity: 1;
-        color: inherit;
-        background: transparent;
+      }
+
+      .btn--ghost:hover {
+        color: var(--text-2);
+        border-color: var(--border);
       }
 
       .nav a:hover {
         color: var(--text-3);
       }
 
-      .feature-cell:hover,
-      .usecase-cell:hover,
-      .plan-col:hover,
-      .footer__nav-col a:hover {
+      .feature-cell:hover {
         background: transparent;
-        color: inherit;
-        opacity: 1;
+      }
+
+      .usecase-cell:hover {
+        background: rgba(var(--text-rgb), 0.04);
       }
     }
 
@@ -1107,23 +1108,6 @@
       }
     }
 
-    /* ── Scroll reveal ── */
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .reveal.is-visible {
-      opacity: 1;
-      transform: none;
-    }
-
-    .reveal-delay-1 { transition-delay: 0.1s; }
-    .reveal-delay-2 { transition-delay: 0.2s; }
-    .reveal-delay-3 { transition-delay: 0.3s; }
 
     /* ── Shader effects (testing toolbar) ── */
 
@@ -1167,6 +1151,18 @@
       color: #fff;
     }
 
+    .fx-toolbar__sep {
+      width: 1px;
+      align-self: stretch;
+      margin: 4px 2px;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* ── Glow toggle ── */
+    body.fx-no-glow .hero__video-glow {
+      display: none;
+    }
+
     /* Ensure hero__video can host overlays */
     .hero__video {
       overflow: visible;
@@ -1188,13 +1184,13 @@
       inset: 0;
       z-index: 10;
       background:
-        repeating-linear-gradient(
-          0deg,
-          transparent,
-          transparent 1px,
-          rgba(0, 0, 0, 0.06) 1px,
-          rgba(0, 0, 0, 0.06) 3px
-        );
+              repeating-linear-gradient(
+                      0deg,
+                      transparent,
+                      transparent 1px,
+                      rgba(0, 0, 0, 0.06) 1px,
+                      rgba(0, 0, 0, 0.06) 3px
+              );
       pointer-events: none;
     }
 
@@ -1209,561 +1205,523 @@
   </script>
 </head>
 
-<body class="fx-crt">
+<body>
 
-  <!-- Shader effects toolbar (testing) -->
-  <div class="fx-toolbar" style="display:none">
-    <button data-fx="">Normal</button>
-    <button class="active" data-fx="fx-crt">CRT</button>
+<!-- Shader effects toolbar (testing) -->
+<div class="fx-toolbar" style="display:none">
+  <button class="active" data-fx="">Normal</button>
+  <button data-fx="fx-crt">CRT</button>
+  <span class="fx-toolbar__sep"></span>
+  <button class="active" data-toggle="glow">Glow</button>
+</div>
+
+<!-- Header -->
+<header class="header">
+  <div class="wrap">
+    <a href="/" class="wordmark">&#9654; Skiv</a>
+    <div class="header__actions">
+      <button class="menu-toggle" aria-label="Toggle navigation" aria-controls="site-nav"
+              aria-expanded="false">Menu</button>
+    </div>
+    <nav id="site-nav" class="nav">
+      <a href="https://muse.ai/pricing">Pricing</a>
+      <a href="https://muse.ai/docs">Docs</a>
+      <a href="#" onclick="toggleTheme();return false" class="theme-toggle nav__theme"><span
+              class="theme-toggle__dark">Dark</span><span class="theme-toggle__light">Light</span></a>
+      <a href="https://muse.ai/login">Sign in</a>
+      <a href="https://muse.ai/join">Get started →</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- Hero -->
+  <section class="hero reveal">
+    <div class="wrap">
+      <div class="hero__grid">
+        <div>
+          <h1 class="hero__headline">Video hosting with AI that understands your content.</h1>
+        </div>
+        <div class="hero__right">
+          <p class="hero__sub">Store everything from lectures to raw footage. Find exactly what you need by searching
+            for what's <em>in</em> the video &mdash; speech, text, objects, actions, ideas.</p>
+          <div class="hero__actions">
+            <a href="https://muse.ai/join" class="btn btn--primary">Start for free →</a>
+          </div>
+        </div>
+      </div>
+      <div class="hero__video">
+        <div class="hero__video-blocker" aria-hidden="true"></div>
+        <div class="hero__video-glow" aria-hidden="true">
+          <div class="muse-video-player hero__dark-only" data-video="sLFaX4p" data-search="0" data-links="0"
+               data-logo="0" data-title="0" data-autoplay="1" data-loop="1" data-volume="0"
+               data-width="1120"></div>
+          <div class="muse-video-player hero__light-only" data-video="aKZ2mjn" data-search="0" data-links="0"
+               data-logo="0" data-title="0" data-autoplay="1" data-loop="1" data-volume="0"
+               data-width="1120"></div>
+        </div>
+        <div class="muse-video-player hero__dark-only" data-video="sLFaX4p" data-search="0" data-links="0"
+             data-logo="0" data-title="0" data-autoplay="1" data-loop="1" data-volume="0"
+             data-coverplayposition="center" data-width="1120"></div>
+        <div class="muse-video-player hero__light-only" data-video="aKZ2mjn" data-search="0" data-links="0"
+             data-logo="0" data-title="0" data-autoplay="1" data-loop="1" data-volume="0"
+             data-coverplayposition="center" data-width="1120"></div>
+        <script src="https://muse.ai/static/js/embed-player.min.js"></script>
+      </div>
+    </div>
+  </section>
+
+  <!-- Proof strip -->
+  <div class="proof-strip">
+    <div class="wrap">
+      <p class="proof__orgs">Trusted by the NHS, Fortnum &amp; Mason, New York University, Arizona State University,
+        Toptal,<br><span class="trusted__highlight">and millions of users worldwide.</span></p>
+    </div>
   </div>
 
-  <!-- Header -->
-  <header class="header">
+  <!-- Features -->
+  <!--    <section class="features">-->
+  <!--      <div class="wrap">-->
+  <!--        <div class="features__head">-->
+  <!--          <span class="section-label">Features</span>-->
+  <!--        </div>-->
+  <!--        <div class="feature-grid">-->
+  <!--          <a href="/search-inside-video" class="feature-cell">-->
+  <!--            <i class="ph-light ph-magnifying-glass feature-cell__icon"></i>-->
+  <!--            <div class="feature-cell__name">AI video search</div>-->
+  <!--            <div class="feature-cell__desc">Search inside your videos for speech, text, people, objects, and abstract ideas. Go beyond keywords.</div>-->
+  <!--          </a>-->
+  <!--          <a href="/video-hosting" class="feature-cell">-->
+  <!--            <i class="ph-light ph-cloud feature-cell__icon"></i>-->
+  <!--            <div class="feature-cell__name">Cloud storage</div>-->
+  <!--            <div class="feature-cell__desc">Ad-free, private-by-default hosting. Auto-generated subtitles, transcripts, and smart chapters.</div>-->
+  <!--          </a>-->
+  <!--          <a href="/player" class="feature-cell">-->
+  <!--            <i class="ph-light ph-play feature-cell__icon"></i>-->
+  <!--            <div class="feature-cell__name">Player</div>-->
+  <!--            <div class="feature-cell__desc">Fast, customizable HTML5 player with 4K, Chromecast, AirPlay, and in-video search built in.</div>-->
+  <!--          </a>-->
+  <!--          <a href="https://muse.ai/docs#embed-player" class="feature-cell">-->
+  <!--            <i class="ph-light ph-code feature-cell__icon"></i>-->
+  <!--            <div class="feature-cell__name">Embed</div>-->
+  <!--            <div class="feature-cell__desc">Embed videos or entire collections on your site. Style it your way, no coding required.</div>-->
+  <!--          </a>-->
+  <!--          <a href="/record-screen-camera-online" class="feature-cell">-->
+  <!--            <i class="ph-light ph-record feature-cell__icon"></i>-->
+  <!--            <div class="feature-cell__name">Record</div>-->
+  <!--            <div class="feature-cell__desc">Capture your screen or camera directly from the browser. No downloads, no extensions.</div>-->
+  <!--          </a>-->
+  <!--          <a href="https://muse.ai/docs#portals" class="feature-cell">-->
+  <!--            <i class="ph-light ph-storefront feature-cell__icon"></i>-->
+  <!--            <div class="feature-cell__name">Portals</div>-->
+  <!--            <div class="feature-cell__desc">Launch your own branded streaming service with subscriptions, tiers, and managed billing.</div>-->
+  <!--          </a>-->
+  <!--          <a href="/blog/ai-assistant" class="feature-cell">-->
+  <!--            <i class="ph-light ph-chat-circle feature-cell__icon"></i>-->
+  <!--            <div class="feature-cell__name">AI assistant</div>-->
+  <!--            <div class="feature-cell__desc">Chat with your video library. Ask questions, get answers grounded in your content with timestamps.</div>-->
+  <!--          </a>-->
+  <!--          <a href="/video-audio-transcription" class="feature-cell">-->
+  <!--            <i class="ph-light ph-subtitles feature-cell__icon"></i>-->
+  <!--            <div class="feature-cell__name">Transcription</div>-->
+  <!--            <div class="feature-cell__desc">Every video automatically transcribed. Edit, download, or display as interactive subtitles.</div>-->
+  <!--          </a>-->
+  <!--          <a href="https://muse.ai/api" class="feature-cell">-->
+  <!--            <i class="ph-light ph-terminal feature-cell__icon"></i>-->
+  <!--            <div class="feature-cell__name">API</div>-->
+  <!--            <div class="feature-cell__desc">Full programmatic access. Upload, analyze, search, and manage your library from your own code.</div>-->
+  <!--          </a>-->
+  <!--        </div>-->
+  <!--      </div>-->
+  <!--    </section>-->
+
+  <!-- Showcase -->
+  <section class="showcase reveal">
     <div class="wrap">
-      <a href="/" class="wordmark">&#9654; Skiv</a>
-      <div class="header__actions">
-        <button class="menu-toggle" aria-label="Toggle navigation" aria-controls="site-nav"
-          aria-expanded="false">Menu</button>
+      <div class="showcase__head">
+        <span class="section-label">Everything you need</span>
       </div>
-      <nav id="site-nav" class="nav">
-        <a href="https://muse.ai/pricing">Pricing</a>
-        <a href="https://muse.ai/docs">Docs</a>
-        <a href="#" onclick="toggleTheme();return false" class="theme-toggle nav__theme"><span
-            class="theme-toggle__dark">Dark</span><span class="theme-toggle__light">Light</span></a>
-        <a href="https://muse.ai/login">Sign in</a>
-        <a href="https://muse.ai/join">Get started →</a>
-      </nav>
+      <div class="showcase-grid">
+
+        <div class="showcase-cell">
+          <video class="showcase-cell__video" autoplay playsinline loop muted
+                 data-dark="https://cdn.muse.ai/u/tbe5TJ1/1ded690821a25c01a2cf38d1b79cd12961742c74c1bf6fe7672611900ffa137f/videos/video.mp4"
+                 data-light="https://cdn.muse.ai/u/tbe5TJ1/1530589b9b4a54cfccd44410120eef931342abd0dc255c172f0e95abb9907515/videos/video.mp4"></video>
+          <div class="showcase-cell__body">
+            <div class="showcase-cell__label">Storage</div>
+            <div class="showcase-cell__title">Your video library, without the mess.</div>
+            <div class="showcase-cell__desc">AI-generated subtitles, smart chapters, and transcripts — all automatic.
+              Ad-free, private by default, accessible from any device.</div>
+          </div>
+        </div>
+
+        <div class="showcase-cell">
+          <video class="showcase-cell__video" autoplay playsinline loop muted
+                 data-dark="https://cdn.muse.ai/u/tbe5TJ1/b2fc00db38449c40efa2b40c9b9b0ac95a80dd256cf5de4fd03e376274294ed2/videos/video.mp4"
+                 data-light="https://cdn.muse.ai/u/tbe5TJ1/07e4fc3661f0876b9f51e55ead5e69fc3ef793acbbf120d716ff29139c27c4ae/videos/video.mp4"></video>
+          <div class="showcase-cell__body">
+            <div class="showcase-cell__label">Search</div>
+            <div class="showcase-cell__title">Find any moment. In any video.</div>
+            <div class="showcase-cell__desc">Search for what's said, written, or shown. Abstract ideas work too —
+              "tense moment", "whiteboard diagram", "person in red jacket."</div>
+          </div>
+        </div>
+
+        <div class="showcase-cell">
+          <video class="showcase-cell__video" autoplay playsinline loop muted
+                 data-dark="https://cdn.muse.ai/u/tbe5TJ1/9760a94297ea8f833416ad8db248ee5c2b22218f62b74279811a4c5bd6279875/videos/video.mp4"
+                 data-light="https://cdn.muse.ai/u/tbe5TJ1/0e953b46a1fa57038f1cc450220a3ffa4b9907b2e277e27cf90c5a0253ac8c02/videos/video.mp4"></video>
+          <div class="showcase-cell__body">
+            <div class="showcase-cell__label">AI Assistant</div>
+            <div class="showcase-cell__title">Ask your library a question.</div>
+            <div class="showcase-cell__desc">Get timestamped answers grounded in your own content. Chat your way to
+              the exact clip instead of scrubbing.</div>
+          </div>
+        </div>
+
+        <div class="showcase-cell">
+          <video class="showcase-cell__video" autoplay playsinline loop muted
+                 data-dark="https://cdn.muse.ai/u/tbe5TJ1/511615c9c99d9f84213e3698e5079a2a86e211cc0ceee803b5f68851cc6ae7b1/videos/video.mp4"
+                 data-light="https://cdn.muse.ai/u/tbe5TJ1/30cf1404b5bae1a9befa3e12698fe638451d8075f67f20fdd101482824a43e99/videos/video.mp4"></video>
+          <div class="showcase-cell__body">
+            <div class="showcase-cell__label">Portals</div>
+            <div class="showcase-cell__title">Launch your own streaming service.</div>
+            <div class="showcase-cell__desc">Branded, gated, subscription-ready. Set your own tiers and pricing — we
+              handle billing, accounts, and the rest.</div>
+          </div>
+        </div>
+
+        <div class="showcase-cell">
+          <video class="showcase-cell__video" autoplay playsinline loop muted
+                 data-dark="https://cdn.muse.ai/u/tbe5TJ1/7319f92ed7c7c5255cf4c218c16d140b4acb838b9d168959110a2ea5b486d736/videos/video.mp4"
+                 data-light="https://cdn.muse.ai/u/tbe5TJ1/83fa98410aa292b88b284bffc23f999faf095af0a556cbd17e713208a88fb232/videos/video.mp4"></video>
+          <div class="showcase-cell__body">
+            <div class="showcase-cell__label">Embed</div>
+            <div class="showcase-cell__title">Put your videos anywhere.</div>
+            <div class="showcase-cell__desc">Embed a single video or your entire library on any site. Fully styled to
+              match your brand — AI search included.</div>
+          </div>
+        </div>
+
+        <div class="showcase-cell">
+          <video class="showcase-cell__video" autoplay playsinline loop muted
+                 data-dark="https://cdn.muse.ai/u/tbe5TJ1/d9e6e95b5880a6cb76e870b86bd54903301c5bf12cafe6bae49f48a8114971e5/videos/video.mp4"
+                 data-light="https://cdn.muse.ai/u/tbe5TJ1/6a107f220247711085c39a9c6ba21c71a78ba2741479092fe0b94b87e2ac881e/videos/video.mp4"></video>
+          <div class="showcase-cell__body">
+            <div class="showcase-cell__label">Record</div>
+            <div class="showcase-cell__title">Record and share in seconds.</div>
+            <div class="showcase-cell__desc">Screen, camera, or both — straight from your browser. No downloads.
+              Auto-transcribed, chaptered, and ready to share instantly.</div>
+          </div>
+        </div>
+
+      </div>
     </div>
-  </header>
+  </section>
 
-  <main>
+  <!-- How it works -->
+  <section class="steps-section reveal">
+    <div class="wrap">
+      <div class="steps-section__head">
+        <span class="section-label">How it works</span>
+      </div>
+      <div class="steps-grid">
+        <div class="step-cell">
+          <div class="step-cell__num">01</div>
+          <div class="step-cell__title">Upload your videos</div>
+          <div class="step-cell__desc">Drag and drop, or use our API. Any format, any size. They're private by
+            default.</div>
+        </div>
+        <div class="step-cell">
+          <div class="step-cell__num">02</div>
+          <div class="step-cell__title">AI does the rest</div>
+          <div class="step-cell__desc">Every video is analyzed for speech, on-screen text, objects, faces, actions,
+            and abstract concepts.</div>
+        </div>
+        <div class="step-cell">
+          <div class="step-cell__num">03</div>
+          <div class="step-cell__title">Search, share, embed</div>
+          <div class="step-cell__desc">Find any moment instantly. Share a link, embed on your site, or build on top of
+            our API.</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <!-- Hero -->
-    <section class="hero reveal">
-      <div class="wrap">
-        <div class="hero__grid">
+  <!-- Use cases -->
+  <section class="usecases reveal">
+    <div class="wrap">
+      <div class="usecases__head">
+        <span class="section-label">Use cases</span>
+      </div>
+      <div class="usecase-grid">
+        <div class="usecase-cell">
+          <i class="ph-light ph-graduation-cap usecase-cell__icon"></i>
+          <div class="usecase-cell__name">Education</div>
+          <div class="usecase-cell__desc">Students search lectures for exactly what they need. Faculty organize years
+            of footage in seconds. Embed course libraries on your LMS.</div>
+        </div>
+        <div class="usecase-cell">
+          <i class="ph-light ph-microphone-stage usecase-cell__icon"></i>
+          <div class="usecase-cell__name">Events &amp; conferences</div>
+          <div class="usecase-cell__desc">Make talks discoverable long after the event ends. Attendees search across
+            every session to find the moments that matter.</div>
+        </div>
+        <div class="usecase-cell">
+          <i class="ph-light ph-film-slate usecase-cell__icon"></i>
+          <div class="usecase-cell__name">Creators &amp; media</div>
+          <div class="usecase-cell__desc">No competing recommendations. No ads on your content. Monetize with Portals,
+            embed anywhere, own the experience.</div>
+        </div>
+        <div class="usecase-cell">
+          <i class="ph-light ph-users-three usecase-cell__icon"></i>
+          <div class="usecase-cell__name">Teams &amp; internal comms</div>
+          <div class="usecase-cell__desc">A searchable knowledge base for onboarding, demos, and company updates.
+            Secure, collaborative, instantly retrievable.</div>
+        </div>
+        <div class="usecase-cell">
+          <i class="ph-light ph-chart-line-up usecase-cell__icon"></i>
+          <div class="usecase-cell__name">Sales &amp; marketing</div>
+          <div class="usecase-cell__desc">Branded player with your logo, custom CTAs, and detailed analytics.
+            Integrates with your existing stack.</div>
+        </div>
+        <div class="usecase-cell">
+          <i class="ph-light ph-headphones usecase-cell__icon"></i>
+          <div class="usecase-cell__name">Podcasts &amp; audio</div>
+          <div class="usecase-cell__desc">Auto-transcripts, deep search, and a clean player. Let your audience find
+            the exact conversation they're looking for.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Plans -->
+  <section class="plans reveal" id="plans">
+    <div class="wrap">
+      <div class="plans__head">
+        <span class="section-label">Plans</span>
+      </div>
+      <div class="plans__toggle">
+        <button class="plans__toggle-btn active" data-cycle="yearly">Yearly (50% off)</button>
+        <button class="plans__toggle-btn" data-cycle="monthly">Monthly</button>
+      </div>
+      <div class="plans-grid">
+
+        <div class="plan-col">
+          <div class="plan-col__name">Basic</div>
+          <p class="plan-col__desc">Everything you need to host and share videos with AI search.</p>
+          <div class="plan-col__pricing">
+            <div class="plan-col__price"><span class="plan-price-val" data-monthly="16" data-yearly="8">$8</span> / mo
+            </div>
+            <div class="plan-col__period" data-yearly-only>billed yearly</div>
+          </div>
+          <a href="https://muse.ai/join" class="btn btn--primary">Start free &rarr;</a>
+          <ul class="plan-col__features">
+            <li class="plan-col__feature">80 GB storage</li>
+            <li class="plan-col__feature">1 seat</li>
+            <li class="plan-col__feature">Unlimited embeds</li>
+            <li class="plan-col__feature">4K playback</li>
+            <li class="plan-col__feature">Portals</li>
+            <li class="plan-col__feature">Email support</li>
+          </ul>
+        </div>
+
+        <div class="plan-col" data-featured>
+          <div class="plan-col__name">Plus</div>
+          <span class="plan-col__badge">Popular</span>
+          <p class="plan-col__desc">More storage, privacy controls, and advanced player customization.</p>
+          <div class="plan-col__pricing">
+            <div class="plan-col__price"><span class="plan-price-val" data-monthly="40" data-yearly="20">$20</span> /
+              mo</div>
+            <div class="plan-col__period" data-yearly-only>billed yearly</div>
+          </div>
+          <a href="https://muse.ai/join" class="btn btn--primary">Start free &rarr;</a>
+          <ul class="plan-col__features">
+            <li class="plan-col__feature">Everything in Basic</li>
+            <li class="plan-col__feature">200 GB storage</li>
+            <li class="plan-col__feature">3 seats</li>
+            <li class="plan-col__feature">Geo-restricted playback</li>
+            <li class="plan-col__feature">Expiring links</li>
+            <li class="plan-col__feature">Call-to-action overlays</li>
+            <li class="plan-col__feature">Original file storage</li>
+            <li class="plan-col__feature">Custom player styling</li>
+            <li class="plan-col__feature">Enhanced privacy &amp; security</li>
+          </ul>
+        </div>
+
+        <div class="plan-col">
+          <div class="plan-col__name">Pro</div>
+          <p class="plan-col__desc">For teams that need scale, integrations, and priority support.</p>
+          <div class="plan-col__pricing">
+            <div class="plan-col__price"><span class="plan-price-val" data-monthly="100" data-yearly="50">$50</span> /
+              mo</div>
+            <div class="plan-col__period" data-yearly-only>billed yearly</div>
+          </div>
+          <a href="https://muse.ai/join" class="btn btn--primary">Start free &rarr;</a>
+          <ul class="plan-col__features">
+            <li class="plan-col__feature">Everything in Plus</li>
+            <li class="plan-col__feature">1 TB storage</li>
+            <li class="plan-col__feature">10 seats</li>
+            <li class="plan-col__feature">VAST ad support</li>
+            <li class="plan-col__feature">Delegated uploads</li>
+            <li class="plan-col__feature">Priority support</li>
+            <li class="plan-col__feature">Custom extensions</li>
+            <li class="plan-col__feature">Custom integrations</li>
+          </ul>
+        </div>
+
+        <div class="plan-col plan-col--enterprise">
           <div>
-            <h1 class="hero__headline">Video hosting with AI that understands your content.</h1>
+            <div class="plan-col__name">Enterprise</div>
+            <p class="plan-col__desc">Unlimited storage, unlimited seats, dedicated account manager, and custom applications.</p>
           </div>
-          <div class="hero__right">
-            <p class="hero__sub">Store everything from lectures to raw footage. Find exactly what you need by searching
-              for what's <em>in</em> the video &mdash; speech, text, objects, actions, ideas.</p>
-            <div class="hero__actions">
-              <a href="https://muse.ai/join" class="btn btn--primary">Start for free →</a>
-            </div>
-          </div>
+          <a href="https://muse.ai/contact" class="btn btn--primary">Contact us &rarr;</a>
         </div>
-        <div class="hero__video">
-          <div class="hero__video-blocker" aria-hidden="true"></div>
-          <div class="hero__video-glow" aria-hidden="true">
-            <div class="muse-video-player hero__dark-only" data-video="sLFaX4p" data-search="0" data-links="0"
-              data-logo="0" data-title="0" data-autoplay="1" data-loop="1" data-volume="0"
-              data-width="1120"></div>
-            <div class="muse-video-player hero__light-only" data-video="aKZ2mjn" data-search="0" data-links="0"
-              data-logo="0" data-title="0" data-autoplay="1" data-loop="1" data-volume="0"
-              data-width="1120"></div>
-          </div>
-          <div class="muse-video-player hero__dark-only" data-video="sLFaX4p" data-search="0" data-links="0"
-            data-logo="0" data-title="0" data-autoplay="1" data-loop="1" data-volume="0"
-            data-coverplayposition="center" data-width="1120"></div>
-          <div class="muse-video-player hero__light-only" data-video="aKZ2mjn" data-search="0" data-links="0"
-            data-logo="0" data-title="0" data-autoplay="1" data-loop="1" data-volume="0"
-            data-coverplayposition="center" data-width="1120"></div>
-          <script src="https://muse.ai/static/js/embed-player.min.js"></script>
-        </div>
-      </div>
-    </section>
 
-    <!-- Proof strip -->
-    <div class="proof-strip">
-      <div class="wrap">
-        <p class="proof__orgs">Trusted by the NHS, Fortnum &amp; Mason, New York University, Arizona State University,
-          Toptal,<br><span class="trusted__highlight">and millions of users worldwide.</span></p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+
+    <div class="footer__cta">
+      <h2>Start for free.<br>Scale when you're ready.</h2>
+      <div class="footer__cta-actions">
+        <a href="https://muse.ai/join" class="btn btn--primary">Get started →</a>
+        <a href="https://muse.ai/pricing" class="btn btn--ghost">See pricing</a>
       </div>
     </div>
 
-    <!-- Features -->
-    <!--    <section class="features">-->
-    <!--      <div class="wrap">-->
-    <!--        <div class="features__head">-->
-    <!--          <span class="section-label">Features</span>-->
-    <!--        </div>-->
-    <!--        <div class="feature-grid">-->
-    <!--          <a href="/search-inside-video" class="feature-cell">-->
-    <!--            <i class="ph-light ph-magnifying-glass feature-cell__icon"></i>-->
-    <!--            <div class="feature-cell__name">AI video search</div>-->
-    <!--            <div class="feature-cell__desc">Search inside your videos for speech, text, people, objects, and abstract ideas. Go beyond keywords.</div>-->
-    <!--          </a>-->
-    <!--          <a href="/video-hosting" class="feature-cell">-->
-    <!--            <i class="ph-light ph-cloud feature-cell__icon"></i>-->
-    <!--            <div class="feature-cell__name">Cloud storage</div>-->
-    <!--            <div class="feature-cell__desc">Ad-free, private-by-default hosting. Auto-generated subtitles, transcripts, and smart chapters.</div>-->
-    <!--          </a>-->
-    <!--          <a href="/player" class="feature-cell">-->
-    <!--            <i class="ph-light ph-play feature-cell__icon"></i>-->
-    <!--            <div class="feature-cell__name">Player</div>-->
-    <!--            <div class="feature-cell__desc">Fast, customizable HTML5 player with 4K, Chromecast, AirPlay, and in-video search built in.</div>-->
-    <!--          </a>-->
-    <!--          <a href="https://muse.ai/docs#embed-player" class="feature-cell">-->
-    <!--            <i class="ph-light ph-code feature-cell__icon"></i>-->
-    <!--            <div class="feature-cell__name">Embed</div>-->
-    <!--            <div class="feature-cell__desc">Embed videos or entire collections on your site. Style it your way, no coding required.</div>-->
-    <!--          </a>-->
-    <!--          <a href="/record-screen-camera-online" class="feature-cell">-->
-    <!--            <i class="ph-light ph-record feature-cell__icon"></i>-->
-    <!--            <div class="feature-cell__name">Record</div>-->
-    <!--            <div class="feature-cell__desc">Capture your screen or camera directly from the browser. No downloads, no extensions.</div>-->
-    <!--          </a>-->
-    <!--          <a href="https://muse.ai/docs#portals" class="feature-cell">-->
-    <!--            <i class="ph-light ph-storefront feature-cell__icon"></i>-->
-    <!--            <div class="feature-cell__name">Portals</div>-->
-    <!--            <div class="feature-cell__desc">Launch your own branded streaming service with subscriptions, tiers, and managed billing.</div>-->
-    <!--          </a>-->
-    <!--          <a href="/blog/ai-assistant" class="feature-cell">-->
-    <!--            <i class="ph-light ph-chat-circle feature-cell__icon"></i>-->
-    <!--            <div class="feature-cell__name">AI assistant</div>-->
-    <!--            <div class="feature-cell__desc">Chat with your video library. Ask questions, get answers grounded in your content with timestamps.</div>-->
-    <!--          </a>-->
-    <!--          <a href="/video-audio-transcription" class="feature-cell">-->
-    <!--            <i class="ph-light ph-subtitles feature-cell__icon"></i>-->
-    <!--            <div class="feature-cell__name">Transcription</div>-->
-    <!--            <div class="feature-cell__desc">Every video automatically transcribed. Edit, download, or display as interactive subtitles.</div>-->
-    <!--          </a>-->
-    <!--          <a href="https://muse.ai/api" class="feature-cell">-->
-    <!--            <i class="ph-light ph-terminal feature-cell__icon"></i>-->
-    <!--            <div class="feature-cell__name">API</div>-->
-    <!--            <div class="feature-cell__desc">Full programmatic access. Upload, analyze, search, and manage your library from your own code.</div>-->
-    <!--          </a>-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <!--    </section>-->
-
-    <!-- Showcase -->
-    <section class="showcase reveal">
-      <div class="wrap">
-        <div class="showcase__head">
-          <span class="section-label">Everything you need</span>
-        </div>
-        <div class="showcase-grid">
-
-          <div class="showcase-cell">
-            <video class="showcase-cell__video" autoplay playsinline loop muted
-              data-dark="https://cdn.muse.ai/u/tbe5TJ1/1ded690821a25c01a2cf38d1b79cd12961742c74c1bf6fe7672611900ffa137f/videos/video.mp4"
-              data-light="https://cdn.muse.ai/u/tbe5TJ1/1530589b9b4a54cfccd44410120eef931342abd0dc255c172f0e95abb9907515/videos/video.mp4"></video>
-            <div class="showcase-cell__body">
-              <div class="showcase-cell__label">Storage</div>
-              <div class="showcase-cell__title">Your video library, without the mess.</div>
-              <div class="showcase-cell__desc">AI-generated subtitles, smart chapters, and transcripts — all automatic.
-                Ad-free, private by default, accessible from any device.</div>
-            </div>
-          </div>
-
-          <div class="showcase-cell">
-            <video class="showcase-cell__video" autoplay playsinline loop muted
-              data-dark="https://cdn.muse.ai/u/tbe5TJ1/b2fc00db38449c40efa2b40c9b9b0ac95a80dd256cf5de4fd03e376274294ed2/videos/video.mp4"
-              data-light="https://cdn.muse.ai/u/tbe5TJ1/07e4fc3661f0876b9f51e55ead5e69fc3ef793acbbf120d716ff29139c27c4ae/videos/video.mp4"></video>
-            <div class="showcase-cell__body">
-              <div class="showcase-cell__label">Search</div>
-              <div class="showcase-cell__title">Find any moment. In any video.</div>
-              <div class="showcase-cell__desc">Search for what's said, written, or shown. Abstract ideas work too —
-                "tense moment", "whiteboard diagram", "person in red jacket."</div>
-            </div>
-          </div>
-
-          <div class="showcase-cell">
-            <video class="showcase-cell__video" autoplay playsinline loop muted
-              data-dark="https://cdn.muse.ai/u/tbe5TJ1/9760a94297ea8f833416ad8db248ee5c2b22218f62b74279811a4c5bd6279875/videos/video.mp4"
-              data-light="https://cdn.muse.ai/u/tbe5TJ1/0e953b46a1fa57038f1cc450220a3ffa4b9907b2e277e27cf90c5a0253ac8c02/videos/video.mp4"></video>
-            <div class="showcase-cell__body">
-              <div class="showcase-cell__label">AI Assistant</div>
-              <div class="showcase-cell__title">Ask your library a question.</div>
-              <div class="showcase-cell__desc">Get timestamped answers grounded in your own content. Chat your way to
-                the exact clip instead of scrubbing.</div>
-            </div>
-          </div>
-
-          <div class="showcase-cell">
-            <video class="showcase-cell__video" autoplay playsinline loop muted
-              data-dark="https://cdn.muse.ai/u/tbe5TJ1/511615c9c99d9f84213e3698e5079a2a86e211cc0ceee803b5f68851cc6ae7b1/videos/video.mp4"
-              data-light="https://cdn.muse.ai/u/tbe5TJ1/30cf1404b5bae1a9befa3e12698fe638451d8075f67f20fdd101482824a43e99/videos/video.mp4"></video>
-            <div class="showcase-cell__body">
-              <div class="showcase-cell__label">Portals</div>
-              <div class="showcase-cell__title">Launch your own streaming service.</div>
-              <div class="showcase-cell__desc">Branded, gated, subscription-ready. Set your own tiers and pricing — we
-                handle billing, accounts, and the rest.</div>
-            </div>
-          </div>
-
-          <div class="showcase-cell">
-            <video class="showcase-cell__video" autoplay playsinline loop muted
-              data-dark="https://cdn.muse.ai/u/tbe5TJ1/7319f92ed7c7c5255cf4c218c16d140b4acb838b9d168959110a2ea5b486d736/videos/video.mp4"
-              data-light="https://cdn.muse.ai/u/tbe5TJ1/83fa98410aa292b88b284bffc23f999faf095af0a556cbd17e713208a88fb232/videos/video.mp4"></video>
-            <div class="showcase-cell__body">
-              <div class="showcase-cell__label">Embed</div>
-              <div class="showcase-cell__title">Put your videos anywhere.</div>
-              <div class="showcase-cell__desc">Embed a single video or your entire library on any site. Fully styled to
-                match your brand — AI search included.</div>
-            </div>
-          </div>
-
-          <div class="showcase-cell">
-            <video class="showcase-cell__video" autoplay playsinline loop muted
-              data-dark="https://cdn.muse.ai/u/tbe5TJ1/d9e6e95b5880a6cb76e870b86bd54903301c5bf12cafe6bae49f48a8114971e5/videos/video.mp4"
-              data-light="https://cdn.muse.ai/u/tbe5TJ1/6a107f220247711085c39a9c6ba21c71a78ba2741479092fe0b94b87e2ac881e/videos/video.mp4"></video>
-            <div class="showcase-cell__body">
-              <div class="showcase-cell__label">Record</div>
-              <div class="showcase-cell__title">Record and share in seconds.</div>
-              <div class="showcase-cell__desc">Screen, camera, or both — straight from your browser. No downloads.
-                Auto-transcribed, chaptered, and ready to share instantly.</div>
-            </div>
-          </div>
-
-        </div>
+    <nav class="footer__nav">
+      <div class="footer__nav-col">
+        <h3>Product</h3>
+        <a href="/search-inside-video">AI Video Search</a>
+        <a href="/video-hosting">Cloud Storage</a>
+        <a href="/player">Player</a>
+        <a href="https://muse.ai/docs#portals">Portals</a>
+        <a href="https://muse.ai/api">API</a>
       </div>
-    </section>
-
-    <!-- How it works -->
-    <section class="steps-section reveal">
-      <div class="wrap">
-        <div class="steps-section__head">
-          <span class="section-label">How it works</span>
-        </div>
-        <div class="steps-grid">
-          <div class="step-cell">
-            <div class="step-cell__num">01</div>
-            <div class="step-cell__title">Upload your videos</div>
-            <div class="step-cell__desc">Drag and drop, or use our API. Any format, any size. They're private by
-              default.</div>
-          </div>
-          <div class="step-cell">
-            <div class="step-cell__num">02</div>
-            <div class="step-cell__title">AI does the rest</div>
-            <div class="step-cell__desc">Every video is analyzed for speech, on-screen text, objects, faces, actions,
-              and abstract concepts.</div>
-          </div>
-          <div class="step-cell">
-            <div class="step-cell__num">03</div>
-            <div class="step-cell__title">Search, share, embed</div>
-            <div class="step-cell__desc">Find any moment instantly. Share a link, embed on your site, or build on top of
-              our API.</div>
-          </div>
-        </div>
+      <div class="footer__nav-col">
+        <h3>Resources</h3>
+        <a href="https://muse.ai/docs">Documentation</a>
+        <a href="https://muse.ai/pricing">Pricing</a>
+        <a href="https://muse.ai/blog">Blog</a>
+        <a href="https://muse.ai/contact">Contact</a>
       </div>
-    </section>
-
-    <!-- Use cases -->
-    <section class="usecases reveal">
-      <div class="wrap">
-        <div class="usecases__head">
-          <span class="section-label">Use cases</span>
-        </div>
-        <div class="usecase-grid">
-          <div class="usecase-cell">
-            <i class="ph-light ph-graduation-cap usecase-cell__icon"></i>
-            <div class="usecase-cell__name">Education</div>
-            <div class="usecase-cell__desc">Students search lectures for exactly what they need. Faculty organize years
-              of footage in seconds. Embed course libraries on your LMS.</div>
-          </div>
-          <div class="usecase-cell">
-            <i class="ph-light ph-microphone-stage usecase-cell__icon"></i>
-            <div class="usecase-cell__name">Events &amp; conferences</div>
-            <div class="usecase-cell__desc">Make talks discoverable long after the event ends. Attendees search across
-              every session to find the moments that matter.</div>
-          </div>
-          <div class="usecase-cell">
-            <i class="ph-light ph-film-slate usecase-cell__icon"></i>
-            <div class="usecase-cell__name">Creators &amp; media</div>
-            <div class="usecase-cell__desc">No competing recommendations. No ads on your content. Monetize with Portals,
-              embed anywhere, own the experience.</div>
-          </div>
-          <div class="usecase-cell">
-            <i class="ph-light ph-users-three usecase-cell__icon"></i>
-            <div class="usecase-cell__name">Teams &amp; internal comms</div>
-            <div class="usecase-cell__desc">A searchable knowledge base for onboarding, demos, and company updates.
-              Secure, collaborative, instantly retrievable.</div>
-          </div>
-          <div class="usecase-cell">
-            <i class="ph-light ph-chart-line-up usecase-cell__icon"></i>
-            <div class="usecase-cell__name">Sales &amp; marketing</div>
-            <div class="usecase-cell__desc">Branded player with your logo, custom CTAs, and detailed analytics.
-              Integrates with your existing stack.</div>
-          </div>
-          <div class="usecase-cell">
-            <i class="ph-light ph-headphones usecase-cell__icon"></i>
-            <div class="usecase-cell__name">Podcasts &amp; audio</div>
-            <div class="usecase-cell__desc">Auto-transcripts, deep search, and a clean player. Let your audience find
-              the exact conversation they're looking for.</div>
-          </div>
-        </div>
+      <div class="footer__nav-col">
+        <h3>Company</h3>
+        <a href="https://muse.ai/about">About</a>
+        <a href="https://muse.ai/opportunities">Careers</a>
+        <a href="https://muse.ai/integrations">Integrations</a>
+        <a href="https://muse.ai/referrals">Referrals</a>
       </div>
-    </section>
+    </nav>
 
-    <!-- Quote -->
-    <section class="quote-section reveal">
-      <div class="wrap">
-        <blockquote>&ldquo;We saved $100K and published 20,000 videos. Skiv replaced our entire video
-          infrastructure.&rdquo;</blockquote>
-        <cite>Academia.edu</cite>
+    <div class="footer__bottom">
+      <span>&#9654; Skiv &mdash; Search &middot; Knowledge &middot; Internet &middot; Video</span>
+      <div class="footer__bottom-links">
+        <a href="https://muse.ai/terms">Terms</a>
+        <a href="https://muse.ai/privacy">Privacy</a>
       </div>
-    </section>
-
-    <!-- Plans -->
-    <section class="plans reveal" id="plans">
-      <div class="wrap">
-        <div class="plans__head">
-          <span class="section-label">Plans</span>
-        </div>
-        <div class="plans__toggle">
-          <button class="plans__toggle-btn active" data-cycle="yearly">Yearly (50% off)</button>
-          <button class="plans__toggle-btn" data-cycle="monthly">Monthly</button>
-        </div>
-        <div class="plans-grid">
-
-          <div class="plan-col">
-            <div class="plan-col__head">
-              <div class="plan-col__name">Basic</div>
-            </div>
-            <p class="plan-col__desc">Everything you need to host and share videos with AI search.</p>
-            <div class="plan-col__pricing">
-              <div class="plan-col__price"><span class="plan-price-val" data-monthly="16" data-yearly="8">$8</span> / mo
-              </div>
-              <div class="plan-col__period" data-yearly-only>billed yearly</div>
-            </div>
-            <a href="https://muse.ai/join" class="btn btn--primary">Start free &rarr;</a>
-            <ul class="plan-col__features">
-              <li class="plan-col__feature">80 GB storage</li>
-              <li class="plan-col__feature">1 seat</li>
-              <li class="plan-col__feature">Unlimited embeds</li>
-              <li class="plan-col__feature">4K playback</li>
-              <li class="plan-col__feature">Portals</li>
-              <li class="plan-col__feature">Email support</li>
-            </ul>
-          </div>
-
-          <div class="plan-col" data-featured>
-            <div class="plan-col__head">
-              <div class="plan-col__name">Plus</div>
-              <span class="plan-col__badge">Popular</span>
-            </div>
-            <p class="plan-col__desc">More storage, privacy controls, and advanced player customization.</p>
-            <div class="plan-col__pricing">
-              <div class="plan-col__price"><span class="plan-price-val" data-monthly="40" data-yearly="20">$20</span> /
-                mo</div>
-              <div class="plan-col__period" data-yearly-only>billed yearly</div>
-            </div>
-            <a href="https://muse.ai/join" class="btn btn--primary">Start free &rarr;</a>
-            <ul class="plan-col__features">
-              <li class="plan-col__feature">Everything in Basic</li>
-              <li class="plan-col__feature">200 GB storage</li>
-              <li class="plan-col__feature">3 seats</li>
-              <li class="plan-col__feature">Geo-restricted playback</li>
-              <li class="plan-col__feature">Expiring links</li>
-              <li class="plan-col__feature">Call-to-action overlays</li>
-              <li class="plan-col__feature">Original file storage</li>
-              <li class="plan-col__feature">Custom player styling</li>
-              <li class="plan-col__feature">Enhanced privacy &amp; security</li>
-            </ul>
-          </div>
-
-          <div class="plan-col">
-            <div class="plan-col__head">
-              <div class="plan-col__name">Pro</div>
-            </div>
-            <p class="plan-col__desc">For teams that need scale, integrations, and priority support.</p>
-            <div class="plan-col__pricing">
-              <div class="plan-col__price"><span class="plan-price-val" data-monthly="100" data-yearly="50">$50</span> /
-                mo</div>
-              <div class="plan-col__period" data-yearly-only>billed yearly</div>
-            </div>
-            <a href="https://muse.ai/join" class="btn btn--primary">Start free &rarr;</a>
-            <ul class="plan-col__features">
-              <li class="plan-col__feature">Everything in Plus</li>
-              <li class="plan-col__feature">1 TB storage</li>
-              <li class="plan-col__feature">10 seats</li>
-              <li class="plan-col__feature">VAST ad support</li>
-              <li class="plan-col__feature">Delegated uploads</li>
-              <li class="plan-col__feature">Priority support</li>
-              <li class="plan-col__feature">Custom extensions</li>
-              <li class="plan-col__feature">Custom integrations</li>
-            </ul>
-          </div>
-
-          <div class="plan-col plan-col--enterprise">
-            <div>
-              <div class="plan-col__name">Enterprise</div>
-              <p class="plan-col__desc">Unlimited storage, unlimited seats, dedicated account manager, and custom applications.</p>
-            </div>
-            <a href="https://muse.ai/contact" class="btn btn--primary">Contact us &rarr;</a>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <footer class="footer">
-    <div class="wrap">
-
-      <div class="footer__cta">
-        <h2>Start for free.<br>Scale when you're ready.</h2>
-        <div class="footer__cta-actions">
-          <a href="https://muse.ai/join" class="btn btn--primary">Get started →</a>
-          <a href="https://muse.ai/pricing" class="btn btn--ghost">See pricing</a>
-        </div>
-      </div>
-
-      <nav class="footer__nav">
-        <div class="footer__nav-col">
-          <h3>Product</h3>
-          <a href="/search-inside-video">AI Video Search</a>
-          <a href="/video-hosting">Cloud Storage</a>
-          <a href="/player">Player</a>
-          <a href="https://muse.ai/docs#portals">Portals</a>
-          <a href="https://muse.ai/api">API</a>
-        </div>
-        <div class="footer__nav-col">
-          <h3>Resources</h3>
-          <a href="https://muse.ai/docs">Documentation</a>
-          <a href="https://muse.ai/pricing">Pricing</a>
-          <a href="https://muse.ai/blog">Blog</a>
-          <a href="https://muse.ai/contact">Contact</a>
-        </div>
-        <div class="footer__nav-col">
-          <h3>Company</h3>
-          <a href="https://muse.ai/about">About</a>
-          <a href="https://muse.ai/opportunities">Careers</a>
-          <a href="https://muse.ai/integrations">Integrations</a>
-          <a href="https://muse.ai/referrals">Referrals</a>
-        </div>
-      </nav>
-
-      <div class="footer__bottom">
-        <span>&#9654; Skiv &mdash; Search &middot; Knowledge &middot; Internet &middot; Video</span>
-        <div class="footer__bottom-links">
-          <a href="https://muse.ai/terms">Terms</a>
-          <a href="https://muse.ai/privacy">Privacy</a>
-        </div>
-      </div>
-
     </div>
-  </footer>
 
-  <script>
-    function toggleTheme() {
-      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
-      updateShowcaseVideos();
-    }
+  </div>
+</footer>
 
-    function updateShowcaseVideos() {
-      var dark = document.documentElement.getAttribute('data-theme') === 'dark';
-      // Selector covers both originals and glow clones (clones inherit data attributes)
-      document.querySelectorAll('[data-dark][data-light]').forEach(function (v) {
-        var src = dark ? v.dataset.dark : v.dataset.light;
-        if (v.getAttribute('src') !== src) {
-          v.setAttribute('src', src);
-        }
-      });
-    }
+<script>
+  function toggleTheme() {
+    var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    updateShowcaseVideos();
+  }
 
-    // Scroll reveal via IntersectionObserver
-    function initReveal() {
-      if (!('IntersectionObserver' in window)) {
-        document.querySelectorAll('.reveal').forEach(function (el) {
-          el.classList.add('is-visible');
+  function updateShowcaseVideos() {
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    // Selector covers both originals and glow clones (clones inherit data attributes)
+    document.querySelectorAll('[data-dark][data-light]').forEach(function (v) {
+      var src = dark ? v.dataset.dark : v.dataset.light;
+      if (v.getAttribute('src') !== src) {
+        v.setAttribute('src', src);
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    updateShowcaseVideos();
+  });
+
+  (function () {
+    var btn = document.querySelector('.menu-toggle');
+    var nav = document.getElementById('site-nav');
+    if (!btn || !nav) return;
+    btn.addEventListener('click', function () {
+      var open = nav.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open);
+      btn.textContent = open ? 'Close' : 'Menu';
+    });
+  })();
+
+  // Plans billing toggle
+  (function () {
+    var btns = document.querySelectorAll('.plans__toggle-btn');
+    if (!btns.length) return;
+    btns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        btns.forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        var yearly = btn.dataset.cycle === 'yearly';
+        document.querySelectorAll('.plan-price-val').forEach(function (el) {
+          el.textContent = '$' + (yearly ? el.dataset.yearly : el.dataset.monthly);
         });
+        document.querySelectorAll('[data-yearly-only]').forEach(function (el) {
+          el.style.display = yearly ? '' : 'none';
+        });
+      });
+    });
+  })();
+
+  // ── Shader effects toolbar toggle ──
+  (function () {
+    var allFx = ['fx-crt'];
+    var toolbar = document.querySelector('.fx-toolbar');
+    if (!toolbar) return;
+
+    toolbar.addEventListener('click', function (e) {
+      // Independent toggles (glow, etc.)
+      var toggle = e.target.closest('button[data-toggle]');
+      if (toggle) {
+        toggle.classList.toggle('active');
+        var key = toggle.dataset.toggle;
+        if (key === 'glow') {
+          document.body.classList.toggle('fx-no-glow');
+        }
         return;
       }
-      var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-      document.querySelectorAll('.reveal').forEach(function (el) {
-        observer.observe(el);
-      });
-    }
+      // Mutually-exclusive fx buttons
+      var btn = e.target.closest('button[data-fx]');
+      if (!btn) return;
 
-    document.addEventListener('DOMContentLoaded', function () {
-      updateShowcaseVideos();
-      initReveal();
-    });
+      // Remove all fx classes from body
+      allFx.forEach(function (cls) { document.body.classList.remove(cls); });
 
-    (function () {
-      var btn = document.querySelector('.menu-toggle');
-      var nav = document.getElementById('site-nav');
-      if (!btn || !nav) return;
+      // Toggle active state on fx buttons only
+      toolbar.querySelectorAll('button[data-fx]').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
 
-      function closeMenu() {
-        nav.classList.remove('open');
-        btn.setAttribute('aria-expanded', 'false');
-        btn.textContent = 'Menu';
+      // Apply selected effect (empty string = none)
+      var fx = btn.dataset.fx;
+      if (fx) {
+        document.body.classList.add(fx);
       }
-
-      btn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        var open = nav.classList.toggle('open');
-        btn.setAttribute('aria-expanded', open);
-        btn.textContent = open ? 'Close' : 'Menu';
-      });
-
-      document.addEventListener('click', function (e) {
-        if (nav.classList.contains('open') && !nav.contains(e.target) && e.target !== btn) {
-          closeMenu();
-        }
-      });
-    })();
-
-    // Plans billing toggle
-    (function () {
-      var btns = document.querySelectorAll('.plans__toggle-btn');
-      if (!btns.length) return;
-      btns.forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          btns.forEach(function (b) { b.classList.remove('active'); });
-          btn.classList.add('active');
-          var yearly = btn.dataset.cycle === 'yearly';
-          document.querySelectorAll('.plan-price-val').forEach(function (el) {
-            el.textContent = '$' + (yearly ? el.dataset.yearly : el.dataset.monthly);
-          });
-          document.querySelectorAll('[data-yearly-only]').forEach(function (el) {
-            el.style.display = yearly ? '' : 'none';
-          });
-        });
-      });
-    })();
-
-    // ── Shader effects toolbar toggle ──
-    (function () {
-      var allFx = ['fx-crt'];
-      var toolbar = document.querySelector('.fx-toolbar');
-      if (!toolbar) return;
-
-      toolbar.addEventListener('click', function (e) {
-        var btn = e.target.closest('button[data-fx]');
-        if (!btn) return;
-
-        // Remove all fx classes from body
-        allFx.forEach(function (cls) { document.body.classList.remove(cls); });
-
-        // Toggle active state on buttons
-        toolbar.querySelectorAll('button').forEach(function (b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-
-        // Apply selected effect (empty string = none)
-        var fx = btn.dataset.fx;
-        if (fx) {
-          document.body.classList.add(fx);
-        }
-      });
-    })();
-  </script>
+    });
+  })();
+</script>
 </body>
 
 </html>
