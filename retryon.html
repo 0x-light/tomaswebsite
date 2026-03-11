@@ -648,7 +648,7 @@
       .hd-nav a { font-size: 14px; }
       .show-desc { font-size: 14px; }
 
-      .hero { padding: 14vh 20px; }
+      .hero { padding: 60px 20px; }
       .hero-title { font-size: clamp(28px, 8vw, 42px); }
 
       .mod-grid { grid-template-columns: 1fr; }
@@ -1124,7 +1124,13 @@
     document.querySelectorAll('a[href^="#"]').forEach(function (a) {
       a.addEventListener('click', function (e) {
         var t = document.querySelector(this.getAttribute('href'));
-        if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        if (t) {
+          e.preventDefault();
+          var hd = document.querySelector('.hd');
+          var offset = hd ? hd.offsetHeight : 0;
+          var top = t.getBoundingClientRect().top + window.pageYOffset - offset;
+          window.scrollTo({ top: top, behavior: 'smooth' });
+        }
       });
     });
   </script>
