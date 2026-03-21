@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RetryOn</title>
+  <meta name="description" content="AI-powered visual production for fashion brands. Editorial, e-commerce, lookbooks, video. One system, zero drift." />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <style>
+    :root {
+      --bg: #f6f5f3;
+      --fg: #111;
+      --mid: rgba(17,17,17,.50);
+      --faint: rgba(17,17,17,.28);
+      --rule: rgba(17,17,17,.12);
+      --surface: rgba(17,17,17,.03);
+      --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --page: 1080px;
+      --gutter: 32px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; overflow-x: clip; }
+    ::selection { background: var(--fg); color: var(--bg); }
+
+    body {
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--fg);
+      background: var(--bg);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    a:focus-visible { outline: 2px solid var(--faint); outline-offset: 2px; }
+    img { display: block; max-width: 100%; }
+    button { font-family: inherit; cursor: pointer; }
+    ol, ul { list-style: none; }
+
+    .w { max-width: var(--page); margin: 0 auto; padding: 0 var(--gutter); }
+
+    /* ── Header ───────────────────────────────── */
+
+    .hd {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid var(--rule);
+    }
+    .hd-inner {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 15px;
+    }
+    .hd-logo img { height: 30px; width: auto; display: block; }
+    .hd-nav { display: flex; align-items: center; gap: 4px; }
+    .hd-nav a {
+      padding: 6px 10px; font-size: 16px;
+      color: var(--faint); transition: color .15s;
+    }
+    .hd-nav a:hover { color: var(--fg); }
+    .hd-cta {
+      padding: 7px 14px; font-size: 14px;
+      background: var(--fg); color: var(--bg);
+      border: none; display: inline-block;
+      transition: opacity .15s;
+    }
+    .hd-cta:hover { opacity: .75; }
+    .hd-nav a.hd-cta { color: var(--bg); }
+    .hd-nav a.hd-cta:hover { color: var(--bg); }
+    .hd-toggle {
+      display: none; background: none; border: none;
+      font-size: 14px; color: var(--faint); padding: 0;
+    }
+
+    /* ── Buttons ──────────────────────────────── */
+
+    .btn-dark {
+      padding: 7px 14px; font-size: 16px;
+      background: var(--fg); color: var(--bg);
+      border: none; display: inline-block;
+      transition: opacity .15s;
+    }
+    .btn-dark:hover { opacity: .8; }
+    .btn-ghost {
+      padding: 7px 14px; font-size: 16px;
+      background: rgba(17,17,17,.09); color: var(--fg);
+      border: none; display: inline-block;
+      transition: color .15s;
+    }
+    .btn-ghost:hover { color: var(--fg); }
+
+    /* ── Rail: the continuous vertical-border frame ── */
+    /*
+     * Two vertical lines run the full page height.
+     * Horizontal rules separate sections within the frame.
+     * The image strip is the only element that breaks out.
+     */
+
+    .rail {
+      max-width: var(--page);
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+    }
+    .rail-inner {
+      border-left: 1px solid var(--rule);
+      border-right: 1px solid var(--rule);
+    }
+
+    /* Horizontal rule: extends edge-to-edge across the full viewport */
+    .rail-rule {
+      height: 1px;
+      background: var(--rule);
+      position: relative;
+      width: 100vw;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* Empty breathing space between major sections (inside the rail) */
+    .rail-spacer {
+      padding: var(--gutter) 0;
+    }
+
+    /* ── Hero ─────────────────────────────────── */
+
+    .hero {
+      padding: 80px 48px 64px;
+      text-align: center;
+    }
+    .hero-title {
+      font-size: clamp(36px, 6vw, 62px);
+      font-weight: 400;
+      line-height: 1.06;
+      letter-spacing: -0.035em;
+    }
+    .hero-sub {
+      margin: 20px auto 0;
+      max-width: 510px;
+      font-size: 16px;
+      color: var(--mid);
+      line-height: 1.55;
+    }
+    .hero-actions {
+      margin-top: 28px;
+      display: flex; gap: 10px;
+      justify-content: center; align-items: center;
+    }
+
+    /* ── Image strip (full-width, scrolling) ─── */
+
+    .img-strip { overflow: hidden; }
+    .img-strip-row {
+      display: flex;
+      animation: drift 50s linear infinite;
+      width: max-content;
+    }
+    .img-strip-item {
+      flex-shrink: 0; width: 220px; overflow: hidden;
+    }
+    .img-strip-item img {
+      width: 100%; height: 100%; object-fit: cover;
+      user-select: none; pointer-events: none;
+    }
+    @keyframes drift { to { transform: translateX(-50%); } }
+
+    /* ── Section content (padded inside the rail) */
+
+    .rail-section {
+      padding: var(--gutter);
+    }
+
+    /* ── Section split header ────────────────── */
+
+    .sec-split {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: var(--gutter);
+    }
+    .sec-split-title {
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+    .sec-split-sub {
+      color: var(--faint);
+      font-size: 18px;
+    }
+
+    /* ── Numbers ──────────────────────────────── */
+
+    .nums-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    .num {
+      padding: var(--gutter);
+    }
+    .num + .num {
+      border-left: 1px solid var(--rule);
+    }
+    .num-fig {
+      font-size: clamp(40px, 5vw, 54px);
+      font-weight: 400;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+    .num-label {
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: -0.005em;
+    }
+    .num-note {
+      margin-top: 6px;
+      font-size: 14px;
+      color: var(--mid);
+      line-height: 1.5;
+      max-width: 260px;
+    }
+
+    /* ── Modules ──────────────────────────────── */
+
+    .mod-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    .mod-item {
+      padding: var(--gutter);
+      border-bottom: 1px solid var(--rule);
+    }
+    .mod-item:nth-last-child(-n+3) {
+      border-bottom: none;
+    }
+    .mod-item:nth-child(3n+2),
+    .mod-item:nth-child(3n) {
+      border-left: 1px solid var(--rule);
+    }
+    .mod-name {
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+    }
+    .mod-desc {
+      font-size: 14px;
+      color: var(--mid);
+      line-height: 1.5;
+    }
+
+    /* ── Showcase ─────────────────────────────── */
+
+    /* image left, text right */
+    .show-editorial {
+      display: grid;
+      grid-template-columns: 2fr 3fr;
+      min-height: 440px;
+    }
+    /* text left, image right */
+    .show-editorial--flip {
+      grid-template-columns: 3fr 2fr;
+    }
+    .show-editorial--flip .show-img {
+      order: 2;
+      border-right: none;
+      border-left: 1px solid var(--rule);
+    }
+    .show-editorial--flip .show-body {
+      order: 1;
+    }
+    .show-img {
+      overflow: hidden;
+      background: var(--surface);
+      border-right: 1px solid var(--rule);
+    }
+    .show-img img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .show-body {
+      padding: 40px 40px;
+      display: flex;
+      flex-direction: column;
+    }
+    .show-tag {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--faint);
+      margin-bottom: 8px;
+    }
+    .show-title {
+      font-size: clamp(22px, 2.4vw, 28px);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .show-desc {
+      font-size: 17px;
+      color: var(--mid);
+      line-height: 1.55;
+      max-width: 400px;
+      margin-top: auto;
+      padding-top: 40px;
+    }
+
+    /* E-commerce: text only */
+    .show-text-only {
+      padding: 44px 40px;
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+    }
+    .show-text-only .show-desc {
+      margin-top: auto;
+      padding-top: 40px;
+      max-width: 420px;
+    }
+
+    /* ── FAQ ──────────────────────────────────── */
+
+    .faq-heading {
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      padding: var(--gutter);
+    }
+    .faq-rule {
+      height: 1px;
+      background: var(--rule);
+    }
+    .faq-item {
+      padding: 0 var(--gutter);
+    }
+    .faq-q {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      width: 100%; padding: var(--gutter) 0;
+      font: inherit; font-size: 16px;
+      background: none; border: none;
+      text-align: left; color: var(--fg);
+      cursor: pointer; gap: 20px;
+    }
+    .faq-label { flex: 1; }
+    .faq-icon {
+      font-size: 18px; font-weight: 300;
+      color: var(--faint); flex-shrink: 0;
+    }
+    .faq-a-wrap {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows .3s ease;
+    }
+    .faq-item.open .faq-a-wrap {
+      grid-template-rows: 1fr;
+    }
+    .faq-a {
+      overflow: hidden;
+      font-size: 15px; color: var(--mid);
+      line-height: 1.6;
+    }
+    .faq-a > span {
+      display: block;
+      padding-bottom: 20px;
+    }
+
+    /* ── About ────────────────────────────────── */
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+    }
+    .about-heading {
+      font-size: clamp(22px, 2.4vw, 28px);
+      font-weight: 400;
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+      padding: 20px var(--gutter);
+      border-right: 1px solid var(--rule);
+    }
+    .about-body { color: var(--mid); line-height: 1.65; font-size: 15px; padding: 20px var(--gutter); }
+    .about-body p + p { margin-top: 14px; }
+
+    /* ── Contact ──────────────────────────────── */
+
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 2fr 3fr;
+      min-height: 440px;
+    }
+    .contact-left {
+      padding: var(--gutter);
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--rule);
+    }
+    .contact-heading {
+      font-size: clamp(22px, 2.4vw, 28px);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .contact-sub {
+      margin-top: auto;
+      color: var(--mid);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    .contact-right {
+      display: flex;
+      flex-direction: column;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--rule);
+    }
+    .form-cell {
+      padding: 20px;
+    }
+    .form-cell + .form-cell {
+      border-left: 1px solid var(--rule);
+    }
+    .form-cell-full {
+      padding: 20px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .form-cell-grow {
+      padding: 20px;
+      border-bottom: 1px solid var(--rule);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .form-cell label,
+    .form-cell-full label,
+    .form-cell-grow label {
+      display: block;
+      font-size: 15px;
+      color: var(--fg);
+      margin-bottom: 8px;
+    }
+    .form-cell input,
+    .form-cell-full input,
+    .form-cell-grow textarea {
+      width: 100%; font-family: inherit; font-size: 15px;
+      padding: 0; border: none;
+      background: transparent; color: var(--fg);
+      outline: none; border-radius: 0;
+    }
+    .form-cell input::placeholder,
+    .form-cell-full input::placeholder,
+    .form-cell-grow textarea::placeholder { color: rgba(17,17,17,.18); }
+    .form-cell-grow textarea {
+      resize: none; flex: 1; min-height: 60px;
+    }
+    .form-submit {
+      width: 100%;
+      padding: 20px; font-size: 16px;
+      background: var(--fg); color: var(--bg);
+      border: none; transition: opacity .15s;
+      text-align: left;
+    }
+    .form-submit:hover { opacity: .75; }
+
+    /* ── Footer ───────────────────────────────── */
+
+    .ft-layout {
+      display: grid;
+      grid-template-columns: 2fr 3fr;
+    }
+    .ft-left {
+      padding: var(--gutter);
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--rule);
+    }
+    .ft-tagline {
+      font-size: clamp(22px, 2.4vw, 28px);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .ft-actions {
+      margin-top: auto;
+      padding-top: 24px;
+      display: flex; gap: 10px;
+    }
+    .ft-nav {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .ft-col {
+      padding: 20px;
+    }
+    .ft-col + .ft-col {
+      border-left: 1px solid var(--rule);
+    }
+    .ft-col h4 {
+      font-size: 11px; font-weight: 400;
+      text-transform: uppercase; letter-spacing: .1em;
+      color: var(--faint); margin-bottom: 10px;
+    }
+    .ft-col a {
+      display: block; font-size: 14px;
+      color: var(--mid); padding: 2px 0;
+      transition: color .15s;
+    }
+    .ft-col a:hover { color: var(--fg); }
+    .ft-bar {
+      padding: 20px;
+      display: flex; justify-content: space-between;
+      align-items: center;
+      font-size: 12px; color: var(--faint);
+    }
+    .ft-links { display: flex; gap: 16px; }
+    .ft-links a { color: var(--faint); transition: color .15s; }
+    .ft-links a:hover { color: var(--fg); }
+
+    /* ── Reveal ───────────────────────────────── */
+
+    .rv {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity .6s cubic-bezier(.16,1,.3,1),
+                  transform .6s cubic-bezier(.16,1,.3,1);
+    }
+    .rv.v { opacity: 1; transform: none; }
+
+    .rv-stagger > * {
+      opacity: 0; transform: translateY(10px);
+      transition: opacity .5s cubic-bezier(.16,1,.3,1),
+                  transform .5s cubic-bezier(.16,1,.3,1);
+    }
+    .rv-stagger.v > * { opacity: 1; transform: none; }
+    .rv-stagger.v > *:nth-child(1) { transition-delay: 0s; }
+    .rv-stagger.v > *:nth-child(2) { transition-delay: .05s; }
+    .rv-stagger.v > *:nth-child(3) { transition-delay: .1s; }
+    .rv-stagger.v > *:nth-child(4) { transition-delay: .15s; }
+    .rv-stagger.v > *:nth-child(5) { transition-delay: .2s; }
+    .rv-stagger.v > *:nth-child(6) { transition-delay: .25s; }
+
+    /* ── Responsive ───────────────────────────── */
+
+    @media (max-width: 900px) {
+      :root { --gutter: 24px; }
+
+      .hd-toggle { display: none; }
+      .hd-inner { flex-wrap: wrap; padding-top: 14px; padding-bottom: 14px; }
+
+      .hero { padding: 56px 28px 48px; }
+
+      .nums-grid {
+        grid-template-columns: auto 1fr;
+      }
+      .num + .num {
+        border-left: none;
+        border-top: 1px solid var(--rule);
+      }
+      .num {
+        display: grid;
+        grid-column: 1 / -1;
+        grid-template-columns: subgrid;
+        grid-template-rows: auto auto;
+        gap: 0;
+        padding: 0;
+      }
+      .num-fig {
+        font-size: clamp(12px, 10vw, 38px);
+        grid-column: 1;
+        grid-row: 1 / 3;
+        display: flex;
+        align-items: flex-end;
+        line-height: normal;
+        padding: var(--gutter);
+        border-right: 1px solid var(--rule);
+      }
+      .num-label {
+        grid-column: 2;
+        grid-row: 1;
+        margin-top: 0;
+        padding: var(--gutter) var(--gutter) 0;
+        align-self: end;
+      }
+      .num-note {
+        grid-column: 2;
+        grid-row: 2;
+        font-size: 13px;
+        padding: 4px var(--gutter) var(--gutter);
+      }
+
+      .mod-grid { grid-template-columns: repeat(2, 1fr); }
+      .mod-item:nth-child(3n+2),
+      .mod-item:nth-child(3n) {
+        border-left: none;
+      }
+      .mod-item:nth-child(even) {
+        border-left: 1px solid var(--rule);
+      }
+
+      .show-editorial,
+      .show-editorial--flip {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .show-editorial--flip .show-img {
+        order: 0;
+        border-left: none;
+        border-bottom: 1px solid var(--rule);
+      }
+      .show-editorial--flip .show-body { order: 1; }
+      .show-img {
+        min-height: 320px;
+        border-right: none;
+        border-bottom: 1px solid var(--rule);
+      }
+      .show-body { padding: 28px 28px; }
+      .show-desc { padding-top: 24px; }
+
+      .about-grid { grid-template-columns: 1fr; }
+      .about-heading { border-right: none; border-bottom: 1px solid var(--rule); }
+      .contact-layout {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .contact-left {
+        border-right: none;
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .ft-layout {
+        grid-template-columns: 1fr;
+      }
+      .ft-left {
+        border-right: none;
+        border-bottom: 1px solid var(--rule);
+      }
+      .ft-nav { grid-template-columns: repeat(3, 1fr); }
+
+      .sec-split { flex-direction: column; gap: 4px; }
+    }
+
+    @media (max-width: 600px) {
+      :root { --gutter: 16px; }
+
+      .hd-logo img { height: 25px; }
+      .hd-nav a { font-size: 14px; }
+      .show-desc { font-size: 14px; }
+
+      .hero { padding: 60px 20px; }
+      .hero-title { font-size: clamp(28px, 8vw, 42px); }
+
+      .mod-grid { grid-template-columns: 1fr; }
+      .mod-item,
+      .mod-item:nth-last-child(-n+3) {
+        border-left: none;
+        border-bottom: 1px solid var(--rule);
+      }
+      .mod-item:last-child {
+        border-bottom: none;
+      }
+
+      .form-row { grid-template-columns: 1fr; }
+      .form-cell + .form-cell {
+        border-left: none;
+        border-top: 1px solid var(--rule);
+      }
+
+      .ft-bar { flex-direction: column; gap: 10px; align-items: flex-start; }
+      .ft-nav { grid-template-columns: 1fr; }
+      .ft-col + .ft-col {
+        border-left: none;
+        border-top: 1px solid var(--rule);
+      }
+      .team-person { flex: 1 1 140px; padding-right: 16px; }
+
+      .show-body { padding: 24px 16px; }
+      .show-text-only { padding: 24px 16px; }
+      .show-img { min-height: 260px; }
+    }
+
+    @media (hover: none) {
+      .hd-cta:hover { opacity: 1; }
+      .hd-nav a:hover { color: var(--faint); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+      }
+      .rv, .rv-stagger > * { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header class="hd">
+    <div class="hd-inner">
+      <a href="/new" class="hd-logo"><img src="https://retryon.com/assets/retryon-logo-header-BO64zL-Y.png" alt="RetryOn" /></a>
+      <button class="hd-toggle" aria-label="Menu" aria-controls="nav" aria-expanded="false">Menu</button>
+      <nav id="nav" class="hd-nav">
+        <a href="#contact" class="hd-cta">Request access</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ═══ The Rail: continuous bordered frame ═══ -->
+    <div class="rail">
+      <div class="rail-inner">
+
+        <!-- ── Hero ── -->
+        <section class="hero rv">
+          <h1 class="hero-title">The AI atelier for&nbsp;fashion.</h1>
+          <p class="hero-sub">One system for every visual your brand needs. Editorial, e-commerce, lookbooks, video. Campaign-grade output, total brand control.</p>
+          <div class="hero-actions">
+            <a href="#contact" class="btn-dark">Request access</a>
+            <a href="#modules" class="btn-ghost">See how it works</a>
+          </div>
+        </section>
+
+        <div class="rail-rule"></div>
+
+      </div>
+    </div>
+
+    <!-- ── Image Strip (full-width, scrolling) ── -->
+    <section class="img-strip rv" aria-hidden="true">
+      <div class="img-strip-row">
+        <div class="img-strip-item"><img src="https://retryon.com/assets/modules-ret1-D4jIovqq.png" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/modules-ecommerce-CFJQP98n.jpg" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/modules-ret3-CvCQom07.jpg" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/modules-lara-B29zJJCD.jpg" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/modules-commercial-CraUH2Dc.jpg" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/modules-editorial-w98GzTGY.jpg" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/retry10-tdTkhV10.png" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/retry11-DdL1nTUJ.jpg" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/retry9-BM36CLgs.jpg" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/retry7-B9n-ARKS.jpg" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/editorial-2-40-Dg6TPc77.jpg" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/retry8-Cc7AzzcB.png" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/modules-ret1-D4jIovqq.png" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/modules-ecommerce-CFJQP98n.jpg" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/modules-ret3-CvCQom07.jpg" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/modules-lara-B29zJJCD.jpg" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/modules-commercial-CraUH2Dc.jpg" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/modules-editorial-w98GzTGY.jpg" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/retry10-tdTkhV10.png" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/retry11-DdL1nTUJ.jpg" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/retry9-BM36CLgs.jpg" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/retry7-B9n-ARKS.jpg" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/editorial-2-40-Dg6TPc77.jpg" alt="" /></div>
+        <div class="img-strip-item"><img src="https://retryon.com/assets/retry8-Cc7AzzcB.png" alt="" /></div>
+      </div>
+    </section>
+
+    <!-- ═══ Rail resumes ═══ -->
+    <div class="rail">
+      <div class="rail-inner">
+
+        <div class="rail-rule"></div>
+        <div class="rail-spacer"></div>
+        <div class="rail-rule"></div>
+
+        <!-- ── Numbers header ── -->
+        <div class="sec-split rv" id="numbers">
+          <div class="sec-split-title">How we can help</div>
+          <div class="sec-split-sub">By the numbers</div>
+        </div>
+
+        <div class="rail-rule"></div>
+
+        <!-- ── Numbers grid ── -->
+        <div class="nums-grid rv-stagger">
+          <div class="num">
+            <div class="num-fig">10&times;</div>
+            <div class="num-label">Faster to market</div>
+            <div class="num-note">Brief to approval in one flow. No sampling delays, no manual loops.</div>
+          </div>
+          <div class="num">
+            <div class="num-fig">100%</div>
+            <div class="num-label">Brand coherence</div>
+            <div class="num-note">One visual language across every channel, enforced automatically.</div>
+          </div>
+          <div class="num">
+            <div class="num-fig">-60%</div>
+            <div class="num-label">Sample costs</div>
+            <div class="num-note">Fewer physical samples. Faster iteration. Same fidelity.</div>
+          </div>
+        </div>
+
+        <div class="rail-rule"></div>
+        <div class="rail-spacer"></div>
+        <div class="rail-rule"></div>
+
+        <!-- ── Modules header ── -->
+        <div class="sec-split rv" id="modules">
+          <div class="sec-split-title">Modules</div>
+          <div class="sec-split-sub">The tools at your disposal</div>
+        </div>
+
+        <div class="rail-rule"></div>
+
+        <!-- ── Modules grid ── -->
+        <div class="mod-grid rv-stagger">
+          <div class="mod-item">
+            <h3 class="mod-name">Editorial Hub</h3>
+            <p class="mod-desc">Full campaigns from a single thread. Scene, casting, lighting, framing: controlled end to end. Batch variants that stay on-brand.</p>
+          </div>
+          <div class="mod-item">
+            <h3 class="mod-name">Ecommerce Studio</h3>
+            <p class="mod-desc">Consistent PDP imagery across thousands of SKUs. Same angle, crop, and light every time. 180-degree spins included.</p>
+          </div>
+          <div class="mod-item">
+            <h3 class="mod-name">Design Lab</h3>
+            <p class="mod-desc">Explore fabrics, colors, and silhouettes without physical samples. Iterate in minutes, approve in the same session.</p>
+          </div>
+          <div class="mod-item">
+            <h3 class="mod-name">Virtual Try-On</h3>
+            <p class="mod-desc">True-to-life fit and drape on real body types. In-store or in-app. The garment behaves like a garment.</p>
+          </div>
+          <div class="mod-item">
+            <h3 class="mod-name">Commercial</h3>
+            <p class="mod-desc">Permissions, audit trails, versioned assets. Private cloud or on-prem. Built for production teams.</p>
+          </div>
+          <div class="mod-item">
+            <h3 class="mod-name">SEO</h3>
+            <p class="mod-desc">Structured metadata, asset naming, PDP copy. Clean from the start, so your pages rank.</p>
+          </div>
+        </div>
+
+        <div class="rail-rule"></div>
+        <div class="rail-spacer"></div>
+        <div class="rail-rule"></div>
+
+        <!-- ── Showcase: Editorial ── -->
+        <section class="rv">
+          <div class="show-editorial">
+            <div class="show-img">
+              <img src="https://retryon.com/assets/modules-editorial-w98GzTGY.jpg" alt="Editorial campaign output" />
+            </div>
+            <div class="show-body">
+              <div class="show-tag">Editorial</div>
+              <h3 class="show-title">Campaigns that hold together.</h3>
+              <div class="show-desc">Scene, casting, lighting stay consistent across every shot. The visual thread holds from first look to last.</div>
+            </div>
+          </div>
+        </section>
+
+        <div class="rail-rule"></div>
+
+        <!-- ── Showcase: E-commerce ── -->
+        <section class="rv">
+          <div class="show-editorial show-editorial--flip">
+            <div class="show-body">
+              <div class="show-tag">E-commerce</div>
+              <h3 class="show-title">Product pages that convert.</h3>
+              <div class="show-desc">Thousands of SKUs, same angle, crop, and light. Flat lays, on-model, 180-degree spins. Hours, not weeks.</div>
+            </div>
+            <div class="show-img">
+              <img src="https://retryon.com/assets/modules-ecommerce-CFJQP98n.jpg" alt="E-commerce product imagery" />
+            </div>
+          </div>
+        </section>
+
+        <div class="rail-rule"></div>
+
+        <!-- ── Showcase: Design ── -->
+        <section class="rv">
+          <div class="show-editorial">
+            <div class="show-img">
+              <img src="https://retryon.com/assets/modules-ret3-CvCQom07.jpg" alt="Design lab material exploration" />
+            </div>
+            <div class="show-body">
+              <div class="show-tag">Design</div>
+              <h3 class="show-title">Skip the sample room.</h3>
+              <div class="show-desc">New fabrics, colors, and cuts without a physical prototype. Share with your team, approve on the spot, move on.</div>
+            </div>
+          </div>
+        </section>
+
+        <div class="rail-rule"></div>
+
+        <!-- ── Showcase: Try-On ── -->
+        <section class="rv">
+          <div class="show-editorial show-editorial--flip">
+            <div class="show-body">
+              <div class="show-tag">Try-On</div>
+              <h3 class="show-title">See it on before it exists.</h3>
+              <div class="show-desc">Realistic fit on real bodies. Honest proportions, correct drape. Works in your app or on the shop floor.</div>
+            </div>
+            <div class="show-img">
+              <img src="https://retryon.com/assets/modules-lara-B29zJJCD.jpg" alt="Virtual try-on" />
+            </div>
+          </div>
+        </section>
+
+        <div class="rail-rule"></div>
+        <div class="rail-spacer"></div>
+        <div class="rail-rule"></div>
+
+        <!-- ── FAQ ── -->
+        <h2 class="faq-heading rv" id="faq">Frequently Asked Questions</h2>
+
+        <div class="faq-rule"></div>
+
+        <div class="faq-item rv">
+          <button class="faq-q" type="button">
+            <span class="faq-label">What is RetryOn?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a-wrap"><div class="faq-a"><span>An AI production platform for fashion. Design, editorial, and e-commerce live in one system. Visual output stays consistent across every channel.</span></div></div>
+        </div>
+
+        <div class="faq-rule"></div>
+
+        <div class="faq-item rv">
+          <button class="faq-q" type="button">
+            <span class="faq-label">How is this different from other AI image tools?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a-wrap"><div class="faq-a"><span>RetryOn controls the full pipeline: brand rules, lighting, casting, framing, approval gates. The output is predictable because it runs on your rules.</span></div></div>
+        </div>
+
+        <div class="faq-rule"></div>
+
+        <div class="faq-item rv">
+          <button class="faq-q" type="button">
+            <span class="faq-label">What can I produce with it?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a-wrap"><div class="faq-a"><span>Campaigns, lookbooks, product imagery, 180-degree spins, virtual try-on, design explorations, and video. All from one platform.</span></div></div>
+        </div>
+
+        <div class="faq-rule"></div>
+
+        <div class="faq-item rv">
+          <button class="faq-q" type="button">
+            <span class="faq-label">Does it learn my brand?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a-wrap"><div class="faq-a"><span>Yes. You define casting, lighting, framing, and tone. The platform applies those rules to every output. Update your guidelines once and the change propagates everywhere.</span></div></div>
+        </div>
+
+        <div class="faq-rule"></div>
+
+        <div class="faq-item rv">
+          <button class="faq-q" type="button">
+            <span class="faq-label">Is our IP safe?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a-wrap"><div class="faq-a"><span>Yes. We never train on client data. Every deployment includes audit trails and full IP controls, with private cloud and on-prem options.</span></div></div>
+        </div>
+
+        <div class="faq-rule"></div>
+
+        <div class="faq-item rv">
+          <button class="faq-q" type="button">
+            <span class="faq-label">How long does onboarding take?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a-wrap"><div class="faq-a"><span>Minutes. Upload your assets, configure your brand rules, start producing. No prompt engineering, no AI expertise required.</span></div></div>
+        </div>
+
+        <div class="faq-rule"></div>
+        <div class="rail-spacer"></div>
+        <div class="rail-rule"></div>
+
+        <!-- ── About ── -->
+        <section class="rv" id="about">
+          <div class="about-grid">
+            <h2 class="about-heading">About us.</h2>
+            <div class="about-body">
+              <p>Designers, engineers, and fashion people. We built RetryOn because AI could generate images but couldn't produce work a brand would actually ship. The gap was governance, not capability.</p>
+              <p>The platform applies your brand rules automatically. Version control, audit trails, real creative guardrails. Your assets stay yours. We never train on client data.</p>
+              <p>Based between Los Angeles and Lisbon.</p>
+            </div>
+          </div>
+        </section>
+
+        <div class="rail-rule"></div>
+        <div class="rail-spacer"></div>
+        <div class="rail-rule"></div>
+
+        <!-- ── Contact ── -->
+        <section class="rv" id="contact">
+          <form class="contact-layout" id="form">
+            <div class="contact-left">
+              <h2 class="contact-heading">Talk to us.</h2>
+              <p class="contact-sub">Tell us what you're working on and we'll show you how RetryOn can help.</p>
+            </div>
+            <div class="contact-right">
+              <div class="form-row">
+                <div class="form-cell">
+                  <label for="f-name">Name</label>
+                  <input type="text" id="f-name" name="name" required placeholder="Your name" />
+                </div>
+                <div class="form-cell">
+                  <label for="f-co">Company</label>
+                  <input type="text" id="f-co" name="company" placeholder="Company name" />
+                </div>
+              </div>
+              <div class="form-cell-full">
+                <label for="f-email">Email</label>
+                <input type="email" id="f-email" name="email" required placeholder="you@brand.com" />
+              </div>
+              <div class="form-cell-grow">
+                <label for="f-msg">Message</label>
+                <textarea id="f-msg" name="message" required placeholder="What are you working on?"></textarea>
+              </div>
+              <button type="submit" class="form-submit">Send</button>
+            </div>
+          </form>
+        </section>
+
+        <div class="rail-rule"></div>
+        <div class="rail-spacer"></div>
+        <div class="rail-rule"></div>
+
+        <!-- ── Footer ── -->
+        <footer>
+          <div class="ft-layout">
+            <div class="ft-left">
+              <div class="ft-tagline">The AI atelier for&nbsp;fashion.</div>
+              <div class="ft-actions">
+                <a href="#contact" class="btn-dark">Request access</a>
+                <a href="#modules" class="btn-ghost">Modules</a>
+              </div>
+            </div>
+            <nav class="ft-nav">
+              <div class="ft-col">
+                <h4>Platform</h4>
+                <a href="#modules">Modules</a>
+                <a href="#about">About</a>
+                <a href="#faq">FAQ</a>
+              </div>
+              <div class="ft-col">
+                <h4>Company</h4>
+                <a href="#contact">Contact</a>
+                <a href="/privacy">Privacy</a>
+              </div>
+              <div class="ft-col">
+                <h4>Connect</h4>
+                <a href="#">Twitter</a>
+                <a href="#">LinkedIn</a>
+                <a href="#">Instagram</a>
+              </div>
+            </nav>
+          </div>
+
+          <div class="rail-rule"></div>
+
+          <div class="ft-bar">
+            <span>&copy; RetryOn, Inc.</span>
+            <div class="ft-links">
+              <a href="/privacy">Privacy</a>
+            </div>
+          </div>
+        </footer>
+
+        <div class="rail-rule"></div>
+
+      </div><!-- / rail-inner -->
+    </div><!-- / rail -->
+
+  </main>
+
+  <script>
+    /* Mobile menu */
+    (function () {
+      var btn = document.querySelector('.hd-toggle');
+      var nav = document.getElementById('nav');
+      btn.addEventListener('click', function () {
+        var open = nav.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open);
+        btn.textContent = open ? 'Close' : 'Menu';
+      });
+      nav.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function () {
+          nav.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.textContent = 'Menu';
+        });
+      });
+    })();
+
+    /* Scroll reveal */
+    (function () {
+      var els = document.querySelectorAll('.rv, .rv-stagger');
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('v'); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.08 });
+      els.forEach(function (el) { io.observe(el); });
+    })();
+
+    /* FAQ accordion */
+    document.querySelectorAll('.faq-q').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var item = this.parentElement;
+        item.classList.toggle('open');
+        var icon = this.querySelector('.faq-icon');
+        icon.textContent = item.classList.contains('open') ? '\u2013' : '+';
+      });
+    });
+
+    /* Form mock submit */
+    document.getElementById('form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var b = this.querySelector('.form-submit');
+      b.textContent = 'Sent';
+      b.disabled = true;
+      b.style.opacity = '.4';
+      this.reset();
+      setTimeout(function () { b.textContent = 'Send'; b.disabled = false; b.style.opacity = ''; }, 3000);
+    });
+
+    /* Smooth scroll */
+    document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        var t = document.querySelector(this.getAttribute('href'));
+        if (t) {
+          e.preventDefault();
+          var hd = document.querySelector('.hd');
+          var offset = hd ? hd.offsetHeight : 0;
+          var top = t.getBoundingClientRect().top + window.pageYOffset - offset;
+          window.scrollTo({ top: top, behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Skiv — Pricing</title>
+  <meta name="description" content="Simple, transparent pricing. Start free, scale when ready." />
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><style>circle{fill:%23fff}polygon{fill:%231a1a1a}@media(prefers-color-scheme:dark){circle{fill:%2309090B}polygon{fill:%23DEDEDE}}</style><circle cx='16' cy='16' r='15'/><polygon points='13,10 13,22 23,16'/></svg>" />
+  <style>
+    /* ── Tokens ── */
+    :root {
+      --bg-left: #e8e8e6;
+      --bg-right: #f2f2f0;
+      --text: #000;
+      --text-2: rgba(0,0,0,0.5);
+      --text-3: rgba(0,0,0,0.3);
+      --border: rgba(0,0,0,0.12);
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Layout: two fixed-height panels ── */
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 480px;
+      min-height: 100vh;
+    }
+
+    /* ── Left panel ── */
+    .left {
+      background: var(--bg-left);
+      padding: 56px 64px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .plan-label {
+      font-size: 20px;
+      color: var(--text-2);
+      margin-bottom: 48px;
+    }
+
+    .plan-label strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 22px;
+      color: var(--text);
+    }
+
+    .feature-list li::before {
+      content: '✓';
+      font-size: 16px;
+      color: var(--text-2);
+      flex-shrink: 0;
+    }
+
+    /* ── Right panel ── */
+    .right {
+      background: var(--bg-right);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .right__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 32px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .wordmark {
+      font-size: 17px;
+    }
+
+    .sign-in {
+      font-size: 17px;
+      color: var(--text-2);
+      transition: color 0.15s;
+    }
+
+    .sign-in:hover { color: var(--text); }
+
+    .right__body {
+      flex: 1;
+      padding: 40px 32px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .right__title {
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+    }
+
+    /* ── Segmented controls ── */
+    .field-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .field-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--text-3);
+      text-transform: uppercase;
+      width: 72px;
+      flex-shrink: 0;
+    }
+
+    .segmented {
+      display: inline-flex;
+      gap: 4px;
+    }
+
+    .segmented button {
+      font-family: inherit;
+      font-size: 14px;
+      padding: 6px 14px;
+      border: none;
+      background: rgba(0,0,0,0.08);
+      color: var(--text-2);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+
+    .segmented button:hover {
+      background: rgba(0,0,0,0.13);
+      color: var(--text);
+    }
+
+    .segmented button.active {
+      background: var(--text);
+      color: #fff;
+    }
+
+    .storage-note {
+      font-size: 15px;
+      color: var(--text-2);
+      padding-left: 88px;
+      margin-top: -8px;
+    }
+
+    /* ── Form fields ── */
+    .form-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field {
+      width: 100%;
+      padding: 13px 16px;
+      font-family: inherit;
+      font-size: 15px;
+      color: var(--text);
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .field::placeholder { color: var(--text-3); }
+    .field:focus { border-color: rgba(0,0,0,0.35); }
+
+    .field-card {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
+      gap: 0;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0 16px;
+    }
+
+    .field-card input {
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 15px;
+      color: var(--text);
+      padding: 13px 0;
+      background: transparent;
+      width: 100%;
+    }
+
+    .field-card input::placeholder { color: var(--text-3); }
+
+    .card-icon {
+      font-size: 20px;
+      margin-right: 10px;
+      color: var(--text-3);
+    }
+
+    .card-hints {
+      font-size: 13px;
+      color: var(--text-3);
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Price summary ── */
+    .price-summary {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .price-main {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .price-sub {
+      font-size: 15px;
+      color: var(--text-2);
+    }
+
+    /* ── Terms ── */
+    .terms-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--text-2);
+    }
+
+    .terms-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      accent-color: var(--text);
+      cursor: pointer;
+    }
+
+    .terms-row a {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    /* ── Submit button ── */
+    .btn-submit {
+      width: 100%;
+      padding: 16px;
+      font-family: inherit;
+      font-size: 17px;
+      font-weight: 500;
+      background: var(--text);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .btn-submit:hover { opacity: 0.85; }
+
+    /* ── Footer tagline ── */
+    .right__footer {
+      padding: 24px 32px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-3);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 820px) {
+      .layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+      }
+
+      .left {
+        padding: 40px 24px;
+        justify-content: flex-start;
+      }
+
+      .right {
+        border-left: none;
+        border-top: 1px solid var(--border);
+        min-height: auto;
+      }
+    }
+
+    @media (hover: none) {
+      .btn-submit:hover { opacity: 1; }
+      .sign-in:hover { color: var(--text-2); }
+      .segmented button:hover {
+        background: rgba(0,0,0,0.08);
+        color: var(--text-2);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+
+    <!-- Left: plan features -->
+    <div class="left">
+      <p class="plan-label" id="plan-label">Plan <strong>Basic</strong></p>
+      <ul class="feature-list" id="feature-list">
+        <li>80 GB storage</li>
+        <li>Unlimited embeds</li>
+        <li>Basic support</li>
+        <li>Monetize your videos</li>
+      </ul>
+    </div>
+
+    <!-- Right: signup form -->
+    <div class="right">
+      <div class="right__header">
+        <a href="skiv2.html" class="wordmark">&#9654; Skiv</a>
+        <a href="https://muse.ai/login" class="sign-in">Sign in</a>
+      </div>
+
+      <div class="right__body">
+        <div class="right__title">Create your account</div>
+
+        <!-- Plan selector -->
+        <div class="field-row">
+          <span class="field-label">Plan</span>
+          <div class="segmented" id="plan-seg">
+            <button class="active" data-plan="basic">Basic</button>
+            <button data-plan="plus">Plus</button>
+            <button data-plan="pro">Pro</button>
+          </div>
+        </div>
+
+        <!-- Billing selector -->
+        <div class="field-row">
+          <span class="field-label">Billing</span>
+          <div class="segmented" id="billing-seg">
+            <button data-billing="trial">Trial</button>
+            <button data-billing="monthly">Monthly</button>
+            <button class="active" data-billing="yearly">Yearly 50% off</button>
+          </div>
+        </div>
+
+        <p class="storage-note" id="storage-note">80 GB storage</p>
+
+        <!-- Form fields -->
+        <div class="form-fields">
+          <input class="field" type="email" placeholder="Email" autocomplete="email" />
+          <input class="field" type="text" placeholder="Name" autocomplete="name" />
+          <div class="field-card">
+            <span class="card-icon">&#128179;</span>
+            <input type="text" placeholder="Card number" autocomplete="cc-number" inputmode="numeric" />
+            <span class="card-hints">MM / YY&nbsp;&nbsp;CVC</span>
+          </div>
+        </div>
+
+        <!-- Price -->
+        <div class="price-summary">
+          <span class="price-main" id="price-main">$96 / year</span>
+          <span class="price-sub" id="price-sub">($8 / month)</span>
+        </div>
+
+        <!-- Terms -->
+        <label class="terms-row">
+          <input type="checkbox" />
+          I accept the <a href="https://muse.ai/terms">Terms &amp; Conditions</a>.
+        </label>
+
+        <!-- Submit -->
+        <button class="btn-submit">Join now</button>
+      </div>
+
+      <div class="right__footer">
+        Search &middot; Knowledge &middot; Internet &middot; Video
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    var plans = {
+      basic: {
+        label: 'Basic',
+        storage: '80 GB storage',
+        features: ['80 GB storage', 'Unlimited embeds', 'Basic support', 'Monetize your videos'],
+        monthly: 16, yearly: 8
+      },
+      plus: {
+        label: 'Plus',
+        storage: '200 GB storage',
+        features: ['200 GB storage', '3 seats', 'Geo-restricted playback', 'Expiring links', 'Custom player styling', 'Enhanced privacy'],
+        monthly: 40, yearly: 20
+      },
+      pro: {
+        label: 'Pro',
+        storage: '1 TB storage',
+        features: ['1 TB storage', '10 seats', 'VAST ad support', 'Delegated uploads', 'Priority support', 'Custom integrations'],
+        monthly: 100, yearly: 50
+      }
+    };
+
+    var currentPlan = 'basic';
+    var currentBilling = 'yearly';
+
+    function updateUI() {
+      var plan = plans[currentPlan];
+
+      // Left panel label
+      document.getElementById('plan-label').innerHTML = 'Plan <strong>' + plan.label + '</strong>';
+
+      // Left panel features
+      var fl = document.getElementById('feature-list');
+      fl.innerHTML = plan.features.map(function(f) { return '<li>' + f + '</li>'; }).join('');
+
+      // Storage note
+      document.getElementById('storage-note').textContent = plan.storage;
+
+      // Price
+      var pm = document.getElementById('price-main');
+      var ps = document.getElementById('price-sub');
+      if (currentBilling === 'trial') {
+        pm.textContent = 'Free trial';
+        ps.textContent = 'No card required';
+      } else if (currentBilling === 'monthly') {
+        pm.textContent = '$' + plan.monthly + ' / month';
+        ps.textContent = '';
+      } else {
+        var yearly = plan.yearly * 12;
+        pm.textContent = '$' + yearly + ' / year';
+        ps.textContent = '($' + plan.yearly + ' / month)';
+      }
+    }
+
+    // Plan segmented control
+    document.getElementById('plan-seg').addEventListener('click', function(e) {
+      var btn = e.target.closest('button[data-plan]');
+      if (!btn) return;
+      currentPlan = btn.dataset.plan;
+      this.querySelectorAll('button').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      updateUI();
+    });
+
+    // Billing segmented control
+    document.getElementById('billing-seg').addEventListener('click', function(e) {
+      var btn = e.target.closest('button[data-billing]');
+      if (!btn) return;
+      currentBilling = btn.dataset.billing;
+      this.querySelectorAll('button').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      updateUI();
+    });
+
+    updateUI();
+  </script>
+</body>
+
+</html>

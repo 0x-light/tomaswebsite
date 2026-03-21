@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Skiv — Video hosting with AI search</title>
+  <meta name="description" content="Store, search, and share your videos. AI that understands what's in them." />
+  <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><style>circle{fill:%23fff}polygon{fill:%231a1a1a}@media(prefers-color-scheme:dark){circle{fill:%2309090B}polygon{fill:%23DEDEDE}}</style><circle cx='16' cy='16' r='15'/><polygon points='13,10 13,22 23,16'/></svg>" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/light/style.css" />
+  <style>
+    /* ── Tokens ── */
+
+    :root {
+      --bg: #f8f8f7;
+      --text: #000000;
+      --text-rgb: 26, 26, 26;
+      --text-2: rgba(var(--text-rgb), 0.75);
+      --text-3: rgba(var(--text-rgb), 0.35);
+      --text-dim: rgba(var(--text-rgb), 0.15);
+      --border: rgba(var(--text-rgb), 0.1);
+      --card-bg: rgba(var(--text-rgb), 0.04);
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --wrap: 1120px;
+      --gutter: 24px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #000000;
+      --text: #DEDEDE;
+      --text-rgb: 222, 222, 222;
+      --card-bg: rgba(255, 255, 255, 0.06);
+    }
+
+    /* ── Reset ── */
+
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    ::selection {
+      background: var(--text);
+      color: var(--bg);
+    }
+
+    body {
+      font-family: var(--font);
+      font-size: 17px;
+      line-height: 1.65;
+      color: var(--text);
+      background: var(--bg);
+      overflow-x: clip;
+    }
+
+    .page-wrap {
+      overflow-x: clip;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    a:focus-visible {
+      outline: 2px solid var(--text-2);
+      outline-offset: 2px;
+    }
+
+    /* ── Wrap ── */
+
+    .wrap {
+      max-width: var(--wrap);
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+    }
+
+    /* ── Buttons ── */
+
+    .btn {
+      display: inline-block;
+      padding: 8px 10px;
+      border-radius: 0;
+      font-size: 18px;
+      font-family: inherit;
+      line-height: 1;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      border: none;
+    }
+
+    @media (hover: hover) {
+      .btn:hover {
+        opacity: 0.8;
+      }
+    }
+
+    .btn--primary {
+      background: var(--text);
+      color: var(--bg);
+    }
+
+    [data-theme="light"] .btn--primary {
+      background: #000000;
+      color: #f8f8f7;
+    }
+
+    [data-theme="dark"] .btn--primary {
+      background: #DEDEDE;
+      color: #000000;
+    }
+
+    .btn--ghost {
+      background: transparent;
+      color: var(--text-3);
+    }
+
+    @media (hover: hover) {
+      .btn--ghost:hover {
+        color: var(--text);
+        opacity: 1;
+      }
+    }
+
+    /* ── Header ── */
+
+    .header {
+      border-bottom: none;
+    }
+
+    .header .wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+
+    .wordmark {
+      font-size: 18px;
+      letter-spacing: -0.01em;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav a {
+      padding: 8px 10px;
+      color: var(--text-3);
+      font-size: 18px;
+      transition: color 0.15s;
+    }
+
+    @media (hover: hover) {
+      .nav a:hover {
+        color: var(--text);
+      }
+    }
+
+    /* ── Theme toggle ── */
+
+    .theme-toggle {
+      cursor: pointer;
+    }
+
+    [data-theme="light"] .theme-toggle__light,
+    [data-theme="dark"] .theme-toggle__dark {
+      display: none;
+    }
+
+    /* ── Mobile menu ── */
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 16px;
+      color: var(--text-3);
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.15s;
+    }
+
+    @media (hover: hover) {
+      .menu-toggle:hover {
+        color: var(--text);
+      }
+    }
+
+    .menu-toggle[aria-expanded="true"] {
+      color: var(--text);
+    }
+
+    .header__actions {
+      display: none;
+      align-items: center;
+      gap: 17px;
+    }
+
+    /* ── Hero ── */
+
+    .hero {
+      padding: 80px 0 0;
+    }
+
+    .hero__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .hero__headline {
+      font-weight: normal;
+      line-height: 1.1;
+      letter-spacing: -0.035em;
+    }
+
+    .hero__sub {
+      color: var(--text-2);
+      font-size: 20px;
+      line-height: 1.3;
+    }
+
+    .hero__actions {
+      margin-top: 32px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .hero__video {
+      margin-top: 64px;
+      position: relative;
+    }
+
+    /* Main player sits above the glow */
+    .hero__video > .muse-video-player {
+      position: relative;
+      z-index: 1;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    [data-theme="dark"] .hero__video > .muse-video-player {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Transparent overlay to block hover interactions on the player */
+    .hero__video-blocker {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      cursor: default;
+    }
+
+    /* Theme-switch the hero videos */
+    [data-theme="dark"] .hero__light-only,
+    [data-theme="light"] .hero__dark-only {
+      display: none;
+    }
+
+    /* ── Video glow ── */
+
+    /* Hero: a second muse.ai embed, blurred behind the main player */
+    .hero__video-glow {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      transform: scale(1.12);
+      filter: blur(50px) saturate(1.5);
+      opacity: 0.5;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .hero__video-glow *,
+    .hero__video-glow iframe {
+      pointer-events: none !important;
+    }
+
+    [data-theme="dark"] .hero__video-glow {
+      opacity: 0.75;
+    }
+
+
+
+    /* ── Proof strip ── */
+
+    .proof-strip {
+      margin-top: 64px;
+      padding: 20px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .proof-strip .wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .proof__ratings {
+      display: flex;
+      gap: 32px;
+      font-size: 16px;
+      color: var(--text-3);
+    }
+
+    .proof__ratings span {
+      white-space: nowrap;
+    }
+
+    .proof__star {
+      color: var(--text-2);
+    }
+
+    .proof__orgs {
+      font-size: 20px;
+      text-align: center;
+      color: var(--text-3);
+    }
+
+    .proof__orgs strong {
+      color: var(--text-2);
+      font-weight: 500;
+    }
+
+    .proof__orgs .trusted__highlight {
+      color: var(--text);
+    }
+
+    /* ── Section label ── */
+
+    .section-label {
+      letter-spacing: -0.035em;
+      font-size: 25px;
+    }
+
+    /* ── Feature grid ── */
+
+    .features {
+      padding: 80px 0 0;
+    }
+
+    .features__head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+    }
+
+    .feature-cell {
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 24px;
+      transition: background 0.2s;
+    }
+
+    @media (hover: hover) {
+      .feature-cell:hover {
+        background: rgba(var(--text-rgb), 0.03);
+      }
+    }
+
+    .feature-cell__icon {
+      font-size: 24px;
+      color: var(--text-3);
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .feature-cell__name {
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .feature-cell__desc {
+      font-size: 16px;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+
+    /* ── Steps ── */
+
+    .steps-section {
+      padding: 80px 0 0;
+    }
+
+    .steps-section__head {
+      margin-bottom: 32px;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+    }
+
+    .step-cell {
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 24px;
+    }
+
+    .step-cell__icon {
+      font-size: 24px;
+      color: var(--text-3);
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .step-cell__num {
+      font-size: 48px;
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: var(--text-3);
+      margin-bottom: 16px;
+    }
+
+    .step-cell__title {
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .step-cell__desc {
+      font-size: 16px;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+
+    /* ── Showcase ── */
+
+    .showcase {
+      padding: 80px 0 0;
+    }
+
+    .showcase__head {
+      margin-bottom: 32px;
+    }
+
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 40px;
+    }
+
+    .showcase-cell {
+      position: relative;
+      /* no overflow:hidden — let the video glow bleed out */
+    }
+
+    .showcase-cell__video {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background: var(--border);
+      border: 1px solid rgba(0, 0, 0, 0.02);
+    }
+
+    [data-theme="dark"] .showcase-cell__video {
+      border-color: rgba(255, 255, 255, 0.02);
+    }
+
+    .showcase-cell__body {
+      padding: 20px 0 0;
+    }
+
+    .showcase-cell__label {
+      font-size: 14px;
+      color: var(--font);
+      background-color: var(--border);
+      display: inline-block;
+      padding: 1px 7px;
+      margin-bottom: 8px;
+    }
+
+    .showcase-cell__title {
+      letter-spacing: -0.035em;
+      font-size: 25px;
+      margin-bottom: 8px;
+    }
+
+    .showcase-cell__desc {
+      font-size: 18px;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+
+    /* ── Use cases ── */
+
+    .usecases {
+      padding: 80px 0 0;
+    }
+
+    .usecases__head {
+      margin-bottom: 32px;
+    }
+
+    .usecase-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .usecase-cell {
+      background: rgba(var(--text-rgb), 0.04);
+      padding: 28px 24px;
+      transition: background 0.2s;
+    }
+
+    @media (hover: hover) {
+      .usecase-cell:hover {
+        background: rgba(var(--text-rgb), 0.07);
+      }
+    }
+
+    .usecase-cell__icon {
+      font-size: 28px;
+      color: var(--text-3);
+      margin-bottom: 18px;
+      display: block;
+    }
+
+    .usecase-cell__name {
+      font-weight: 500;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .usecase-cell__desc {
+      font-size: 16px;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+
+    /* ── Quote ── */
+
+    .quote-section {
+      padding: 80px 0 0;
+    }
+
+    .quote-section .wrap {}
+
+    .quote-section blockquote {
+      font-size: clamp(22px, 3vw, 32px);
+      font-weight: 400;
+      line-height: 1.45;
+      letter-spacing: -0.015em;
+    }
+
+    .quote-section cite {
+      display: block;
+      margin-top: 20px;
+      font-style: normal;
+      font-size: 16px;
+      color: var(--text-3);
+    }
+
+    /* ── Plans ── */
+
+    .plans {
+      padding: 80px 0 0;
+    }
+
+    .plans__head {
+      margin-bottom: 32px;
+    }
+
+    .plans__toggle {
+      display: inline-flex;
+      margin-bottom: 28px;
+      padding: 4px;
+      background: var(--card-bg);
+      overflow: hidden;
+    }
+
+    .plans__toggle-btn {
+      padding: 8px 10px;
+      font-size: 16px;
+      font-family: inherit;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      border: none;
+    }
+
+    .plans__toggle-btn.active {
+      background: var(--text);
+      color: var(--bg);
+    }
+
+    [data-theme="light"] .plans__toggle-btn.active {
+      background: var(--bg);
+      color: var(--gutter);
+    }
+
+    [data-theme="dark"] .plans__toggle-btn.active {
+      background: #DEDEDE;
+      color: #000000;
+    }
+
+    .plans__toggle-btn:not(.active) {
+      background: transparent;
+      color: var(--text);
+    }
+
+    @media (hover: hover) {
+      .plans__toggle-btn:hover {
+        opacity: 0.8;
+      }
+    }
+
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .plan-col {
+      display: flex;
+      flex-direction: column;
+      padding: 25px;
+      transition: background 0.2s;
+      position: relative;
+      background: var(--card-bg);
+    }
+
+
+
+    /* Enterprise: full-width banner row */
+    .plan-col--enterprise {
+      grid-column: 1 / -1;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .plan-col--enterprise .plan-col__desc {
+      margin-bottom: 0;
+      min-height: 0;
+    }
+
+    @media (hover: hover) {
+      .plan-col:hover {
+        background: rgba(var(--text-rgb), 0.03);
+      }
+    }
+
+    .plan-col__name {
+      font-size: 20px;
+      letter-spacing: -0.02em;
+      line-height: normal;
+      margin-bottom: 10px;
+    }
+
+    .plan-col__badge {
+      display: none;
+      position: absolute;
+      top: 25px;
+      right: 25px;
+    }
+
+    .plan-col__desc {
+      display: block;
+      color: var(--text-2);
+      font-size: 15px;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .plan-col__pricing {
+      margin-bottom: 20px;
+    }
+
+    .plan-col__price {
+      font-size: 32px;
+      font-weight: 400;
+      letter-spacing: -0.035em;
+      line-height: 1.2;
+    }
+
+    .plan-col__period {
+      font-size: 14px;
+      color: var(--text-3);
+      margin-top: 4px;
+    }
+
+    .plan-col>.btn {
+      width: fit-content;
+    }
+
+    .plan-col__features {
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      list-style: none;
+      flex: 1;
+    }
+
+    .plan-col__feature {
+      font-size: 15px;
+      color: var(--text-2);
+      padding: 3px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .plan-col__feature:last-child {}
+
+    .plan-col__feature::before {
+      content: "";
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      min-width: 16px;
+      background: currentColor;
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+      -webkit-mask-size: contain;
+      mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      opacity: 0.4;
+    }
+
+    /* ── Featured plan (Plus) ── */
+
+    .plan-col[data-featured] .plan-col__badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 3px 10px;
+      position: absolute;
+      top: 25px;
+      right: 25px;
+    }
+
+    [data-theme="light"] .plan-col[data-featured] {
+      background: var(--text);
+      color: #f8f8f7;
+      border-color: var(--text);
+    }
+
+    [data-theme="light"] .plan-col[data-featured] .plan-col__desc,
+    [data-theme="light"] .plan-col[data-featured] .plan-col__period {
+      color: rgba(248, 248, 247, 0.55);
+    }
+
+    [data-theme="light"] .plan-col[data-featured] .plan-col__feature {
+      color: rgba(248, 248, 247, 0.7);
+      border-color: rgba(248, 248, 247, 0.1);
+    }
+
+    [data-theme="light"] .plan-col[data-featured] .plan-col__badge {
+      background: #f8f8f7;
+      color: #1a1a1a;
+    }
+
+    [data-theme="light"] .plan-col[data-featured] .btn--primary {
+      background: #f8f8f7;
+      color: #1a1a1a;
+    }
+
+    @media (hover: hover) {
+      [data-theme="light"] .plan-col[data-featured]:hover {
+        background: #222;
+      }
+    }
+
+    [data-theme="dark"] .plan-col[data-featured] {
+      background: #DEDEDE;
+      color: #000;
+      border-color: #DEDEDE;
+    }
+
+    [data-theme="dark"] .plan-col[data-featured] .plan-col__desc,
+    [data-theme="dark"] .plan-col[data-featured] .plan-col__period {
+      color: rgba(0, 0, 0, 0.5);
+    }
+
+    [data-theme="dark"] .plan-col[data-featured] .plan-col__feature {
+      color: rgba(0, 0, 0, 0.65);
+      border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    [data-theme="dark"] .plan-col[data-featured] .plan-col__badge {
+      background: #000;
+      color: #DEDEDE;
+    }
+
+    [data-theme="dark"] .plan-col[data-featured] .btn--primary {
+      background: #000;
+      color: #DEDEDE;
+    }
+
+    @media (hover: hover) {
+      [data-theme="dark"] .plan-col[data-featured]:hover {
+        background: #CCC;
+      }
+    }
+
+    /* ── Footer ── */
+
+    .footer {
+      margin-top: 80px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer__cta {
+      padding: 64px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .footer__cta h2 {
+      font-weight: normal;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+    }
+
+    .footer__cta-actions {
+      margin-top: 24px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .footer__cta-sub {
+      margin-top: 12px;
+      color: var(--text-3);
+      font-size: 14px;
+    }
+
+    .footer__nav {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      padding: 40px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .footer__nav-col h3 {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--text-3);
+      margin-bottom: 16px;
+    }
+
+    .footer__nav-col a {
+      display: block;
+      font-size: 15px;
+      color: var(--text-2);
+      padding: 4px 0;
+      transition: color 0.15s;
+    }
+
+    @media (hover: hover) {
+      .footer__nav-col a:hover {
+        color: var(--text);
+      }
+    }
+
+    .footer__bottom {
+      padding: 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-3);
+      font-size: 14px;
+    }
+
+    .footer__bottom-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer__bottom-links a {
+      color: var(--text-3);
+      transition: color 0.15s;
+    }
+
+    @media (hover: hover) {
+      .footer__bottom-links a:hover {
+        color: var(--text);
+      }
+    }
+
+    /* ── Responsive ── */
+
+    @media (max-width: 900px) {
+      .hero__grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+
+      .hero__right {
+        padding-top: 0;
+      }
+
+      .feature-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .proof-strip .wrap {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
+
+      .plans-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .footer__nav {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 32px;
+      }
+
+      .usecase-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      /* Mobile menu */
+      .header .wrap {
+        height: auto;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .header__actions {
+        display: flex;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      .nav {
+        display: none;
+        flex-direction: column;
+        gap: 0;
+        width: 100%;
+        padding-top: 20px;
+      }
+
+      .nav a {
+        font-size: 16px;
+        padding: 12px 0;
+        color: var(--text-2);
+        width: 100%;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav.open {
+        display: flex;
+      }
+    }
+
+    @media (max-width: 600px) {
+      :root {
+        --gutter: 16px;
+      }
+
+      .hero {
+        padding: 48px 0 0;
+      }
+
+      .hero__headline {
+        font-size: 32px;
+      }
+
+      .feature-grid,
+      .showcase-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .usecase-grid {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 4px;
+        margin-right: calc(-1 * var(--gutter));
+        padding-right: var(--gutter);
+      }
+
+      .usecase-grid::-webkit-scrollbar {
+        display: none;
+      }
+
+      .usecase-cell {
+        flex: 0 0 280px;
+        scroll-snap-align: start;
+      }
+
+      .plans-grid {
+        grid-template-columns: 1fr;
+        margin-left: calc(-1 * var(--gutter));
+        margin-right: calc(-1 * var(--gutter));
+        border-left: none;
+        border-right: none;
+      }
+
+      .plans-grid .plan-col {
+        border-left: none;
+        border-right: none;
+        padding-left: var(--gutter);
+        padding-right: var(--gutter);
+      }
+
+      .showcase-grid {
+        gap: 0;
+        margin-left: calc(-1 * var(--gutter));
+        margin-right: calc(-1 * var(--gutter));
+      }
+
+      .showcase-cell__video {
+        border: none;
+      }
+
+      .showcase-cell:last-child {
+        border-bottom: none;
+      }
+
+      .showcase-cell__body {
+        padding: 16px var(--gutter) 24px;
+      }
+
+      .footer__nav {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 32px;
+      }
+
+      .footer__bottom {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+      }
+
+      .hero__video,
+      .feature-grid,
+      .steps-grid {
+        margin-left: calc(-1 * var(--gutter));
+        margin-right: calc(-1 * var(--gutter));
+        border-left: none;
+        border-right: none;
+      }
+
+      .hero__video > .muse-video-player {
+        border-left: none;
+        border-right: none;
+      }
+
+      .feature-grid .feature-cell,
+      .steps-grid .step-cell {
+        border-left: none;
+        border-right: none;
+        padding-left: var(--gutter);
+        padding-right: var(--gutter);
+      }
+
+      .showcase-grid {
+        gap: 32px;
+      }
+
+      .proof__ratings {
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .features,
+      .showcase,
+      .steps-section,
+      .usecases,
+      .plans,
+      .quote-section {
+        padding: 56px 0 0;
+      }
+
+      .footer {
+        margin-top: 56px;
+      }
+    }
+
+
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        transition-duration: 0.01ms !important;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+
+    /* ── Shader effects (testing toolbar) ── */
+
+    .fx-toolbar {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: flex;
+      gap: 2px;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 5px;
+      border-radius: 10px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+      font-family: var(--font);
+    }
+
+    .fx-toolbar button {
+      font-family: inherit;
+      font-size: 12px;
+      padding: 7px 14px;
+      border: none;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    @media (hover: hover) {
+      .fx-toolbar button:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.08);
+      }
+    }
+
+    .fx-toolbar button.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    .fx-toolbar__sep {
+      width: 1px;
+      align-self: stretch;
+      margin: 4px 2px;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* ── Glow toggle ── */
+    body.fx-no-glow .hero__video-glow {
+      display: none;
+    }
+
+    /* Ensure hero__video can host overlays */
+    .hero__video {
+      overflow: visible;
+    }
+
+    .hero__video::after {
+      display: none;
+    }
+
+    /* ── 1. CRT scanlines ── */
+    body.fx-crt .hero__video {
+      border-radius: 6px;
+    }
+
+    body.fx-crt .hero__video::after {
+      content: '';
+      display: block;
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      background:
+              repeating-linear-gradient(
+                      0deg,
+                      transparent,
+                      transparent 1px,
+                      rgba(0, 0, 0, 0.06) 1px,
+                      rgba(0, 0, 0, 0.06) 3px
+              );
+      pointer-events: none;
+    }
+
+
+  </style>
+  <script>
+    (function () {
+      var s = localStorage.getItem('theme');
+      var d = s || (matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', d);
+    })();
+  </script>
+</head>
+
+<body>
+<div class="page-wrap">
+
+<!-- Shader effects toolbar (testing) -->
+<div class="fx-toolbar" style="display:none">
+  <button class="active" data-fx="">Normal</button>
+  <button data-fx="fx-crt">CRT</button>
+  <span class="fx-toolbar__sep"></span>
+  <button class="active" data-toggle="glow">Glow</button>
+</div>
+
+<!-- Header -->
+<header class="header">
+  <div class="wrap">
+    <a href="/" class="wordmark">&#9654; Skiv</a>
+    <div class="header__actions">
+      <button class="menu-toggle" aria-label="Toggle navigation" aria-controls="site-nav"
+              aria-expanded="false">Menu</button>
+    </div>
+    <nav id="site-nav" class="nav">
+      <a href="https://muse.ai/pricing">Pricing</a>
+      <a href="https://muse.ai/docs">Docs</a>
+      <a href="#" onclick="toggleTheme();return false" class="theme-toggle nav__theme"><span
+              class="theme-toggle__dark">Dark</span><span class="theme-toggle__light">Light</span></a>
+      <a href="https://muse.ai/login">Sign in</a>
+      <a href="https://muse.ai/join">Get started →</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- Hero -->
+  <section class="hero reveal">
+    <div class="wrap">
+      <div class="hero__grid">
+        <div>
+          <h1 class="hero__headline">Video hosting with AI that understands your content.</h1>
+        </div>
+        <div class="hero__right">
+          <p class="hero__sub">Store everything from lectures to raw footage. Find exactly what you need by searching
+            for what's <em>in</em> the video &mdash; speech, text, objects, actions, ideas.</p>
+          <div class="hero__actions">
+            <a href="https://muse.ai/join" class="btn btn--primary">Start for free →</a>
+          </div>
+        </div>
+      </div>
+      <div class="hero__video">
+        <div class="hero__video-blocker" aria-hidden="true"></div>
+        <div class="hero__video-glow" aria-hidden="true">
+          <div class="muse-video-player hero__dark-only" data-video="sLFaX4p" data-search="0" data-links="0"
+               data-logo="0" data-title="0" data-autoplay="1" data-loop="1" data-volume="0"
+               data-width="1120"></div>
+          <div class="muse-video-player hero__light-only" data-video="aKZ2mjn" data-search="0" data-links="0"
+               data-logo="0" data-title="0" data-autoplay="1" data-loop="1" data-volume="0"
+               data-width="1120"></div>
+        </div>
+        <div class="muse-video-player hero__dark-only" data-video="sLFaX4p" data-search="0" data-links="0"
+             data-logo="0" data-title="0" data-autoplay="1" data-loop="1" data-volume="0"
+             data-coverplayposition="center" data-width="1120"></div>
+        <div class="muse-video-player hero__light-only" data-video="aKZ2mjn" data-search="0" data-links="0"
+             data-logo="0" data-title="0" data-autoplay="1" data-loop="1" data-volume="0"
+             data-coverplayposition="center" data-width="1120"></div>
+        <script src="https://muse.ai/static/js/embed-player.min.js"></script>
+      </div>
+    </div>
+  </section>
+
+  <!-- Proof strip -->
+  <div class="proof-strip">
+    <div class="wrap">
+      <p class="proof__orgs">Trusted by the NHS, Fortnum &amp; Mason, New York University, Arizona State University,
+        Toptal,<br><span class="trusted__highlight">and millions of users worldwide.</span></p>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <!--    <section class="features">-->
+  <!--      <div class="wrap">-->
+  <!--        <div class="features__head">-->
+  <!--          <span class="section-label">Features</span>-->
+  <!--        </div>-->
+  <!--        <div class="feature-grid">-->
+  <!--          <a href="/search-inside-video" class="feature-cell">-->
+  <!--            <i class="ph-light ph-magnifying-glass feature-cell__icon"></i>-->
+  <!--            <div class="feature-cell__name">AI video search</div>-->
+  <!--            <div class="feature-cell__desc">Search inside your videos for speech, text, people, objects, and abstract ideas. Go beyond keywords.</div>-->
+  <!--          </a>-->
+  <!--          <a href="/video-hosting" class="feature-cell">-->
+  <!--            <i class="ph-light ph-cloud feature-cell__icon"></i>-->
+  <!--            <div class="feature-cell__name">Cloud storage</div>-->
+  <!--            <div class="feature-cell__desc">Ad-free, private-by-default hosting. Auto-generated subtitles, transcripts, and smart chapters.</div>-->
+  <!--          </a>-->
+  <!--          <a href="/player" class="feature-cell">-->
+  <!--            <i class="ph-light ph-play feature-cell__icon"></i>-->
+  <!--            <div class="feature-cell__name">Player</div>-->
+  <!--            <div class="feature-cell__desc">Fast, customizable HTML5 player with 4K, Chromecast, AirPlay, and in-video search built in.</div>-->
+  <!--          </a>-->
+  <!--          <a href="https://muse.ai/docs#embed-player" class="feature-cell">-->
+  <!--            <i class="ph-light ph-code feature-cell__icon"></i>-->
+  <!--            <div class="feature-cell__name">Embed</div>-->
+  <!--            <div class="feature-cell__desc">Embed videos or entire collections on your site. Style it your way, no coding required.</div>-->
+  <!--          </a>-->
+  <!--          <a href="/record-screen-camera-online" class="feature-cell">-->
+  <!--            <i class="ph-light ph-record feature-cell__icon"></i>-->
+  <!--            <div class="feature-cell__name">Record</div>-->
+  <!--            <div class="feature-cell__desc">Capture your screen or camera directly from the browser. No downloads, no extensions.</div>-->
+  <!--          </a>-->
+  <!--          <a href="https://muse.ai/docs#portals" class="feature-cell">-->
+  <!--            <i class="ph-light ph-storefront feature-cell__icon"></i>-->
+  <!--            <div class="feature-cell__name">Portals</div>-->
+  <!--            <div class="feature-cell__desc">Launch your own branded streaming service with subscriptions, tiers, and managed billing.</div>-->
+  <!--          </a>-->
+  <!--          <a href="/blog/ai-assistant" class="feature-cell">-->
+  <!--            <i class="ph-light ph-chat-circle feature-cell__icon"></i>-->
+  <!--            <div class="feature-cell__name">AI assistant</div>-->
+  <!--            <div class="feature-cell__desc">Chat with your video library. Ask questions, get answers grounded in your content with timestamps.</div>-->
+  <!--          </a>-->
+  <!--          <a href="/video-audio-transcription" class="feature-cell">-->
+  <!--            <i class="ph-light ph-subtitles feature-cell__icon"></i>-->
+  <!--            <div class="feature-cell__name">Transcription</div>-->
+  <!--            <div class="feature-cell__desc">Every video automatically transcribed. Edit, download, or display as interactive subtitles.</div>-->
+  <!--          </a>-->
+  <!--          <a href="https://muse.ai/api" class="feature-cell">-->
+  <!--            <i class="ph-light ph-terminal feature-cell__icon"></i>-->
+  <!--            <div class="feature-cell__name">API</div>-->
+  <!--            <div class="feature-cell__desc">Full programmatic access. Upload, analyze, search, and manage your library from your own code.</div>-->
+  <!--          </a>-->
+  <!--        </div>-->
+  <!--      </div>-->
+  <!--    </section>-->
+
+  <!-- Showcase -->
+  <section class="showcase reveal">
+    <div class="wrap">
+      <div class="showcase__head">
+        <span class="section-label">Everything you need</span>
+      </div>
+      <div class="showcase-grid">
+
+        <div class="showcase-cell">
+          <video class="showcase-cell__video" autoplay playsinline loop muted
+                 data-dark="https://cdn.muse.ai/u/tbe5TJ1/1ded690821a25c01a2cf38d1b79cd12961742c74c1bf6fe7672611900ffa137f/videos/video.mp4"
+                 data-light="https://cdn.muse.ai/u/tbe5TJ1/1530589b9b4a54cfccd44410120eef931342abd0dc255c172f0e95abb9907515/videos/video.mp4"></video>
+          <div class="showcase-cell__body">
+            <div class="showcase-cell__label">Storage</div>
+            <div class="showcase-cell__title">Your video library, without the mess.</div>
+            <div class="showcase-cell__desc">AI-generated subtitles, smart chapters, and transcripts — all automatic.
+              Ad-free, private by default, accessible from any device.</div>
+          </div>
+        </div>
+
+        <div class="showcase-cell">
+          <video class="showcase-cell__video" autoplay playsinline loop muted
+                 data-dark="https://cdn.muse.ai/u/tbe5TJ1/b2fc00db38449c40efa2b40c9b9b0ac95a80dd256cf5de4fd03e376274294ed2/videos/video.mp4"
+                 data-light="https://cdn.muse.ai/u/tbe5TJ1/07e4fc3661f0876b9f51e55ead5e69fc3ef793acbbf120d716ff29139c27c4ae/videos/video.mp4"></video>
+          <div class="showcase-cell__body">
+            <div class="showcase-cell__label">Search</div>
+            <div class="showcase-cell__title">Find any moment. In any video.</div>
+            <div class="showcase-cell__desc">Search for what's said, written, or shown. Abstract ideas work too —
+              "tense moment", "whiteboard diagram", "person in red jacket."</div>
+          </div>
+        </div>
+
+        <div class="showcase-cell">
+          <video class="showcase-cell__video" autoplay playsinline loop muted
+                 data-dark="https://cdn.muse.ai/u/tbe5TJ1/9760a94297ea8f833416ad8db248ee5c2b22218f62b74279811a4c5bd6279875/videos/video.mp4"
+                 data-light="https://cdn.muse.ai/u/tbe5TJ1/0e953b46a1fa57038f1cc450220a3ffa4b9907b2e277e27cf90c5a0253ac8c02/videos/video.mp4"></video>
+          <div class="showcase-cell__body">
+            <div class="showcase-cell__label">AI Assistant</div>
+            <div class="showcase-cell__title">Ask your library a question.</div>
+            <div class="showcase-cell__desc">Get timestamped answers grounded in your own content. Chat your way to
+              the exact clip instead of scrubbing.</div>
+          </div>
+        </div>
+
+        <div class="showcase-cell">
+          <video class="showcase-cell__video" autoplay playsinline loop muted
+                 data-dark="https://cdn.muse.ai/u/tbe5TJ1/511615c9c99d9f84213e3698e5079a2a86e211cc0ceee803b5f68851cc6ae7b1/videos/video.mp4"
+                 data-light="https://cdn.muse.ai/u/tbe5TJ1/30cf1404b5bae1a9befa3e12698fe638451d8075f67f20fdd101482824a43e99/videos/video.mp4"></video>
+          <div class="showcase-cell__body">
+            <div class="showcase-cell__label">Portals</div>
+            <div class="showcase-cell__title">Launch your own streaming service.</div>
+            <div class="showcase-cell__desc">Branded, gated, subscription-ready. Set your own tiers and pricing — we
+              handle billing, accounts, and the rest.</div>
+          </div>
+        </div>
+
+        <div class="showcase-cell">
+          <video class="showcase-cell__video" autoplay playsinline loop muted
+                 data-dark="https://cdn.muse.ai/u/tbe5TJ1/7319f92ed7c7c5255cf4c218c16d140b4acb838b9d168959110a2ea5b486d736/videos/video.mp4"
+                 data-light="https://cdn.muse.ai/u/tbe5TJ1/83fa98410aa292b88b284bffc23f999faf095af0a556cbd17e713208a88fb232/videos/video.mp4"></video>
+          <div class="showcase-cell__body">
+            <div class="showcase-cell__label">Embed</div>
+            <div class="showcase-cell__title">Put your videos anywhere.</div>
+            <div class="showcase-cell__desc">Embed a single video or your entire library on any site. Fully styled to
+              match your brand — AI search included.</div>
+          </div>
+        </div>
+
+        <div class="showcase-cell">
+          <video class="showcase-cell__video" autoplay playsinline loop muted
+                 data-dark="https://cdn.muse.ai/u/tbe5TJ1/d9e6e95b5880a6cb76e870b86bd54903301c5bf12cafe6bae49f48a8114971e5/videos/video.mp4"
+                 data-light="https://cdn.muse.ai/u/tbe5TJ1/6a107f220247711085c39a9c6ba21c71a78ba2741479092fe0b94b87e2ac881e/videos/video.mp4"></video>
+          <div class="showcase-cell__body">
+            <div class="showcase-cell__label">Record</div>
+            <div class="showcase-cell__title">Record and share in seconds.</div>
+            <div class="showcase-cell__desc">Screen, camera, or both — straight from your browser. No downloads.
+              Auto-transcribed, chaptered, and ready to share instantly.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="steps-section reveal">
+    <div class="wrap">
+      <div class="steps-section__head">
+        <span class="section-label">How it works</span>
+      </div>
+      <div class="steps-grid">
+        <div class="step-cell">
+          <div class="step-cell__num">01</div>
+          <div class="step-cell__title">Upload your videos</div>
+          <div class="step-cell__desc">Drag and drop, or use our API. Any format, any size. They're private by
+            default.</div>
+        </div>
+        <div class="step-cell">
+          <div class="step-cell__num">02</div>
+          <div class="step-cell__title">AI does the rest</div>
+          <div class="step-cell__desc">Every video is analyzed for speech, on-screen text, objects, faces, actions,
+            and abstract concepts.</div>
+        </div>
+        <div class="step-cell">
+          <div class="step-cell__num">03</div>
+          <div class="step-cell__title">Search, share, embed</div>
+          <div class="step-cell__desc">Find any moment instantly. Share a link, embed on your site, or build on top of
+            our API.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Use cases -->
+  <section class="usecases reveal">
+    <div class="wrap">
+      <div class="usecases__head">
+        <span class="section-label">Use cases</span>
+      </div>
+      <div class="usecase-grid">
+        <div class="usecase-cell">
+          <i class="ph-light ph-graduation-cap usecase-cell__icon"></i>
+          <div class="usecase-cell__name">Education</div>
+          <div class="usecase-cell__desc">Students search lectures for exactly what they need. Faculty organize years
+            of footage in seconds. Embed course libraries on your LMS.</div>
+        </div>
+        <div class="usecase-cell">
+          <i class="ph-light ph-microphone-stage usecase-cell__icon"></i>
+          <div class="usecase-cell__name">Events &amp; conferences</div>
+          <div class="usecase-cell__desc">Make talks discoverable long after the event ends. Attendees search across
+            every session to find the moments that matter.</div>
+        </div>
+        <div class="usecase-cell">
+          <i class="ph-light ph-film-slate usecase-cell__icon"></i>
+          <div class="usecase-cell__name">Creators &amp; media</div>
+          <div class="usecase-cell__desc">No competing recommendations. No ads on your content. Monetize with Portals,
+            embed anywhere, own the experience.</div>
+        </div>
+        <div class="usecase-cell">
+          <i class="ph-light ph-users-three usecase-cell__icon"></i>
+          <div class="usecase-cell__name">Teams &amp; internal comms</div>
+          <div class="usecase-cell__desc">A searchable knowledge base for onboarding, demos, and company updates.
+            Secure, collaborative, instantly retrievable.</div>
+        </div>
+        <div class="usecase-cell">
+          <i class="ph-light ph-chart-line-up usecase-cell__icon"></i>
+          <div class="usecase-cell__name">Sales &amp; marketing</div>
+          <div class="usecase-cell__desc">Branded player with your logo, custom CTAs, and detailed analytics.
+            Integrates with your existing stack.</div>
+        </div>
+        <div class="usecase-cell">
+          <i class="ph-light ph-headphones usecase-cell__icon"></i>
+          <div class="usecase-cell__name">Podcasts &amp; audio</div>
+          <div class="usecase-cell__desc">Auto-transcripts, deep search, and a clean player. Let your audience find
+            the exact conversation they're looking for.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Plans -->
+  <section class="plans reveal" id="plans">
+    <div class="wrap">
+      <div class="plans__head">
+        <span class="section-label">Plans</span>
+      </div>
+      <div class="plans__toggle">
+        <button class="plans__toggle-btn active" data-cycle="yearly">Yearly (50% off)</button>
+        <button class="plans__toggle-btn" data-cycle="monthly">Monthly</button>
+      </div>
+      <div class="plans-grid">
+
+        <div class="plan-col">
+          <div class="plan-col__name">Basic</div>
+          <p class="plan-col__desc">Everything you need to host and share videos with AI search.</p>
+          <div class="plan-col__pricing">
+            <div class="plan-col__price"><span class="plan-price-val" data-monthly="16" data-yearly="8">$8</span> / mo
+            </div>
+            <div class="plan-col__period" data-yearly-only>billed yearly</div>
+          </div>
+          <a href="https://muse.ai/join" class="btn btn--primary">Start free &rarr;</a>
+          <ul class="plan-col__features">
+            <li class="plan-col__feature">80 GB storage</li>
+            <li class="plan-col__feature">1 seat</li>
+            <li class="plan-col__feature">Unlimited embeds</li>
+            <li class="plan-col__feature">4K playback</li>
+            <li class="plan-col__feature">Portals</li>
+            <li class="plan-col__feature">Email support</li>
+          </ul>
+        </div>
+
+        <div class="plan-col" data-featured>
+          <div class="plan-col__name">Plus</div>
+          <span class="plan-col__badge">Popular</span>
+          <p class="plan-col__desc">More storage, privacy controls, and advanced player customization.</p>
+          <div class="plan-col__pricing">
+            <div class="plan-col__price"><span class="plan-price-val" data-monthly="40" data-yearly="20">$20</span> /
+              mo</div>
+            <div class="plan-col__period" data-yearly-only>billed yearly</div>
+          </div>
+          <a href="https://muse.ai/join" class="btn btn--primary">Start free &rarr;</a>
+          <ul class="plan-col__features">
+            <li class="plan-col__feature">Everything in Basic</li>
+            <li class="plan-col__feature">200 GB storage</li>
+            <li class="plan-col__feature">3 seats</li>
+            <li class="plan-col__feature">Geo-restricted playback</li>
+            <li class="plan-col__feature">Expiring links</li>
+            <li class="plan-col__feature">Call-to-action overlays</li>
+            <li class="plan-col__feature">Original file storage</li>
+            <li class="plan-col__feature">Custom player styling</li>
+            <li class="plan-col__feature">Enhanced privacy &amp; security</li>
+          </ul>
+        </div>
+
+        <div class="plan-col">
+          <div class="plan-col__name">Pro</div>
+          <p class="plan-col__desc">For teams that need scale, integrations, and priority support.</p>
+          <div class="plan-col__pricing">
+            <div class="plan-col__price"><span class="plan-price-val" data-monthly="100" data-yearly="50">$50</span> /
+              mo</div>
+            <div class="plan-col__period" data-yearly-only>billed yearly</div>
+          </div>
+          <a href="https://muse.ai/join" class="btn btn--primary">Start free &rarr;</a>
+          <ul class="plan-col__features">
+            <li class="plan-col__feature">Everything in Plus</li>
+            <li class="plan-col__feature">1 TB storage</li>
+            <li class="plan-col__feature">10 seats</li>
+            <li class="plan-col__feature">VAST ad support</li>
+            <li class="plan-col__feature">Delegated uploads</li>
+            <li class="plan-col__feature">Priority support</li>
+            <li class="plan-col__feature">Custom extensions</li>
+            <li class="plan-col__feature">Custom integrations</li>
+          </ul>
+        </div>
+
+        <div class="plan-col plan-col--enterprise">
+          <div>
+            <div class="plan-col__name">Enterprise</div>
+            <p class="plan-col__desc">Unlimited storage, unlimited seats, dedicated account manager, and custom applications.</p>
+          </div>
+          <a href="https://muse.ai/contact" class="btn btn--primary">Contact us &rarr;</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+
+    <div class="footer__cta">
+      <h2>Start for free.<br>Scale when you're ready.</h2>
+      <div class="footer__cta-actions">
+        <a href="https://muse.ai/join" class="btn btn--primary">Get started →</a>
+        <a href="https://muse.ai/pricing" class="btn btn--ghost">See pricing</a>
+      </div>
+    </div>
+
+    <nav class="footer__nav">
+      <div class="footer__nav-col">
+        <h3>Product</h3>
+        <a href="/search-inside-video">AI Video Search</a>
+        <a href="/video-hosting">Cloud Storage</a>
+        <a href="/player">Player</a>
+        <a href="https://muse.ai/docs#portals">Portals</a>
+        <a href="https://muse.ai/api">API</a>
+      </div>
+      <div class="footer__nav-col">
+        <h3>Resources</h3>
+        <a href="https://muse.ai/docs">Documentation</a>
+        <a href="https://muse.ai/pricing">Pricing</a>
+        <a href="https://muse.ai/blog">Blog</a>
+        <a href="https://muse.ai/contact">Contact</a>
+      </div>
+      <div class="footer__nav-col">
+        <h3>Company</h3>
+        <a href="https://muse.ai/about">About</a>
+        <a href="https://muse.ai/opportunities">Careers</a>
+        <a href="https://muse.ai/integrations">Integrations</a>
+        <a href="https://muse.ai/referrals">Referrals</a>
+      </div>
+    </nav>
+
+    <div class="footer__bottom">
+      <span>&#9654; Skiv &mdash; Search &middot; Knowledge &middot; Internet &middot; Video</span>
+      <div class="footer__bottom-links">
+        <a href="https://muse.ai/terms">Terms</a>
+        <a href="https://muse.ai/privacy">Privacy</a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    updateShowcaseVideos();
+  }
+
+  function updateShowcaseVideos() {
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    // Selector covers both originals and glow clones (clones inherit data attributes)
+    document.querySelectorAll('[data-dark][data-light]').forEach(function (v) {
+      var src = dark ? v.dataset.dark : v.dataset.light;
+      if (v.getAttribute('src') !== src) {
+        v.setAttribute('src', src);
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    updateShowcaseVideos();
+  });
+
+  (function () {
+    var btn = document.querySelector('.menu-toggle');
+    var nav = document.getElementById('site-nav');
+    if (!btn || !nav) return;
+    btn.addEventListener('click', function () {
+      var open = nav.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open);
+      btn.textContent = open ? 'Close' : 'Menu';
+    });
+  })();
+
+  // Plans billing toggle
+  (function () {
+    var btns = document.querySelectorAll('.plans__toggle-btn');
+    if (!btns.length) return;
+    btns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        btns.forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        var yearly = btn.dataset.cycle === 'yearly';
+        document.querySelectorAll('.plan-price-val').forEach(function (el) {
+          el.textContent = '$' + (yearly ? el.dataset.yearly : el.dataset.monthly);
+        });
+        document.querySelectorAll('[data-yearly-only]').forEach(function (el) {
+          el.style.display = yearly ? '' : 'none';
+        });
+      });
+    });
+  })();
+
+  // ── Shader effects toolbar toggle ──
+  (function () {
+    var allFx = ['fx-crt'];
+    var toolbar = document.querySelector('.fx-toolbar');
+    if (!toolbar) return;
+
+    toolbar.addEventListener('click', function (e) {
+      // Independent toggles (glow, etc.)
+      var toggle = e.target.closest('button[data-toggle]');
+      if (toggle) {
+        toggle.classList.toggle('active');
+        var key = toggle.dataset.toggle;
+        if (key === 'glow') {
+          document.body.classList.toggle('fx-no-glow');
+        }
+        return;
+      }
+
+      // Mutually-exclusive fx buttons
+      var btn = e.target.closest('button[data-fx]');
+      if (!btn) return;
+
+      // Remove all fx classes from body
+      allFx.forEach(function (cls) { document.body.classList.remove(cls); });
+
+      // Toggle active state on fx buttons only
+      toolbar.querySelectorAll('button[data-fx]').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+
+      // Apply selected effect (empty string = none)
+      var fx = btn.dataset.fx;
+      if (fx) {
+        document.body.classList.add(fx);
+      }
+    });
+  })();
+</script>
+</div><!-- .page-wrap -->
+</body>
+
+</html>

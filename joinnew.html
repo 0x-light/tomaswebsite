@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Skiv — Create your account</title>
+  <meta name="description" content="Sign up for Skiv. Video hosting with AI that understands your content." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%23fff'/><polygon points='13,10 13,22 23,16' fill='%231a1a1a'/></svg>" />
+  <style>
+    :root {
+      --bg: #f8f8f7;
+      --text: #000000;
+      --text-rgb: 26, 26, 26;
+      --text-2: rgba(var(--text-rgb), 0.6);
+      --text-3: rgba(var(--text-rgb), 0.4);
+      --text-dim: rgba(var(--text-rgb), 0.2);
+      --border: rgba(var(--text-rgb), 0.1);
+      --danger: #c44a28;
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --form-w: 420px;
+    }
+
+    html.dark {
+      --bg: #09090B;
+      --text: #DEDEDE;
+      --text-rgb: 222, 222, 222;
+      --danger: #ff6830;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    ::selection { background: var(--text); color: var(--bg); }
+
+    body {
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--text);
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--text-2); outline-offset: 2px; }
+
+    /* ── Layout ── */
+
+    .page {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    /* ── Header ── */
+
+    .header {
+      width: 100%;
+      max-width: var(--form-w);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 48px 0 0;
+    }
+
+    .wordmark {
+      font-size: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .header-link {
+      font-size: 16px;
+      color: var(--text-3);
+      transition: color 0.15s;
+    }
+
+    .header-link:hover { color: var(--text); }
+
+    /* ── Form area ── */
+
+    .form-area {
+      width: 100%;
+      max-width: var(--form-w);
+      padding: 64px 0 48px;
+    }
+
+    .form-area h1 {
+      font-size: 16px;
+      font-weight: 400;
+      margin-bottom: 32px;
+    }
+
+    /* ── Selector rows ── */
+
+    .selector-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .selector-label {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-3);
+    }
+
+    .selector-options {
+      display: flex;
+      gap: 4px;
+    }
+
+    .selector-options label {
+      cursor: pointer;
+    }
+
+    .selector-options input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .selector-btn {
+      display: inline-block;
+      padding: 7px 9px;
+      font-family: inherit;
+      font-size: 15px;
+      line-height: 1;
+      color: var(--text-3);
+      background: var(--border);
+      transition: color 0.15s, background 0.15s;
+      cursor: pointer;
+    }
+
+    .selector-btn:hover {
+      color: var(--text);
+    }
+
+    input[type="radio"]:checked + .selector-btn {
+      color: var(--bg);
+      background: var(--text);
+    }
+
+    .selector-btn .discount {
+      margin-left: 4px;
+    }
+
+    input[type="radio"]:checked + .selector-btn .discount {
+      color: var(--bg);
+    }
+
+    /* ── Inputs ── */
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    .field input[type="email"],
+    .field input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      font-family: inherit;
+      font-size: 16px;
+      line-height: 1;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .field input::placeholder {
+      color: var(--text-3);
+    }
+
+    .field input:hover,
+    .field input:focus {
+      border-color: var(--text-dim);
+    }
+
+    /* ── Stripe card ── */
+
+    #payment-request-button {
+      margin-bottom: 12px;
+    }
+
+    #payment-request-button:empty {
+      display: none;
+    }
+
+    .StripeElement {
+      padding: 13px 14px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      transition: border-color 0.15s;
+    }
+
+    .StripeElement--focus {
+      border-color: var(--text-dim);
+    }
+
+    .StripeElement--invalid {
+      border-color: var(--danger);
+    }
+
+    .card-errors {
+      color: var(--danger);
+      font-size: 14px;
+      margin: 6px 0 0;
+      min-height: 20px;
+    }
+
+    /* ── Cost ── */
+
+    .cost-summary {
+      margin: 20px 0;
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    #cost-full {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    #cost-discount {
+      font-size: 15px;
+      color: var(--text-3);
+    }
+
+    /* ── Trial info ── */
+
+    .info-trial {
+      display: none;
+      font-size: 15px;
+      color: var(--text-2);
+      margin-bottom: 16px;
+      line-height: 1.55;
+    }
+
+    .free-trial .info-trial {
+      display: block;
+    }
+
+    /* ── Terms ── */
+
+    .terms {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 24px;
+      font-size: 15px;
+      color: var(--text-2);
+    }
+
+    .terms input[type="checkbox"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      margin-top: 5px;
+      flex-shrink: 0;
+      border: 1.5px solid var(--text-dim);
+      background: transparent;
+      cursor: pointer;
+      position: relative;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .terms input[type="checkbox"]:hover {
+      border-color: var(--text-3);
+    }
+
+    .terms input[type="checkbox"]:checked {
+      border-color: var(--text);
+      background: var(--text);
+    }
+
+    .terms input[type="checkbox"]:checked::after {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 1px;
+      width: 5px;
+      height: 9px;
+      border: solid var(--bg);
+      border-width: 0 1.5px 1.5px 0;
+      transform: rotate(45deg);
+    }
+
+    .terms input[type="checkbox"]:focus-visible {
+      outline: 2px solid var(--text-2);
+      outline-offset: 2px;
+    }
+
+    .terms a {
+      text-decoration: underline;
+      text-decoration-color: var(--text-dim);
+      transition: text-decoration-color 0.15s;
+    }
+
+    .terms a:hover {
+      text-decoration-color: var(--text);
+    }
+
+    /* ── Submit ── */
+
+    .btn-submit {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1;
+      color: var(--bg);
+      background: var(--text);
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .btn-submit:hover { opacity: 0.85; }
+
+    .btn-submit.loading {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    /* ── Referral ── */
+
+    .msg-referral {
+      display: none;
+      font-size: 15px;
+      color: var(--text-2);
+      margin-bottom: 12px;
+    }
+
+    .free-month .msg-referral { display: block; }
+
+    /* ── Result screens ── */
+
+    .result-screen {
+      display: none;
+      width: 100%;
+      max-width: var(--form-w);
+      padding: 120px 0;
+    }
+
+    .result-screen h2 {
+      font-size: 16px;
+      font-weight: 400;
+      margin-bottom: 12px;
+    }
+
+    .result-screen p {
+      color: var(--text-2);
+      margin-bottom: 8px;
+    }
+
+    .result-screen a.back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: var(--text-3);
+      text-decoration: underline;
+      text-decoration-color: var(--text-dim);
+      transition: color 0.15s, text-decoration-color 0.15s;
+    }
+
+    .result-screen a.back-link:hover {
+      color: var(--text);
+      text-decoration-color: var(--text);
+    }
+
+    /* ── Loading overlay ── */
+
+    #d-loading {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: var(--bg);
+    }
+
+    #d-loading::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 24px;
+      height: 24px;
+      margin: -12px 0 0 -12px;
+      border: 2px solid var(--border);
+      border-top-color: var(--text);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── Error toast ── */
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      padding: 10px 20px;
+      font-family: inherit;
+      font-size: 15px;
+      color: var(--bg);
+      background: var(--text);
+      z-index: 200;
+      opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .toast.visible {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .toast.danger {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    /* ── Footer ── */
+
+    .footer {
+      width: 100%;
+      max-width: var(--form-w);
+      margin: 0 auto;
+      padding: 0 20px 32px;
+      font-size: 14px;
+      color: var(--text-dim);
+      text-align: center;
+    }
+
+    /* ── Responsive ── */
+
+    @media (max-width: 500px) {
+      .header { padding-top: 24px; }
+      .form-area { padding-top: 40px; }
+
+      .selector-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <header class="header">
+      <a href="/" class="wordmark">&#9654; Skiv</a>
+      <a href="/login" class="header-link">Sign in</a>
+    </header>
+
+    <!-- Main form -->
+    <div id="d-pay" class="form-area {{ pay_trial_class }}">
+      <h1>Create your account</h1>
+
+      <div class="selector-row">
+        <span class="selector-label">Plan</span>
+        <div class="selector-options">
+          <label><input type="radio" name="plan" value="basic"><span class="selector-btn">Basic</span></label>
+          <label><input type="radio" name="plan" value="plus"><span class="selector-btn">Plus</span></label>
+          <label><input type="radio" name="plan" value="pro"><span class="selector-btn">Pro</span></label>
+        </div>
+      </div>
+
+      <div class="selector-row">
+        <span class="selector-label">Billing</span>
+        <div class="selector-options">
+          <label><input type="radio" name="billing" value="trial" checked><span class="selector-btn">Trial</span></label>
+          <label><input type="radio" name="billing" value="monthly"><span class="selector-btn">Monthly</span></label>
+          <label><input type="radio" name="billing" value="yearly"><span class="selector-btn">Yearly<span class="discount">50% off</span></span></label>
+        </div>
+      </div>
+
+      <div style="height: 24px"></div>
+
+      <form id="form-payment">
+        <div class="field">
+          <input id="email" name="email" type="email" placeholder="Email" required />
+        </div>
+        <div class="field">
+          <input id="name" name="name" type="text" placeholder="Name" required maxlength="32" />
+        </div>
+        <div id="payment-request-button"></div>
+        <div id="card-element"></div>
+        <div id="card-errors" role="alert" class="card-errors"></div>
+      </form>
+
+      <div class="cost-summary">
+        <span id="cost-full"></span>
+        <span id="cost-discount"></span>
+      </div>
+
+      <p class="info-trial">
+        Free 14-day trial, then automatically upgrades to monthly
+        <span class="trial-tier">Basic</span>. Cancel anytime.
+      </p>
+
+      <p class="msg-referral">First month free.</p>
+
+      <label class="terms">
+        <input id="c-terms" type="checkbox" />
+        <span>I accept the <a href="/terms" target="_blank">Terms &amp; Conditions</a>.</span>
+      </label>
+
+      <button class="btn-submit" form="form-payment">Join now</button>
+    </div>
+
+    <!-- Result: approved -->
+    <div id="d-approved" class="result-screen">
+      <h2>Check your inbox</h2>
+      <p>We've emailed you with a link to activate your account. If it doesn't arrive in a few minutes, check your spam folder.</p>
+    </div>
+
+    <!-- Result: already exists -->
+    <div id="d-exists" class="result-screen">
+      <h2>Already signed up</h2>
+      <p>The email <strong class="s-email"></strong> is already enrolled. No charge was made.</p>
+      <a href="/login" class="back-link">Go to login</a>
+    </div>
+
+    <!-- Result: denied -->
+    <div id="d-denied" class="result-screen">
+      <h2>Access needed</h2>
+      <p>Sign up at <a href="/join">/join</a>. No charge was made.</p>
+      <a href="{{ request.full_path }}" class="back-link">Try again</a>
+    </div>
+
+    <!-- Result: error -->
+    <div id="d-error" class="result-screen">
+      <h2>Something went wrong</h2>
+      <p class="s-error"></p>
+      <p>Please contact <strong>info@muse.ai</strong>.</p>
+      <a href="{{ request.full_path }}" class="back-link">Back to sign up</a>
+    </div>
+
+    <!-- Result: payment error -->
+    <div id="d-error-pay" class="result-screen">
+      <h2>Payment error</h2>
+      <p class="s-error"></p>
+      <p>Please try again or contact <strong>info@muse.ai</strong>.</p>
+      <a href="{{ request.full_path }}" class="back-link">Back to sign up</a>
+    </div>
+
+  </div>
+
+  <!-- Loading overlay -->
+  <div id="d-loading"></div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <footer class="footer">Search &middot; Knowledge &middot; Internet &middot; Video</footer>
+
+  <!-- Dependencies -->
+  <script>
+    var AB_PRICING  = {{ ab_pricing|tojson|safe }};
+    var AB_LANDING  = {{ ab_landing|tojson|safe }};
+    var AUTH_DOMAIN = '{{ auth_domain }}';
+    var payURL = function(path) { return '{{ pay_api_url }}' + path };
+  </script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="/static/js/utils.js"></script>
+  <script src="/static/js/pricing.js"></script>
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      /* ── Toast (standalone, no minima dependency) ── */
+
+      var $toast = document.getElementById('toast');
+      var toastTimer;
+      window.toast = function (msg, type) {
+        $toast.textContent = msg;
+        $toast.className = 'toast visible' + (type ? ' ' + type : '');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { $toast.className = 'toast'; }, 3500);
+      };
+
+      /* ── Cookie helpers ── */
+
+      function setCookie(name, val, days) {
+        var d = new Date();
+        d.setTime(d.getTime() + (days || 365) * 864e5);
+        document.cookie = name + '=' + val + ';expires=' + d.toUTCString() + ';path=/';
+      }
+
+      function getCookie(name) {
+        var v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+        return v ? v.pop() : '';
+      }
+
+      // Make sure key is cleared.
+      setCookie('key', '', 0);
+
+      /* ── Globals ── */
+
+      var payintid, cost_month, duration, postcode;
+
+      var params  = new URLSearchParams(window.location.search);
+      var plan    = params.get('plan');
+      var email   = params.get('email') || '';
+      var name    = params.get('name') || '';
+      var trial   = params.get('trial') === '1';
+      var bill    = params.get('bill') || 'yearly';
+      var tier    = ['basic', 'plus', 'pro'].includes(plan) ? plan : 'basic';
+      var referral      = params.get('ref') || getCookie('ref') || '';
+      var referral_type = null;
+      var access  = params.get('access') || '';
+      var google  = params.get('google') === '1';
+
+      var $cost_full     = $('#cost-full');
+      var $cost_discount = $('#cost-discount');
+      var $i_email       = $('#email');
+      var $i_name        = $('#name');
+      var $d_pay         = $('#d-pay');
+      var $d_loading     = $('#d-loading');
+      var $d_approved    = $('#d-approved');
+      var $d_exists      = $('#d-exists');
+      var $d_denied      = $('#d-denied');
+      var $d_error       = $('#d-error');
+      var $d_error_pay   = $('#d-error-pay');
+      var $d_trial       = $('.info-trial');
+      var $s_error       = $('.s-error');
+
+      var $billSwitches  = $('input[name="billing"]');
+      var $planSwitches  = $('input[name="plan"]');
+
+      mtag('join_visit', {ab_pricing: AB_PRICING, ab_landing: AB_LANDING});
+
+      /* ── Stripe setup ── */
+
+      function cssVar(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+
+      var stripe   = Stripe('{{ stripe_key_public }}');
+      var elements = stripe.elements();
+      var cardEmpty = true;
+
+      var card = elements.create('card', {
+        style: {
+          base: {
+            color: cssVar('--text'),
+            iconColor: cssVar('--text'),
+            fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+            fontSmoothing: 'antialiased',
+            fontWeight: 400,
+            fontSize: '16px',
+            '::placeholder': { color: cssVar('--text-3') }
+          },
+          invalid: {
+            color: cssVar('--danger'),
+            iconColor: cssVar('--danger')
+          }
+        }
+      });
+
+      card.mount('#card-element');
+      card.addEventListener('change', function (ev) {
+        cardEmpty = ev.empty;
+        document.getElementById('card-errors').textContent = ev.error ? ev.error.message : '';
+        if (ev.value && ev.value.postalCode) {
+          var old = postcode;
+          postcode = ev.value.postalCode;
+          if (old !== postcode) recalculate();
+        }
+      });
+
+      /* ── Apple Pay / Google Pay ── */
+
+      var paymentRequest = stripe.paymentRequest({
+        country: 'US',
+        currency: 'usd',
+        total: { label: 'Skiv subscription', amount: 0 },
+        requestPayerName: true,
+        requestPayerEmail: true,
+      });
+
+      var prButton = elements.create('paymentRequestButton', { paymentRequest: paymentRequest });
+
+      paymentRequest.canMakePayment().then(function (result) {
+        if (result) {
+          prButton.mount('#payment-request-button');
+        }
+      });
+
+      /* ── Recalculate ── */
+
+      function recalculate() {
+        tier  = $planSwitches.filter(':checked').val();
+        var period = $billSwitches.filter(':checked').val();
+        trial = period === 'trial' ? 1 : 0;
+
+        var cost_m = PLANS[tier]['cost_m'];
+        var cost_y = PLANS[tier]['cost_y'];
+
+        $('.trial-tier').text(tier);
+        $('body')
+          .toggleClass('basic', tier === 'basic')
+          .toggleClass('plus',  tier === 'plus')
+          .toggleClass('pro',   tier === 'pro')
+          .toggleClass('free-trial', trial === 1);
+        $d_pay.toggleClass('free-trial', trial === 1);
+        $cost_discount.hide();
+
+        if (email) $i_email.val(email).attr('disabled', true);
+        if (name)  $i_name.val(name);
+
+        $d_trial.hide();
+
+        if (trial) {
+          cost_month = cost_m;
+          duration   = SECONDS_MONTH;
+          $d_trial.show();
+          $cost_full.html('Free Trial');
+        } else if (period === 'yearly') {
+          cost_month = cost_y;
+          duration   = SECONDS_YEAR;
+          $cost_full.html(formatCurrency(cost_y * 12, 'USD') + ' / year');
+          $cost_discount.show().html('(' + formatCurrency(cost_y, 'USD') + ' / month)');
+        } else {
+          cost_month = cost_m;
+          duration   = SECONDS_MONTH;
+          $cost_full.html(formatCurrency(cost_m, 'USD') + ' / month');
+        }
+
+        // Update Apple/Google Pay amount
+        paymentRequest.update({
+          total: { label: 'Skiv subscription', amount: Math.round(cost_month * (trial ? 0 : (period === 'yearly' ? 12 : 1)) * 100) }
+        });
+
+        if (referral) referralRender(period);
+      }
+
+      /* ── Form submission ── */
+
+      document.getElementById('form-payment').addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        mtag('join_click', {ab_pricing: AB_PRICING, ab_landing: AB_LANDING});
+
+        name = $i_name.val();
+        if (name.length < 2) { toast('Please enter your name.', 'danger'); return; }
+
+        email = $i_email.val();
+        if (!/(.+)@(.+){2,}\.(.+){2,}/.test(email)) { toast('Please enter a valid email.', 'danger'); return; }
+
+        if (tier !== 'free' && cardEmpty) { toast('Card number is required.', 'danger'); return; }
+
+        if (!document.getElementById('c-terms').checked) { toast('Please accept the Terms & Conditions.', 'danger'); return; }
+
+        var $btn = $('.btn-submit');
+        $btn.addClass('loading');
+
+        createCard().then(function (resp) {
+          if (resp.error) { $btn.removeClass('loading'); toast(resp.error.message, 'danger'); return; }
+
+          $d_pay.hide();
+          $d_loading.show();
+          recalculate();
+
+          mtag('join_start', {ab_pricing: AB_PRICING, ab_landing: AB_LANDING});
+
+          var result = getSecret({
+            email: email, name: name, trial: trial, tier: tier,
+            cost_month: cost_month, duration: duration, access: access,
+            referral: referral, pm: resp.paymentMethod.id,
+            ab_pricing: AB_PRICING, ab_landing: AB_LANDING,
+          });
+
+          var error  = result[0];
+          var secret = result[1];
+          if (error) { $btn.removeClass('loading'); return; }
+
+          if (secret.startsWith('seti_')) {
+            stripe.confirmCardSetup(secret, {
+              payment_method: { card: card, billing_details: { name: name, email: email } }
+            }).then(function (r) {
+              if (r.error) {
+                $d_loading.hide(); $d_error_pay.show();
+                $('.s-error').html(r.error.message);
+                sendError(r.error);
+              } else {
+                confirmPayment({
+                  name: name, email: email, pm: r.setupIntent.payment_method,
+                  referral: referral, trial: trial, tier: tier,
+                  cost_month: cost_month, duration: duration, access: access,
+                  ab_pricing: AB_PRICING, ab_landing: AB_LANDING,
+                });
+              }
+            }).always(function () { $btn.removeClass('loading'); });
+          } else {
+            stripe.confirmCardPayment(secret).then(function (r) {
+              if (r.error) {
+                $d_loading.hide(); $d_error_pay.show();
+                $('.s-error').html(r.error.message);
+                sendError(r.error);
+              } else {
+                confirmPayment({
+                  pi: payintid, referral: referral, trial: trial,
+                  tier: tier, access: access,
+                  ab_pricing: AB_PRICING, ab_landing: AB_LANDING,
+                });
+              }
+            }).always(function () { $btn.removeClass('loading'); });
+          }
+        });
+      });
+
+      /* ── API calls ── */
+
+      function getSecret(p) {
+        var error = 'Failed to get token.', secret = '';
+        $.ajax({
+          url: payURL('/start'), type: 'POST', async: false,
+          data: JSON.stringify(p),
+          contentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          success: function (d) { payintid = d.id; secret = d.secret; error = ''; },
+          error: function (d) {
+            try { error = d.responseJSON.error; } catch (e) { error = 'error_start'; }
+            $d_loading.hide();
+            if (error === 'restricted_signup') $d_denied.show();
+            else if (error === 'email_already_exists') { $d_exists.show(); $('.s-email').text(email); }
+            else {
+              try { var s = error.split('_').join(' '); error = s[0].toUpperCase() + s.substring(1); } catch (e) {}
+              $s_error.html(error); $d_error.show();
+            }
+          }
+        });
+        return [error, secret];
+      }
+
+      function confirmPayment(p) {
+        $.ajax({
+          url: payURL('/confirm'), type: 'POST', async: false,
+          data: JSON.stringify(p),
+          contentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          xhrFields: { withCredentials: true },
+          success: function (d) {
+            mtag('join_signup', {ab_pricing: AB_PRICING, ab_landing: AB_LANDING});
+            mtag('conversion', {send_to: 'AW-650656140/pYeqCJyyptkBEIzzoLYC'});
+            $d_loading.hide();
+            if (d.key) {
+              setCookie('key', d.key);
+              var args = !google && d.access ? '?' + new URLSearchParams({access: d.access}).toString() : '';
+              window.location.href = '/' + args;
+            } else {
+              $d_approved.show();
+            }
+          },
+          error: function () {
+            $d_loading.hide(); $d_error.show();
+          }
+        });
+      }
+
+      function createCard() {
+        return stripe.createPaymentMethod({
+          type: 'card', card: card,
+          billing_details: { name: name, email: email }
+        });
+      }
+
+      function referralCheck() { return jGet(payURL('/referral/' + referral)); }
+
+      function referralRender(bill) {
+        referralCheck().then(function (rt) {
+          referral_type = rt;
+          var freeMonth = !trial && ['user', 'free_month'].includes(rt);
+          $('.form-area').toggleClass('free-month', freeMonth);
+        });
+      }
+
+      function sendError(err) {
+        try { jPost(payURL('/error'), { error: err }); } catch (e) {}
+      }
+
+      /* ── Init ── */
+
+      $billSwitches.filter('[value="' + bill + '"]').prop('checked', true);
+      $planSwitches.filter('[value="' + tier + '"]').prop('checked', true);
+      if (trial) $billSwitches.filter('[value="trial"]').prop('checked', true);
+
+      $billSwitches.on('input', function (e) {
+        $billSwitches.filter('[value=' + e.currentTarget.value + ']').prop('checked', true);
+      });
+
+      $billSwitches.on('input', recalculate);
+      $planSwitches.on('input', recalculate);
+      recalculate();
+
+      if ($i_email.val()) { $i_name.focus(); } else { $i_email.focus(); }
+    })();
+  </script>
+</body>
+</html>
