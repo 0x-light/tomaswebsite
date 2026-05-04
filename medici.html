@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Medici - Palmeirim</title>
+  <meta name="description" content="Source-agnostic zoomable image assembler." />
+  <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+  <div class="site">
+    <aside class="sidebar">
+      <div class="mobile-header">
+        <a href="index.html" class="mobile-header__name">Palmeirim</a>
+        <div class="mobile-header__actions">
+          <button class="theme-toggle mobile-theme" type="button" aria-label="Cycle theme">Theme</button>
+          <button class="hamburger" type="button" aria-label="Toggle navigation menu" aria-controls="site-nav" aria-expanded="false">Menu</button>
+        </div>
+      </div>
+      <a href="index.html" class="sidebar__name">Palmeirim</a>
+      <nav id="site-nav" class="sidebar__nav" aria-label="Primary">
+        <a href="index.html" class="sidebar__link">About</a>
+        <a href="work.html" class="sidebar__link">Work</a>
+        <!-- <a href="writing.html" class="sidebar__link">Writing</a> -->
+        <a href="reading.html" class="sidebar__link">Reading</a>
+        <a href="contact.html" class="sidebar__link">Contact</a>
+        <button class="theme-toggle sidebar__theme" type="button" aria-label="Cycle theme">Theme</button>
+      </nav>
+      <div class="sidebar__footer">
+        <button class="theme-toggle" type="button" aria-label="Cycle theme">Theme</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <h1 class="page-title">Medici</h1>
+      <p class="page-subtitle">Paste a zoomable image page or manifest.</p>
+
+      <div class="medici-tool" data-medici>
+        <form class="medici-form" id="medici-form">
+          <label class="medici-label" for="medici-source">URL</label>
+          <textarea id="medici-source" class="medici-source" rows="3" spellcheck="false" autocomplete="off" placeholder="https://www.artic.edu/artworks/20199/final-study-for-bathers-at-asnieres"></textarea>
+
+          <div class="medici-actions">
+            <button id="medici-analyze" class="medici-button" type="submit">Get Image</button>
+            <button id="medici-stop" class="medici-button" type="button" disabled>Stop</button>
+          </div>
+        </form>
+
+        <section class="medici-section" aria-live="polite">
+          <div class="medici-alert" id="medici-alert" hidden></div>
+          <dl class="medici-stats">
+            <div>
+              <dt>Detected</dt>
+              <dd id="medici-detected">-</dd>
+            </div>
+            <div>
+              <dt>Size</dt>
+              <dd id="medici-size">-</dd>
+            </div>
+            <div>
+              <dt>Tiles</dt>
+              <dd id="medici-tiles">-</dd>
+            </div>
+            <div>
+              <dt>Memory</dt>
+              <dd id="medici-memory">-</dd>
+            </div>
+          </dl>
+
+          <div class="medici-progress" aria-hidden="true">
+            <div id="medici-progress-bar"></div>
+          </div>
+          <div class="medici-progress-text" id="medici-progress-text">Idle</div>
+        </section>
+
+        <section class="medici-section medici-preview-section">
+          <canvas id="medici-canvas" class="medici-canvas" width="1" height="1"></canvas>
+          <div class="medici-actions medici-actions--output">
+            <a id="medici-download" class="medici-button" href="#" aria-disabled="true"><span>Download</span><span id="medici-download-size" class="medici-download-size" hidden></span></a>
+          </div>
+        </section>
+
+        <details class="medici-section medici-details">
+          <summary>Details</summary>
+          <pre id="medici-log" class="medici-log">Ready.</pre>
+        </details>
+      </div>
+    </main>
+  </div>
+
+  <script src="scripts/main.js" defer></script>
+  <script src="scripts/medici.js" defer></script>
+</body>
+</html>
