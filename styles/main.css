@@ -914,7 +914,7 @@ a[href^="http"]:not(.project-row)::after {
 .medici-tool {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
 }
 
 .medici-form {
@@ -1065,6 +1065,13 @@ a[href^="http"]:not(.project-row)::after {
   padding-top: 20px;
 }
 
+.medici-section[hidden],
+.medici-stats[hidden],
+.medici-progress-wrap[hidden],
+.medici-actions[hidden] {
+  display: none;
+}
+
 .medici-alert {
   margin-bottom: 16px;
   color: var(--text-2);
@@ -1094,11 +1101,18 @@ a[href^="http"]:not(.project-row)::after {
   overflow-wrap: anywhere;
 }
 
+.medici-progress-wrap {
+  margin-top: 0;
+}
+
 .medici-progress {
   height: 2px;
-  margin-top: 18px;
   background: var(--border);
   overflow: hidden;
+}
+
+.medici-stats:not([hidden]) + .medici-progress-wrap {
+  margin-top: 18px;
 }
 
 .medici-progress div {

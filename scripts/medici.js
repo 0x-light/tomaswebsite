@@ -43,17 +43,23 @@
     analyze: document.getElementById("medici-analyze"),
     assemble: document.getElementById("medici-assemble"),
     stop: document.getElementById("medici-stop"),
+    status: document.getElementById("medici-status"),
     alert: document.getElementById("medici-alert"),
+    stats: document.getElementById("medici-stats"),
     detected: document.getElementById("medici-detected"),
     size: document.getElementById("medici-size"),
     tiles: document.getElementById("medici-tiles"),
     memory: document.getElementById("medici-memory"),
+    progressWrap: document.getElementById("medici-progress-wrap"),
     progressBar: document.getElementById("medici-progress-bar"),
     progressText: document.getElementById("medici-progress-text"),
+    preview: document.getElementById("medici-preview"),
     canvas: document.getElementById("medici-canvas"),
+    outputActions: document.getElementById("medici-output-actions"),
     download: document.getElementById("medici-download"),
     downloadSize: document.getElementById("medici-download-size"),
     copy: document.getElementById("medici-copy"),
+    details: document.getElementById("medici-details"),
     log: document.getElementById("medici-log")
   };
 
@@ -67,16 +73,28 @@
     if (els.assemble) {
       els.assemble.disabled = isWorking || !activePlan;
     }
-    els.stop.disabled = !isWorking;
+    if (els.stop) {
+      els.stop.disabled = !isWorking;
+    }
     if (els.copy) {
       els.copy.disabled = !activePlan;
     }
   }
 
-  function showAlert(message, tone) {
+  function setVisible(element, visible) {
+    if (element) {
+      element.hidden = !visible;
+    }
+  }
+
+  function showAlert(message, tone, showDetails) {
+    setVisible(els.status, true);
     els.alert.hidden = false;
     els.alert.textContent = message;
     els.alert.dataset.tone = tone || "neutral";
+    if (tone === "warning" && showDetails !== false) {
+      setVisible(els.details, true);
+    }
   }
 
   function clearAlert() {
@@ -181,6 +199,7 @@
     if (!els.downloadSize) {
       return;
     }
+    setVisible(els.outputActions, false);
     els.download.href = "#";
     els.download.removeAttribute("download");
     els.download.setAttribute("aria-disabled", "true");
@@ -195,6 +214,7 @@
       activeDownloadUrl = null;
     }
     clearDownloadPreparing();
+    setVisible(els.outputActions, false);
     els.download.href = "#";
     els.download.removeAttribute("download");
     els.download.setAttribute("aria-disabled", "true");
@@ -210,6 +230,7 @@
     els.download.href = activeDownloadUrl;
     els.download.download = getFileName(plan) + getExtension(getOutputType());
     els.download.setAttribute("aria-disabled", "false");
+    setVisible(els.outputActions, true);
     if (els.downloadSize) {
       els.downloadSize.textContent = formatCompactBytes(blob.size);
       els.downloadSize.hidden = false;
@@ -437,7 +458,13 @@
   async function analyze() {
     var source = normalizeSource(els.source.value);
     if (!source) {
-      showAlert("Paste a source URL or tile template first.", "warning");
+      setVisible(els.status, true);
+      setVisible(els.stats, false);
+      setVisible(els.progressWrap, false);
+      setVisible(els.preview, false);
+      setVisible(els.outputActions, false);
+      setVisible(els.details, false);
+      showAlert("Paste a source URL or tile template first.", "warning", false);
       return;
     }
 
@@ -451,6 +478,12 @@
     revokeDownload();
     resetLog("Analyzing source.");
     helperNoticeShown = false;
+    setVisible(els.status, true);
+    setVisible(els.stats, false);
+    setVisible(els.progressWrap, true);
+    setVisible(els.preview, false);
+    setVisible(els.outputActions, false);
+    setVisible(els.details, false);
     setProgress(0, 0, "Analyzing");
     setWorking(true);
     renderEmptyPlan();
@@ -1710,12 +1743,14 @@
     els.size.textContent = "-";
     els.tiles.textContent = "-";
     els.memory.textContent = "-";
+    setVisible(els.stats, false);
     if (els.copy) {
       els.copy.disabled = true;
     }
   }
 
   function renderPlan(plan) {
+    setVisible(els.stats, true);
     els.detected.textContent = plan.type;
     els.size.textContent = formatNumber(plan.width) + " x " + formatNumber(plan.height);
     els.tiles.textContent = formatNumber(plan.tiles.length);
@@ -1754,6 +1789,9 @@
     activeController = new AbortController();
     clearAlert();
     revokeDownload();
+    setVisible(els.status, true);
+    setVisible(els.preview, true);
+    setVisible(els.outputActions, false);
     setWorking(true);
 
     var plan = activePlan;
@@ -1880,12 +1918,16 @@
   }
 
   function drawTile(ctx, image, tile, scale) {
-    var sx = tile.sx || 0;
-    var sy = tile.sy || 0;
-    var sw = tile.sw || ((image.naturalWidth || image.width) - sx);
-    var sh = tile.sh || ((image.naturalHeight || image.height) - sy);
     var imageWidth = image.naturalWidth || image.width;
     var imageHeight = image.naturalHeight || image.height;
+    var sx = tile.sx || 0;
+    var sy = tile.sy || 0;
+    var sw = Number.isFinite(Number(tile.sw)) && Number(tile.sw) > 0 ?
+      Number(tile.sw) :
+      Math.min(Math.ceil(tile.dw), imageWidth - sx);
+    var sh = Number.isFinite(Number(tile.sh)) && Number(tile.sh) > 0 ?
+      Number(tile.sh) :
+      Math.min(Math.ceil(tile.dh), imageHeight - sy);
     var dx = Math.round(tile.dx * scale);
     var dy = Math.round(tile.dy * scale);
     var dw = Math.max(1, Math.ceil(tile.dw * scale));
@@ -2049,11 +2091,13 @@
     els.assemble.addEventListener("click", assemble);
   }
 
-  els.stop.addEventListener("click", function () {
-    if (activeController) {
-      activeController.abort();
-    }
-  });
+  if (els.stop) {
+    els.stop.addEventListener("click", function () {
+      if (activeController) {
+        activeController.abort();
+      }
+    });
+  }
 
   els.download.addEventListener("click", function (event) {
     if (els.download.getAttribute("aria-disabled") === "true") {
@@ -2069,6 +2113,11 @@
 
   renderEmptyPlan();
   setProgress(0, 0, "Idle");
+  setVisible(els.status, false);
+  setVisible(els.progressWrap, false);
+  setVisible(els.preview, false);
+  setVisible(els.outputActions, false);
+  setVisible(els.details, false);
   setWorking(false);
   }
 })();

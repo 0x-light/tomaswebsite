@@ -43,13 +43,12 @@
 
           <div class="medici-actions">
             <button id="medici-analyze" class="medici-button" type="submit">Get Image</button>
-            <button id="medici-stop" class="medici-button" type="button" disabled>Stop</button>
           </div>
         </form>
 
-        <section class="medici-section" aria-live="polite">
+        <section id="medici-status" class="medici-section" aria-live="polite" hidden>
           <div class="medici-alert" id="medici-alert" hidden></div>
-          <dl class="medici-stats">
+          <dl id="medici-stats" class="medici-stats" hidden>
             <div>
               <dt>Detected</dt>
               <dd id="medici-detected">-</dd>
@@ -68,20 +67,22 @@
             </div>
           </dl>
 
-          <div class="medici-progress" aria-hidden="true">
-            <div id="medici-progress-bar"></div>
+          <div id="medici-progress-wrap" class="medici-progress-wrap" hidden>
+            <div class="medici-progress" aria-hidden="true">
+              <div id="medici-progress-bar"></div>
+            </div>
+            <div class="medici-progress-text" id="medici-progress-text">Idle</div>
           </div>
-          <div class="medici-progress-text" id="medici-progress-text">Idle</div>
         </section>
 
-        <section class="medici-section medici-preview-section">
+        <section id="medici-preview" class="medici-section medici-preview-section" hidden>
           <canvas id="medici-canvas" class="medici-canvas" width="1" height="1"></canvas>
-          <div class="medici-actions medici-actions--output">
+          <div id="medici-output-actions" class="medici-actions medici-actions--output" hidden>
             <a id="medici-download" class="medici-button" href="#" aria-disabled="true"><span>Download</span><span id="medici-download-size" class="medici-download-size" hidden></span></a>
           </div>
         </section>
 
-        <details class="medici-section medici-details">
+        <details id="medici-details" class="medici-section medici-details" hidden>
           <summary>Details</summary>
           <pre id="medici-log" class="medici-log">Ready.</pre>
         </details>
