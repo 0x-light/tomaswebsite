@@ -955,6 +955,7 @@ a[href^="http"]:not(.project-row)::after {
 .medici-source::placeholder,
 .medici-field input::placeholder {
   color: var(--text-dim);
+  opacity: 0.55;
 }
 
 .medici-controls,

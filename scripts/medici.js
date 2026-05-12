@@ -199,7 +199,7 @@
     if (!els.downloadSize) {
       return;
     }
-    setVisible(els.outputActions, false);
+    setVisible(els.outputActions, true);
     els.download.href = "#";
     els.download.removeAttribute("download");
     els.download.setAttribute("aria-disabled", "true");
@@ -299,11 +299,20 @@
   }
 
   function getHelperOrigin() {
-    if ((window.location.protocol === "http:" || window.location.protocol === "https:") &&
-      /^(?:localhost|127\.0\.0\.1|\[::1\])$/i.test(window.location.hostname)) {
+    if (window.MEDICI_HELPER_ORIGIN) {
+      return String(window.MEDICI_HELPER_ORIGIN).replace(/\/$/, "");
+    }
+    if (window.location.protocol === "http:" || window.location.protocol === "https:") {
       return window.location.origin;
     }
     return DEFAULT_HELPER_ORIGIN;
+  }
+
+  function helperMissingMessage(label) {
+    if (window.location.protocol === "file:") {
+      return label + " needs the local Medici helper. Start it with: node scripts/medici-helper.mjs";
+    }
+    return label + " needs the Medici helper endpoint at " + getHelperOrigin() + HELPER_PATH + ". This production deployment is missing it.";
   }
 
   function proxyUrl(url) {
@@ -351,7 +360,7 @@
   function noteHelperUse() {
     if (!helperNoticeShown) {
       helperNoticeShown = true;
-      writeLog("Using local helper for browser-blocked requests.");
+      writeLog("Using Medici helper for browser-blocked requests.");
     }
   }
 
@@ -377,7 +386,10 @@
           } catch (_readError) {
             helperBody = "";
           }
-          throw new Error("Local helper request failed with " + proxied.status + (helperBody ? ": " + helperBody : ""));
+          throw new Error("Medici helper request failed with " + proxied.status + (helperBody ? ": " + helperBody : ""));
+        }
+        if (!proxied.headers.get("x-medici-upstream-status")) {
+          throw new Error("Medici helper endpoint did not handle the proxy request.");
         }
         noteHelperUse();
         return proxied;
@@ -386,9 +398,9 @@
         var helperMessage = String(helperError && helperError.message || helperError);
         if (/Failed to fetch|NetworkError|Load failed/i.test(browserMessage)) {
           if (/Failed to fetch|NetworkError|Load failed/i.test(helperMessage)) {
-            throw new Error("The browser could not fetch that source, and the local Medici helper is not reachable. Start it with: node scripts/medici-helper.mjs");
+            throw new Error(helperMissingMessage("The browser could not fetch that source"));
           }
-          throw new Error("The browser could not fetch that source, and the local Medici helper could not fetch it either. " + helperMessage);
+          throw new Error("The browser could not fetch that source, and the Medici helper could not fetch it either. " + helperMessage);
         }
         throw browserError;
       }
@@ -416,11 +428,11 @@
       };
     } catch (error) {
       var message = error && error.message ? error.message : String(error);
-      if (/failed with 404|request failed with 404|Local helper request failed with 404/i.test(message)) {
-        throw new Error("The local Medici helper is running, but it needs to be restarted to enable the reader fallback.");
+      if (/failed with 404|request failed with 404|(?:Local|Medici) helper request failed with 404/i.test(message)) {
+        throw new Error("The Medici helper is running, but it needs to be updated to enable the reader fallback.");
       }
       if (/Failed to fetch|NetworkError|Load failed/i.test(message)) {
-        throw new Error("The reader fallback needs the local Medici helper. Start it with: node scripts/medici-helper.mjs");
+        throw new Error(helperMissingMessage("The reader fallback"));
       }
       throw error;
     }
@@ -450,9 +462,9 @@
       return;
     }
     if (status && status.ok) {
-      throw new Error("The local Medici helper is running, but it is too old for " + label + ". Stop it with Ctrl-C, then run: node scripts/medici-helper.mjs");
+      throw new Error("The Medici helper is running, but it is too old for " + label + ". Update the helper and redeploy.");
     }
-    throw new Error(label + " needs the local Medici helper. Start it with: node scripts/medici-helper.mjs");
+    throw new Error(helperMissingMessage(label));
   }
 
   async function analyze() {
@@ -1043,7 +1055,7 @@
       width: width,
       height: height,
       tiles: tiles,
-      note: "Google Arts tiles are decrypted through the local Medici helper."
+      note: "Google Arts tiles are decrypted through the Medici helper."
     };
   }
 
