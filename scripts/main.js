@@ -187,6 +187,7 @@
   function setupNavigationState() {
     var path = window.location.pathname;
     var page = path.slice(path.lastIndexOf("/") + 1) || "index.html";
+    var navSection = document.body.getAttribute("data-nav-section");
     if (page.indexOf(".") === -1) {
       page += ".html";
     }
@@ -195,7 +196,8 @@
     document.querySelectorAll(".sidebar__link").forEach(function (link) {
       var href = link.getAttribute("href") || "";
       var target = href.split("/").pop() || "index.html";
-      var isActive = page === target || (target === "writing.html" && isWritingDetail);
+      var isSectionActive = navSection && target === navSection + ".html";
+      var isActive = page === target || isSectionActive || (target === "writing.html" && isWritingDetail);
 
       link.classList.toggle("active", isActive);
       if (isActive) {
