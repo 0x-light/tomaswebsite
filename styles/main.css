@@ -738,6 +738,10 @@ a[href^="http"]:not(.project-row)::after {
 
 .about p + p { margin-top: 20px; }
 
+.dia-legal-links {
+  margin-top: 32px;
+}
+
 .about a {
   text-decoration: underline;
   text-decoration-color: var(--text-dim);
