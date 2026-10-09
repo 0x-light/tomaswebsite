@@ -14,7 +14,8 @@
 
   // ── Themes ──
   // A random theme per visit, kept while you browse (and shared with any page
-  // reading the "theme" key). T opens the picker.
+  // reading the "theme" key). T, or the footer button, moves to the next one;
+  // Shift+T goes back.
 
   var THEMES = [
     "light", "dark", "nocturne", "dawn", "moss", "glacial", "ember", "midnight", "fog", "alabaster",
@@ -51,7 +52,7 @@
     theme = applyTheme(name);
     try { if (themeStore) themeStore.setItem("theme", theme); } catch (_e) {}
     var btn = $(".js-theme");
-    if (btn) btn.setAttribute("aria-label", "Theme: " + theme + ". Choose a theme");
+    if (btn) btn.setAttribute("aria-label", "Theme: " + theme + ". Next theme");
   }
 
   function initialTheme() {
@@ -73,163 +74,9 @@
     if (link) link.href = "data:image/svg+xml," + encodeURIComponent(svg);
   }
 
-  // Each theme's two colours, read from themes.css, for the themes table.
-  function themeColors() {
-    var colors = { light: { bg: "#f8f8f7", text: "#1a1a1a" } };
-    $$("link[rel=stylesheet]").forEach(function (link) {
-      var rules;
-      try { rules = link.sheet && link.sheet.cssRules; } catch (_e) { return; }
-      Array.prototype.forEach.call(rules || [], function (r) {
-        var m = r.selectorText && r.selectorText.match(/^html\.([a-z0-9]+)$/);
-        if (m) colors[m[1]] = { bg: r.style.getPropertyValue("--bg").trim(), text: r.style.getPropertyValue("--text").trim() };
-      });
-    });
-    return colors;
-  }
-
-  function isDark(color) {
-    var probe = document.createElement("span");
-    probe.style.color = color;
-    document.body.appendChild(probe);
-    var rgb = getComputedStyle(probe).color.match(/[\d.]+/g).map(Number);
-    probe.remove();
-    return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2] < 128;
-  }
-
-  // ── Theme picker ──
-  // T swaps the page for a themes table, laid out like any other page: a
-  // section, a filter line, a box-drawn table, a hint. Moving through the
-  // rows tries each theme on the page itself; Enter or a tap keeps it, Esc
-  // puts the old one back and returns to the page.
-
-  var picker = null, pickerRows = [], pickerIndex = 0, pickerStart = "light", pickerScroll = 0;
-
-  function buildPicker() {
-    var colors = themeColors();
-    var view = document.createElement("section");
-    view.className = "page page--themes";
-    view.setAttribute("aria-label", "Themes");
-    view.tabIndex = -1;
-    view.hidden = true;
-    view.innerHTML =
-      '<section class="sec"><h2 class="sec__title">Themes</h2><div class="sec__body">' +
-        '<p>One at random each visit. Moving through the list tries each one on.</p>' +
-        '<div class="filter" hidden><label class="chip" for="filter-themes"><kbd>/</kbd><span class="chip__label">Filter</span></label>' +
-          '<input class="filter__input" id="filter-themes" type="text" autocomplete="off" spellcheck="false" placeholder="Type a name, or dark, or light. Esc clears."></div>' +
-        '<table class="tbl tbl--themes">' +
-          '<thead><tr><th>Theme</th></tr></thead>' +
-          '<tbody></tbody></table>' +
-        '<p class="empty" hidden>No themes match.</p>' +
-        '<p class="hint"><span class="hint--keys"><kbd>↑</kbd><kbd>↓</kbd> try · <kbd>↵</kbd> keep · <kbd>esc</kbd> back · <kbd>/</kbd> filter</span>' +
-        '<span class="hint--touch">Tap a theme to keep it.</span></p>' +
-      '</div></section>';
-
-    var tbody = $("tbody", view);
-    THEMES.forEach(function (name) {
-      var c = colors[name] || colors.light;
-      var tone = c.bg ? (isDark(c.bg) ? "dark" : "light") : "";
-      var tr = document.createElement("tr");
-      tr.className = "row";
-      tr.dataset.theme = name;
-      tr.dataset.search = name + " " + tone;
-      // The name is the sample: each row is painted in its own theme.
-      tr.style.setProperty("--sample-bg", c.bg);
-      tr.style.setProperty("--sample-text", c.text);
-      tr.innerHTML = '<td><button class="xrow__toggle" type="button" tabindex="-1">' + name + '</button></td>';
-      tbody.appendChild(tr);
-    });
-
-    tbody.addEventListener("click", function (e) {
-      var tr = e.target.closest("tr");
-      if (tr) keepTheme(tr.dataset.theme);
-    });
-
-    var input = $(".filter__input", view);
-    input.addEventListener("input", filterThemes);
-    input.addEventListener("keydown", function (e) {
-      if (e.key === "ArrowDown") { e.preventDefault(); highlight(pickerIndex + 1, true); }
-      else if (e.key === "ArrowUp") { e.preventDefault(); highlight(pickerIndex - 1, true); }
-      else if (e.key === "Enter") { e.preventDefault(); if (pickerRows[pickerIndex]) keepTheme(pickerRows[pickerIndex].dataset.theme); }
-      else if (e.key === "Escape") { e.preventDefault(); closeThemeFilter(); }
-    });
-
-    $("main.page").insertAdjacentElement("afterend", view);
-    return view;
-  }
-
-  function filterThemes() {
-    var input = $(".filter__input", picker), tbody = $("tbody", picker);
-    var q = fold(input.value.trim()), shown = 0;
-    $$("tr", tbody).forEach(function (tr) {
-      var hit = !q || fold(tr.dataset.search).indexOf(q) !== -1;
-      tr.hidden = !hit;
-      if (hit) shown += 1;
-    });
-    $(".empty", picker).hidden = shown > 0;
-    // Keep the highlighted theme if it still matches; otherwise move to the first match.
-    var current = pickerRows[pickerIndex];
-    pickerRows = $$("tr:not([hidden])", tbody);
-    var at = pickerRows.indexOf(current);
-    if (at !== -1) pickerIndex = at;
-    else if (pickerRows.length) highlight(0, true);
-  }
-
-  function openThemeFilter() {
-    var f = $(".filter", picker);
-    f.hidden = false;
-    $(".filter__input", f).focus();
-  }
-
-  function closeThemeFilter() {
-    var f = $(".filter", picker);
-    $(".filter__input", f).value = "";
-    filterThemes();
-    f.hidden = true;
-    picker.focus({ preventScroll: true });
-  }
-
-  function highlight(i, preview) {
-    if (!pickerRows.length) return;
-    pickerIndex = Math.max(0, Math.min(pickerRows.length - 1, i));
-    $$("tr.is-current", picker).forEach(function (tr) { tr.classList.remove("is-current"); });
-    var tr = pickerRows[pickerIndex];
-    tr.classList.add("is-current");
-    tr.scrollIntoView({ block: "nearest" });
-    if (preview) applyTheme(tr.dataset.theme);
-  }
-
-  function pickerOpen() { return !!picker && !picker.hidden; }
-
-  function openPicker() {
-    if (!picker) picker = buildPicker();
-    if (pickerOpen()) return;
-    pickerStart = theme;
-    pickerScroll = window.scrollY;
-    $(".filter__input", picker).value = "";
-    $(".filter", picker).hidden = true;
-    $$("tbody tr", picker).forEach(function (tr) { tr.hidden = false; });
-    $(".empty", picker).hidden = true;
-    pickerRows = $$("tbody tr", picker);
-    $("main.page").hidden = true;
-    picker.hidden = false;
-    highlight(THEMES.indexOf(theme), false);
-    pickerRows[pickerIndex].scrollIntoView({ block: "center" });
-    picker.focus({ preventScroll: true });
-  }
-
-  function closePicker(keep) {
-    if (!pickerOpen()) return;
-    if (!keep) setTheme(pickerStart);
-    picker.hidden = true;
-    $("main.page").hidden = false;
-    window.scrollTo(0, pickerScroll);
-    var btn = $(".js-theme");
-    if (btn) btn.focus({ preventScroll: true });
-  }
-
-  function keepTheme(name) {
-    setTheme(name);
-    closePicker(true);
+  function cycleTheme(delta) {
+    var i = (THEMES.indexOf(theme) + delta + THEMES.length) % THEMES.length;
+    setTheme(THEMES[i]);
   }
 
   // ── Tables: rows that open into a full-width block ──
@@ -411,9 +258,9 @@
 
   // ── Keyboard ──
   // 1–4 pages · arrows (or j/k) move through a table · Enter opens · Esc closes
-  // / filter · T themes
+  // / filter · T next theme (Shift+T previous)
 
-  $$(".js-theme").forEach(function (b) { b.addEventListener("click", openPicker); });
+  $$(".js-theme").forEach(function (b) { b.addEventListener("click", function () { cycleTheme(1); }); });
 
   function focusRow(tr) {
     $(".xrow__toggle", tr).focus({ preventScroll: true });
@@ -443,29 +290,13 @@
   document.addEventListener("keydown", function (e) {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
 
-    // In the themes view: arrows (or j/k) try a theme, Enter keeps it, Esc or T
-    // goes back, / filters. Page numbers still work. The filter input handles
-    // its own keys.
-    if (pickerOpen()) {
-      if (e.target.matches("input")) return;
-      var pk = e.key.length === 1 ? e.key.toLowerCase() : e.key;
-      var pHandled = true;
-      if (pk === "ArrowDown" || pk === "j") highlight(pickerIndex + 1, true);
-      else if (pk === "ArrowUp" || pk === "k") highlight(pickerIndex - 1, true);
-      else if (pk === "Enter" && pickerRows[pickerIndex]) keepTheme(pickerRows[pickerIndex].dataset.theme);
-      else if (pk === "Escape" || pk === "t") closePicker(false);
-      else if (pk === "/") openThemeFilter();
-      else pHandled = false;
-      if (pHandled) { e.preventDefault(); return; }
-    }
-
     if (e.target.matches && e.target.matches("input, textarea, select")) return;
 
     var k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     var handled = true;
 
     if (k >= "1" && k <= "4") location.href = PAGES[+k - 1];
-    else if (k === "t") openPicker();
+    else if (k === "t") cycleTheme(e.shiftKey ? -1 : 1);
     else if (k === "/") handled = openFilter();
     // Arrows (or j/k) move through the page's table; with no table they scroll as usual.
     else if (k === "ArrowDown" || k === "j") handled = moveRow(1);

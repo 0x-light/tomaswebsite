@@ -39,6 +39,11 @@ PROJECTS = [
 
 BOOKS = [
     # title, year, author, note
+    ("Medieval Europe", 2016, "Chris Wickham", "A history of Europe from 500 to 1500, told through how power was held, shared, and lost."),
+    ("Swann's Way", 1913, "Marcel Proust", "The first volume of In Search of Lost Time. A childhood in Combray, and Swann's long, jealous love for Odette."),
+    ("Chess Story", 1942, "Stefan Zweig", "On a liner to Buenos Aires, the world chess champion meets a passenger who learned the game alone in a Gestapo cell."),
+    ("The Remains of the Day", 1989, "Kazuo Ishiguro", "An English butler drives across the country and looks back on decades of service to a lord whose politics he never questioned."),
+    ("The Invisible Man", 1897, "H. G. Wells", "A scientist arrives in a Sussex village wrapped in bandages. He has made himself invisible and cannot undo it."),
     ("Butcher's Crossing", 1960, "John Williams", "A young Harvard dropout joins a buffalo hunting expedition into the Colorado wilderness."),
     ("Under the Glacier", 1968, "Halldor Laxness", "A young emissary is sent to investigate a pastor who has stopped performing his duties in a remote Icelandic village."),
     ("There Is No Antimemetics Division", 2020, "qntm", "A division that fights things you can't remember."),
@@ -393,7 +398,7 @@ PAGES = {
     ),
     "404": page(
         "404", "Not found · Tomás Thor Palmeirim", "This page doesn't exist.", "",
-        section("Not found", '<p>Nothing lives here.</p>' + links([("Go to the home page", "/")])),
+        section("Not found", '<p>There is no page at this address.</p>' + links([("Go to the home page", "/")])),
     ),
 }
 

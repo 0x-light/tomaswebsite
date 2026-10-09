@@ -313,19 +313,6 @@ kbd {
 .sort button::before { content: "( ) "; white-space: pre; }
 .sort button[aria-checked="true"]::before { content: "(*) "; }
 
-/* ── Theme picker ── */
-/* T swaps the page for a themes table; it's styled like any other page.
-   The table's columns are set below with the others. */
-
-.page--themes:focus { outline: none; }
-
-/* Each row wears its own theme; the highlighted row inverts within it. */
-.tbl--themes .row td { background: var(--sample-bg); color: var(--sample-text); }
-.tbl--themes .row.is-current td { background: var(--sample-text); color: var(--sample-bg); }
-@media (hover: hover) {
-  .tbl--themes .row:hover td { background: var(--sample-text); color: var(--sample-bg); }
-}
-
 /* ── Medici ── */
 
 .medici-tool { display: flex; flex-direction: column; gap: var(--lh); margin-top: var(--lh); }
