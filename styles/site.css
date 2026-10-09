@@ -262,6 +262,9 @@ kbd {
 .tbl--work th:nth-child(2) { width: 24ch; }   /* Product, Design, Dev */
 .tbl--books th:nth-child(1) { width: 6ch; }   /* year */
 .tbl--books th:nth-child(3) { width: 28ch; }  /* Antoine de Saint-Exupéry */
+/* On small screens the author column goes and "by Author" joins the title.
+   Opacity rather than --muted so it stays dim when the row inverts. */
+.tbl--books .by { display: none; opacity: 0.58; }
 .tbl--facts th:nth-child(1) { width: 13ch; }
 
 .row { cursor: pointer; }
@@ -277,7 +280,6 @@ kbd {
   border-top: 1px solid var(--rule);      /* closes the columns: ├──┴──┤ */
   border-bottom: 1px solid var(--rule);
 }
-.note__author { display: none; }
 
 /* ── Filter ── */
 /* Press / on a table: a filter line appears above it. */
@@ -466,5 +468,5 @@ kbd {
 
 @media (max-width: 520px) {
   .col-author { display: none; }
-  .note__author { display: inline; }
+  .tbl--books .by { display: inline; }
 }

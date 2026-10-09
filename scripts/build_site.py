@@ -248,10 +248,10 @@ def books_table():
         rows.append(
             f'<tr class="row xrow" data-slug="{s}" data-i="{i}" data-year="{year}" data-title="{e(title)}" data-author="{e(author)}">'
             f"<td>{year}</td>"
-            f'<td><button class="xrow__toggle" type="button" aria-expanded="false" aria-controls="book-{s}">{e(title)}</button></td>'
+            f'<td><button class="xrow__toggle" type="button" aria-expanded="false" aria-controls="book-{s}">{e(title)}<span class="by"> by {e(author)}</span></button></td>'
             f'<td class="col-author">{e(author)}</td>'
             f"</tr>"
-            f'<tr class="note" id="book-{s}" hidden><td colspan="3"><span class="note__author">{e(author)}. </span>{e(note)}</td></tr>'
+            f'<tr class="note" id="book-{s}" hidden><td colspan="3">{e(note)}</td></tr>'
         )
     return (
         '<div class="sort" role="radiogroup" aria-label="Sort books"><span class="sort__label">Sort</span>'
