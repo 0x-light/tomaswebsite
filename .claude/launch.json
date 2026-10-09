@@ -1,0 +1,14 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "site",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "/Users/tomas/Documents/code/tomaswebsite/scripts/dev-server.mjs"
+      ],
+      "port": 4173,
+      "autoPort": true
+    }
+  ]
+}

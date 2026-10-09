@@ -1,287 +1,1202 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Skiv — Video hosting with AI search</title>
   <meta name="description" content="Store, search, and share your videos. AI that understands what's in them." />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><style>circle{fill:%23fff}polygon{fill:%231a1a1a}@media(prefers-color-scheme:dark){circle{fill:%2309090B}polygon{fill:%23DEDEDE}}</style><circle cx='16' cy='16' r='15'/><polygon points='13,10 13,22 23,16'/></svg>" />
+  <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><style>circle{fill:%23fff}polygon{fill:%231a1a1a}@media(prefers-color-scheme:dark){circle{fill:%2309090B}polygon{fill:%23DEDEDE}}</style><circle cx='16' cy='16' r='15'/><polygon points='13,10 13,22 23,16'/></svg>" />
+  <script>
+    (function () {
+      var s = localStorage.getItem('theme');
+      var d = s || (matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', d);
+    })();
+  </script>
   <style>
-
-    /* ── Tokens ── */
-
     :root {
-      --bg:       #f8f8f7;
-      --text:     #1a1a1a;
-      --text-rgb: 26, 26, 26;
-      --text-2:   rgba(var(--text-rgb), 0.6);
-      --text-3:   rgba(var(--text-rgb), 0.4);
-      --text-dim: rgba(var(--text-rgb), 0.2);
-      --border:   rgba(var(--text-rgb), 0.1);
-      --font:     system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      --content-w: 560px;
+      --bg: #f6f5f3;
+      --fg: #111;
+      --mid: rgba(17,17,17,.50);
+      --faint: rgba(17,17,17,.28);
+      --rule: rgba(17,17,17,.12);
+      --surface: rgba(210,180,140,.08);
+      --tint: rgba(17,17,17,.04);
+      --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --page: 1080px;
+      --gutter: 32px;
+      --text-base: 20px;
+      --text-sm: 18px;
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg:       #09090B;
-        --text:     #DEDEDE;
-        --text-rgb: 222, 222, 222;
-      }
+    [data-theme="dark"] {
+      --bg: #000000;
+      --fg: #dedede;
+      --mid: rgba(222,222,222,.50);
+      --faint: rgba(222,222,222,.28);
+      --rule: rgba(222,222,222,.12);
+      --surface: rgba(140,170,210,.06);
+      --tint: rgba(222,222,222,.06);
     }
 
-    /* ── Reset ── */
-
-    *, *::before, *::after {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html {
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-
-    ::selection {
-      background: var(--text);
-      color: var(--bg);
-    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; overflow-x: hidden; overflow-x: clip; }
+    ::selection { background: var(--fg); color: var(--bg); }
 
     body {
-      font-family: var(--font);
-      font-size: 17px;
-      line-height: 1.7;
-      color: var(--text);
+      font-family: var(--sans);
+      font-size: var(--text-base);
+      line-height: 1.6;
+      color: var(--fg);
       background: var(--bg);
+      overflow-x: clip;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
+    a { color: inherit; text-decoration: none; }
+    a:focus-visible { outline: 2px solid var(--faint); outline-offset: 2px; }
+    img { display: block; max-width: 100%; }
+    button { font-family: inherit; cursor: pointer; }
+    ol, ul { list-style: none; }
+
+    /* ── Header ───────────────────────────────── */
+
+    .hd {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid var(--rule);
     }
-
-    a:focus-visible {
-      outline: 2px solid var(--text-2);
-      outline-offset: 2px;
-    }
-
-    /* ── Layout ── */
-
-    .site {
-      max-width: var(--content-w);
-      margin: 0 auto;
-      padding: 0 20px;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* ── Header ── */
-
-    .header {
-      display: flex;
-      align-items: center;
+    .hd-inner {
+      display: flex; align-items: center;
       justify-content: space-between;
-      padding: 48px 0 0;
+      padding: 15px 15px 15px 25px;
     }
-
-    .wordmark {
-      letter-spacing: -0.01em;
+    .hd-logo { display: block; }
+    .hd-logo img { height: 20px; width: auto; display: block; }
+    [data-theme="dark"] .hd-logo img { filter: invert(1); }
+    .hd-nav { display: flex; align-items: center; gap: 4px; }
+    .hd-nav a {
+      padding: 6px 10px;
+      font-size: var(--text-sm);
+      color: var(--mid);
+      transition: color .15s;
     }
-
-    .nav {
-      display: flex;
-      gap: 24px;
+    .hd-nav a:hover { color: var(--fg); }
+    .hd-nav a[href*="pricing"] { order: 6; }
+    .hd-nav-docs { order: 7; display: none; }
+    .hd-nav-theme { order: 8; }
+    .hd-nav-api { order: 9; display: none; }
+    .hd-nav-signin { order: 10; }
+    .hd-nav a.hd-cta { order: 11; }
+    .hd-cta {
+      padding: 7px 14px; font-size: var(--text-base);
+      background: var(--fg); color: var(--bg);
+      border: none; display: inline-block;
+      transition: opacity .15s;
+      margin-left: 10px;
     }
-
-    .nav a {
-      color: var(--text-3);
-      transition: color 0.15s;
+    .hd-cta:hover { opacity: .75; }
+    .hd-nav a.hd-cta { color: var(--bg); }
+    .hd-nav a.hd-cta:hover { color: var(--bg); }
+    .hd-actions { display: none; align-items: center; gap: 16px; }
+    .hd-join {
+      font-size: var(--text-sm); color: var(--bg);
+      background: var(--fg); padding: 1px 10px; transition: opacity .15s;
     }
-
-    .nav a:hover {
-      color: var(--text);
+    .hd-join:hover { opacity: .75; }
+    .hd-login {
+      font-size: var(--text-sm); color: var(--faint);
+      transition: color .15s;
     }
-
-    /* ── Hero ── */
-
-    .main {
-      flex: 1;
-      padding: 40px 0 0;
+    .hd-login:hover { color: var(--fg); }
+    .hd-toggle {
+      display: none; background: none; border: none;
+      font-family: inherit; font-size: var(--text-base);
+      color: var(--faint); padding: 0; cursor: pointer;
+      transition: color .15s;
     }
+    .hd-toggle:hover { color: var(--fg); }
 
-    .hero .dim {
-      color: var(--text-2);
-    }
+    /* ── Desktop dropdown nav ────────────────── */
 
-    .hero p + p {
-      margin-top: 20px;
-    }
-
-    .hero a {
-      text-decoration: underline;
-      text-decoration-color: var(--text-dim);
-      transition: text-decoration-color 0.15s;
-    }
-
-    .hero a:hover {
-      text-decoration-color: var(--text);
-    }
-
-    .hero .cta {
-      display: inline-block;
-      margin-top: 32px;
-      text-decoration: underline;
-      text-decoration-color: var(--text-dim);
-      transition: text-decoration-color 0.15s;
-    }
-
-    .hero .cta:hover {
-      text-decoration-color: var(--text);
-    }
-
-    /* ── Section heading ── */
-
-    .section-heading {
+    .hd-parent {
+      position: relative;
       display: flex;
       align-items: center;
-      gap: 17px;
-      margin-top: 64px;
-      margin-bottom: 20px;
+      padding: 6px 10px;
+      font-size: var(--text-sm);
+      color: var(--mid);
+      cursor: pointer;
+      transition: color .15s;
+      user-select: none;
+    }
+    .hd-parent:hover { color: var(--fg); }
+    .hd-parent > .icon-m-caret-small {
+      display: inline-block;
+      width: 26px; height: 26px;
+      background-image: url(/static/imgs/icon-sprites.svg);
+      background-repeat: no-repeat;
+      background-position: -35px -431px;
+      margin-left: 2px;
+      vertical-align: middle;
+      opacity: .5;
+    }
+    [data-theme="dark"] .hd-parent > .icon-m-caret-small { filter: invert(1); }
+
+    .hd-dropdown {
+      position: fixed;
+      left: 0; right: 0;
+      top: 72px;
+      background: var(--bg);
+      display: none;
+      z-index: 99;
+    }
+    .hd-parent.active .hd-dropdown { display: block; }
+    .hd-dropdown-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin: 0 auto;
+    }
+    .hd-dropdown-grid--3 { grid-template-columns: repeat(3, 1fr); }
+
+    .hd-dropdown-cell {
+      padding: var(--gutter)!important;
+      color: var(--fg)!important;
+      border-right: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      text-decoration: none;
+      transition: background .15s;
+    }
+    .hd-dropdown-cell:nth-child(4n) { border-right: none; }
+    .hd-dropdown-cell:hover { background: var(--tint); }
+    .hd-dropdown-cell--empty { pointer-events: none; }
+
+    /* Invisible bridge above dropdown to close mouse gap */
+    .hd-dropdown::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: 0; right: 0;
+      height: 20px;
     }
 
-    .section-heading__text {
-      font-weight: 400;
-      color: var(--text-3);
-      flex-shrink: 0;
+    .hd-dropdown-cell h3 {
+      font-size: var(--text-sm);
+      font-weight: normal;
+    }
+    .hd-dropdown-cell p {
+      font-size: var(--text-sm);
+      color: var(--mid);
+      margin-top: 4px;
+      line-height: 1.5;
     }
 
-    .section-heading__rule {
-      flex: 1;
+    .hd-overlay {
+      position: fixed;
+      inset: 0;
+      top: 72px;
+      background: var(--bg);
+      z-index: 98;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .15s;
+    }
+    .hd-overlay.active {
+      opacity: .7;
+      pointer-events: all;
+    }
+
+    /* ── Icon sprites ────────────────────────── */
+
+    .hd-dropdown-cell i[class^="icon-"],
+    .hd-dropdown-cell i[class*=" icon-"] {
+      display: block;
+      width: 26px; height: 26px;
+      background-image: url(/static/imgs/icon-sprites.svg);
+      background-repeat: no-repeat;
+      margin-bottom: 10px;
+      opacity: .45;
+    }
+    [data-theme="dark"] .hd-dropdown-cell i[class^="icon-"],
+    [data-theme="dark"] .hd-dropdown-cell i[class*=" icon-"] {
+      filter: invert(1);
+    }
+    .icon-m-bulb { background-position: -440px -366px; }
+    .icon-m-price { background-position: -202px -367px; }
+    .icon-m-concepts { background-position: -378px -84px; }
+    .icon-m-team { background-position: -225px -431px; }
+    .icon-m-play { background-position: -2px -209px; }
+    .icon-m-cloud { background-position: -578px -399px; }
+    .icon-m-search { background-position: -252px -210px; }
+    .icon-m-portal { background-position: -613px -329px; }
+    .icon-m-rec { background-position: -42px -210px; }
+    .icon-m-transcript { background-position: -504px 0; }
+    .icon-m-label { background-position: -535px -291px; }
+    .icon-m-star { background-position: -84px 0; }
+    .icon-m-brain { background-position: -210px -84px; }
+    .icon-m-dev { background-position: -546px -84px; }
+    .icon-m-external { background-position: -41px -125px; }
+    .icon-m-info { background-position: -631px -127px; }
+    .icon-m-grid { background-position: -462px -126px; }
+    .icon-m-trim { background-position: -378px 0; }
+    .icon-m-sound { background-position: 0 -252px; }
+    .icon-m-popcorn { background-position: -356px -428px; }
+    .icon-m-user-channel-filled { background-position: -473px -366px; }
+    .icon-m-trademark { background-position: -292px -293px; }
+    .icon-m-upload { background-position: -210px -250px; }
+    .icon-m-share { background-position: -210px -208px; }
+    .icon-m-embed { background-position: -2px -398px; }
+    .icon-m-lock { background-position: -84px -167px; }
+    .icon-m-4k { background-position: -123px -367px; }
+    .icon-m-chromecast { background-position: -126px -84px; }
+    .icon-m-airplay { background-position: -630px -42px; }
+    .icon-m-scenes { background-position: -294px 0; }
+    .icon-m-copyright { background-position: -334px -292px; }
+    .icon-m-subtitles { background-position: -574px -365px; }
+    .icon-m-dashhls { background-position: -83px -367px; }
+
+    /* ── Buttons ──────────────────────────────── */
+
+    .btn-dark {
+      padding: 7px 14px; font-size: var(--text-base);
+      background: var(--fg); color: var(--bg);
+      border: none; display: inline-block;
+      transition: opacity .15s;
+    }
+    .btn-dark:hover { opacity: .8; }
+    .btn-ghost {
+      padding: 7px 14px; font-size: var(--text-base);
+      background: rgba(127,127,127,.12); color: var(--fg);
+      border: none; display: inline-block;
+    }
+
+    /* ── Rail: continuous vertical-border frame ── */
+
+    .rail {
+      max-width: var(--page);
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+    }
+    .rail-inner {
+      border-left: 1px solid var(--rule);
+      border-right: 1px solid var(--rule);
+    }
+    .rail-rule {
       height: 1px;
-      background: var(--border);
+      background: var(--rule);
+      position: relative;
+      width: 100vw;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .rail-spacer {
+      padding: var(--gutter) 0;
     }
 
-    /* ── Feature rows ── */
+    /* ── Hero ─────────────────────────────────── */
 
-    .feature-list {
+    .hero {
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+      background: #111;
+      aspect-ratio: 16/7;
+      width: 100%;
+    }
+    .hero__bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .hero__poster {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+      transition: opacity .4s ease;
+      pointer-events: none;
+    }
+    .hero__poster.is-hidden { opacity: 0; }
+    .hero__bg .muse-video-player {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .hero__bg .muse-video-player,
+    .hero__bg iframe {
+      pointer-events: none !important;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 1;
+      pointer-events: none;
+    }
+    .hero__overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
       display: flex;
       flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 50px;
+      color: #fff;
+    }
+    .hero-title {
+      font-size: clamp(42px, 7vw, 72px);
+      font-weight: 400;
+      line-height: 1.06;
+      letter-spacing: -0.035em;
+      color: #fff;
+    }
+    .hero-sub {
+      margin: 20px auto 0;
+      max-width: 700px;
+      font-size: 28px;
+      color: rgba(255,255,255,.75);
+      line-height: 1.55;
+    }
+    .desktop-br { display: block; }
+    .hero-actions {
+      margin-top: 28px;
+      display: flex; gap: 10px;
+      justify-content: center; align-items: center;
+    }
+    .hero-actions .btn-dark {
+      background: #fff;
+      color: #111;
+      font-size: 22px;
+      padding: 10px 22px;
+    }
+    .hero-actions .btn-ghost {
+      color: rgba(255,255,255,.8);
+      border-color: rgba(255,255,255,.3);
+      backdrop-filter: blur(50px);
+      font-size: 22px;
+      padding: 10px 22px;
+    }
+    .hero-actions .btn-ghost:hover {
+      color: #fff;
+      border-color: rgba(255,255,255,.6);
     }
 
-    .feature-row {
-      display: block;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--border);
-    }
+    /* ── Section header ──────────────────────── */
 
-    .feature-row:last-child {
-      border-bottom: none;
-    }
-
-    .feature-row__name {
-      color: var(--text);
-      transition: color 0.2s;
-    }
-
-    .feature-row__desc {
-      color: var(--text-2);
-      margin-top: 2px;
-      transition: color 0.2s;
-    }
-
-    .feature-list:hover .feature-row__name,
-    .feature-list:hover .feature-row__desc {
-      color: var(--text-dim);
-    }
-
-    .feature-list:hover .feature-row:hover .feature-row__name {
-      color: var(--text);
-    }
-
-    .feature-list:hover .feature-row:hover .feature-row__desc {
-      color: var(--text-2);
-    }
-
-    /* ── Trusted ── */
-
-    .trusted {
-      margin-top: 64px;
-      color: var(--text-3);
-    }
-
-    .trusted__highlight {
-      color: var(--text);
-    }
-
-    /* ── Closing ── */
-
-    .closing {
-      margin-top: 64px;
-    }
-
-    .closing a {
-      text-decoration: underline;
-      text-decoration-color: var(--text-dim);
-      transition: text-decoration-color 0.15s;
-    }
-
-    .closing a:hover {
-      text-decoration-color: var(--text);
-    }
-
-    /* ── Footer ── */
-
-    .footer {
-      padding: 64px 0 48px;
-      color: var(--text-3);
+    .section-head {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
+      padding: var(--gutter);
+    }
+    .section-title {
+      font-size: 25px;
+      letter-spacing: -0.01em;
+    }
+    .section-sub {
+      color: var(--faint);
+      font-size: 25px;
+      letter-spacing: -0.01em;
     }
 
-    .tagline {
-      color: var(--text-dim);
+    /* ── Pillars (Host / Share / Search) ──────── */
+
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .pillar {
+      padding: var(--gutter);
+    }
+    .pillar + .pillar {
+      border-left: 1px solid var(--rule);
+    }
+    .pillar-icon {
+      display: block;
+      width: 26px; height: 26px;
+      background-image: url(/static/imgs/icon-sprites.svg);
+      background-repeat: no-repeat;
+      opacity: .45;
+      margin-bottom: 12px;
+    }
+    [data-theme="dark"] .pillar-icon { filter: invert(1); }
+    .pillar-title {
+      font-size: var(--text-base);
+      font-weight: 500;
+      letter-spacing: -0.005em;
+    }
+    .pillar-desc {
+      margin-top: 6px;
+      font-size: var(--text-sm);
+      color: var(--mid);
+      line-height: 1.5;
     }
 
-    /* ── Responsive ── */
+    /* ── Features ─────────────────────────────── */
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .feature {
+      padding: var(--gutter);
+      border-bottom: 1px solid var(--rule);
+    }
+    .feature:nth-last-child(-n+2) { border-bottom: none; }
+    .feature:nth-child(even) {
+      border-left: 1px solid var(--rule);
+    }
+    .feature-video {
+      width: calc(100% + var(--gutter) * 2);
+      margin-left: calc(-1 * var(--gutter));
+      margin-top: calc(-1 * var(--gutter));
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      display: block;
+      margin-bottom: var(--gutter);
+      background: var(--surface);
+      border-bottom: 1px solid var(--rule);
+    }
+    .feature-title {
+      font-size: var(--text-base);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+    }
+    .feature-desc {
+      font-size: var(--text-sm);
+      color: var(--mid);
+      line-height: 1.5;
+    }
+
+    /* ── Plans ────────────────────────────────── */
+
+    .plan-toggle-wrap {
+      padding: var(--gutter);
+      display: flex;
+      gap: 2px;
+    }
+    .plan-toggle-btn {
+      padding: 8px 14px;
+      font-size: var(--text-sm);
+      font-family: inherit;
+      line-height: 1;
+      cursor: pointer;
+      border: none;
+      background: var(--surface);
+      color: var(--mid);
+      transition: background .15s, color .15s;
+    }
+    .plan-toggle-btn.active {
+      background: var(--fg);
+      color: var(--bg);
+    }
+    .plan-toggle-btn:hover { opacity: .85; }
+    .plan-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .plan-cell {
+      padding: var(--gutter);
+      display: flex;
+      flex-direction: column;
+    }
+    .plan-cell + .plan-cell {
+      border-left: 1px solid var(--rule);
+    }
+    .plan-cell--featured {
+      background: var(--fg);
+      color: var(--bg);
+    }
+    .plan-cell--featured .plan-desc,
+    .plan-cell--featured .plan-period {
+      color: rgba(255,255,255,.5);
+    }
+    [data-theme="dark"] .plan-cell--featured .plan-desc,
+    [data-theme="dark"] .plan-cell--featured .plan-period {
+      color: rgba(0,0,0,.45);
+    }
+    .plan-cell--featured .plan-features li {
+      color: rgba(255,255,255,.65);
+    }
+    [data-theme="dark"] .plan-cell--featured .plan-features li {
+      color: rgba(0,0,0,.6);
+    }
+    .plan-cell--featured .btn-dark {
+      background: var(--bg);
+      color: var(--fg);
+    }
+    .plan-name {
+      font-size: 20px;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .plan-badge {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 2px 8px;
+      background: var(--bg);
+      color: var(--fg);
+      vertical-align: middle;
+    }
+    .plan-desc {
+      font-size: var(--text-sm);
+      color: var(--mid);
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    .plan-price {
+      font-size: clamp(28px, 3vw, 36px);
+      font-weight: 400;
+      letter-spacing: -0.035em;
+      line-height: 1.2;
+    }
+    .plan-period {
+      font-size: var(--text-sm);
+      color: var(--faint);
+      margin-top: 4px;
+    }
+    .plan-cta { width: fit-content; margin-top: 20px; }
+    .plan-features {
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .plan-features li {
+      font-size: var(--text-sm);
+      color: var(--mid);
+      padding: 3px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .plan-features li::before {
+      content: "";
+      display: inline-block;
+      width: 16px; height: 16px; min-width: 16px;
+      background: currentColor;
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+      -webkit-mask-size: contain;
+      mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      opacity: .4;
+    }
+    .plan-enterprise {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--gutter);
+      padding: var(--gutter);
+    }
+    .plan-enterprise .plan-name { margin-bottom: 4px; }
+    .plan-enterprise .plan-desc { margin-bottom: 0; }
+
+    /* ── Proof / logo grid ────────────────────── */
+
+    .proof-text {
+      padding: var(--gutter);
+      text-align: center;
+      font-size: var(--text-sm);
+      color: var(--mid);
+      line-height: 1.55;
+    }
+    .logo-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+    }
+    .logo-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px;
+      border-top: 1px solid var(--rule);
+    }
+    .logo-cell:nth-child(n+2) {
+      border-left: 1px solid var(--rule);
+    }
+    .logo-cell img {
+      height: auto; width: auto;
+      max-height: 24px;
+    }
+    .logo-cell .logo-dark { display: none; }
+    [data-theme="dark"] .logo-cell .logo-light { display: none; }
+    [data-theme="dark"] .logo-cell .logo-dark { display: block; }
+    [data-theme="dark"] .logo-cell.logo-mono img { filter: invert(1); }
+
+    /* ── Footer ───────────────────────────────── */
+
+    .ft-layout {
+      display: grid;
+      grid-template-columns: 2fr 3fr;
+    }
+    .ft-left {
+      padding: var(--gutter);
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--rule);
+    }
+    .ft-tagline {
+      font-size: clamp(22px, 2.4vw, 28px);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .ft-actions {
+      margin-top: auto;
+      padding-top: 24px;
+      display: flex; gap: 10px;
+    }
+    .ft-nav {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .ft-col { padding: 20px; }
+    .ft-col + .ft-col {
+      border-left: 1px solid var(--rule);
+    }
+    .ft-col h4 {
+      font-size: 12px; font-weight: 400;
+      text-transform: uppercase; letter-spacing: .1em;
+      color: var(--faint); margin-bottom: 10px;
+    }
+    .ft-col a {
+      display: block; font-size: 15px;
+      color: var(--mid); padding: 2px 0;
+      transition: color .15s;
+    }
+    .ft-col a:hover { color: var(--fg); }
+    .ft-bar {
+      padding: 20px;
+      display: flex; justify-content: space-between;
+      align-items: center;
+      font-size: 14px; color: var(--faint);
+    }
+    .ft-links { display: flex; gap: 16px; }
+    .ft-links a { color: var(--faint); transition: color .15s; }
+    .ft-links a:hover { color: var(--fg); }
+
+    /* ── Player demo ─────────────────────────── */
+
+    .player-tagline {
+      font-size: 25px;
+      color: var(--faint);
+      line-height: 1.3;
+    }
+
+    .player-tags {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      padding-top: 1px;
+      padding-bottom: 1px;
+      background: var(--rule);
+    }
+    .player-tag {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 16px 20px;
+      font-size: var(--text-sm);
+      background: var(--bg);
+      cursor: pointer;
+      transition: background .15s;
+    }
+    /* hover/active colors set below in status bar section */
+    .player-tag i {
+      display: inline-block;
+      width: 26px; height: 26px;
+      background-image: url(/static/imgs/icon-sprites.svg);
+      background-repeat: no-repeat;
+      opacity: .45;
+    }
+    [data-theme="dark"] .player-tag i { filter: invert(1); }
+
+    .player-tag-input { cursor: text; text-align: right; }
+    .player-tag-input:focus-within { background: var(--surface); }
+    .player-search-input {
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: var(--text-sm);
+      color: var(--fg);
+      outline: none;
+      width: 100%;
+      min-width: 0;
+      text-align: right;
+    }
+    .player-search-input::placeholder { color: var(--faint); }
+
+    .player-feats {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1px;
+      background: var(--rule);
+    }
+    .player-feat {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 12px;
+      font-size: 15px;
+      color: var(--mid);
+      background: var(--bg);
+    }
+    .player-feat i {
+      display: inline-block;
+      width: 26px; height: 26px;
+      background-image: url(/static/imgs/icon-sprites.svg);
+      background-repeat: no-repeat;
+      opacity: .35;
+    }
+    [data-theme="dark"] .player-feat i { filter: invert(1); }
+
+    /* Search status bar (inside tags grid) */
+    .player-tag:hover { background: #eae8e5; }
+    [data-theme="dark"] .player-tag:hover { background: #131313; }
+    .player-tag.active { background: #eae8e5; }
+    [data-theme="dark"] .player-tag.active { background: #131313; }
+    .player-tag.active i { opacity: .7; }
+    .player-tag-input:focus-within { background: #eae8e5; }
+    [data-theme="dark"] .player-tag-input:focus-within { background: #131313; }
+
+    @keyframes statusReveal {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .player-tag-status {
+      display: none;
+      grid-column: 1 / -1;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 10px 20px;
+      background: var(--bg);
+      font-size: var(--text-sm);
+      color: var(--mid);
+    }
+    .player-tag-status.active {
+      display: flex;
+      animation: statusReveal .35s ease;
+    }
+    .player-tag-status .q { color: var(--fg); }
+    .player-tag-status .sep { opacity: .3; }
+    .player-tag-nav {
+      cursor: pointer;
+      color: var(--mid);
+      transition: color .15s;
+      user-select: none;
+      display: flex;
+      padding: 2px;
+    }
+    .player-tag-nav:hover { color: var(--fg); }
+    .player-tag-nav.disabled { opacity: .2; pointer-events: none; }
+    .player-tag-nav svg { width: 14px; height: 14px; }
+
+    /* ── Unmute overlay ─────────────────────── */
+
+    .player-wrap { position: relative; }
+    .player-unmute {
+      position: absolute;
+      bottom: 72px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: rgba(0,0,0,.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #fff;
+      font-size: 15px;
+      font-family: var(--sans);
+      border-radius: 24px;
+      cursor: pointer;
+      transition: opacity .4s, background .2s;
+      z-index: 10;
+      user-select: none;
+    }
+    .player-unmute:hover { background: rgba(0,0,0,.85); }
+    .player-unmute svg { width: 18px; height: 18px; }
+    .player-unmute.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* ── Player transcript ─────────────────── */
+
+    .player-transcript {
+      position: relative;
+      max-height: 150px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      display: none;
+      scroll-behavior: smooth;
+    }
+    .player-transcript.loaded {
+      display: block;
+      animation: statusReveal .5s ease;
+    }
+    .player-transcript::before,
+    .player-transcript::after {
+      content: '';
+      position: sticky;
+      left: 0; right: 0;
+      display: block;
+      height: 24px;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .player-transcript::before {
+      top: 0;
+      margin-bottom: -24px;
+      background: linear-gradient(var(--bg), transparent);
+    }
+    .player-transcript::after {
+      bottom: 0;
+      margin-top: -24px;
+      background: linear-gradient(transparent, var(--bg));
+    }
+    .player-transcript-inner {
+      padding: var(--gutter);
+      line-height: 1.5;
+      font-size: var(--text-sm);
+    }
+    .player-transcript-inner span {
+      color: var(--faint);
+      cursor: pointer;
+      transition: color .2s, background .2s, text-shadow .2s;
+      border-radius: 3px;
+    }
+    .player-transcript-inner span:hover {
+      color: var(--fg);
+      background: var(--tint);
+    }
+    .player-transcript-inner span.active {
+      color: var(--fg);
+      text-shadow: 0 0 12px rgba(17,17,17,.25);
+    }
+    [data-theme="dark"] .player-transcript-inner span.active {
+      text-shadow: 0 0 14px rgba(222,222,222,.5);
+    }
+
+    /* ── Player layout: video + sidebar ──────── */
+
+    .player-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      position: relative;
+    }
+    .player-sidebar {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 340px;
+      border-left: 1px solid var(--rule);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg);
+    }
+    .player-layout .player-wrap {
+      overflow: hidden;
+    }
+    .player-sidebar .player-tags {
+      grid-template-columns: repeat(3, 1fr);
+      flex-shrink: 0;
+      padding-top: 0;
+    }
+    .player-sidebar .player-tag-status.active {
+    }
+    .player-sidebar .player-tag-input {
+      grid-column: 1 / -1;
+      justify-content: flex-start;
+    }
+    .player-sidebar .player-search-input {
+      text-align: left;
+    }
+    .player-sidebar .player-tag:not(.player-tag-input) i {
+      display: none;
+    }
+    .player-sidebar .player-tag:not(.player-tag-input) {
+      justify-content: center;
+      font-size: 15px;
+      padding: 12px 10px;
+    }
+    .player-sidebar .player-tag-status {
+      padding: 8px 16px;
+      font-size: 15px;
+    }
+    .player-sidebar .player-transcript {
+      flex: 1;
+      max-height: none;
+      min-height: 0;
+    }
+
+    /* ── Scroll reveal ───────────────────────── */
+
+    .rv {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity .6s cubic-bezier(.16,1,.3,1),
+      transform .6s cubic-bezier(.16,1,.3,1);
+    }
+    .rv.v { opacity: 1; transform: none; }
+    .rv-stagger > * {
+      opacity: 0; transform: translateY(10px);
+      transition: opacity .5s cubic-bezier(.16,1,.3,1),
+      transform .5s cubic-bezier(.16,1,.3,1);
+    }
+    .rv-stagger.v > * { opacity: 1; transform: none; }
+    .rv-stagger.v > *:nth-child(1) { transition-delay: 0s; }
+    .rv-stagger.v > *:nth-child(2) { transition-delay: .05s; }
+    .rv-stagger.v > *:nth-child(3) { transition-delay: .1s; }
+    .rv-stagger.v > *:nth-child(4) { transition-delay: .15s; }
+    .rv-stagger.v > *:nth-child(5) { transition-delay: .2s; }
+    .rv-stagger.v > *:nth-child(6) { transition-delay: .25s; }
+
+    /* ── Responsive ───────────────────────────── */
+
+    @media (max-width: 900px) {
+      :root { --gutter: 24px; }
+
+      .hd-actions { display: flex; }
+      .hd-toggle { display: block; font-size: var(--text-sm); }
+      .hd-login { font-size: var(--text-sm); }
+      .hd-inner { flex-wrap: wrap; padding: 14px 15px; }
+      .hd-inner:has(.hd-nav.open) { padding-bottom: 0; }
+      .hd:has(.hd-nav.open) { border-bottom: none; }
+
+      .hd-nav {
+        display: none;
+        flex-wrap: wrap;
+        align-items: stretch;
+        gap: 0;
+        width: calc(100% + var(--gutter) * 2);
+        margin: 14px calc(-1 * var(--gutter)) 0;
+      }
+      .hd-nav.open { display: flex; }
+      .hd-parent { display: none; }
+      .hd-overlay { display: none; }
+      .hd-nav a {
+        order: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        font-size: var(--text-base);
+        padding: 40px var(--gutter) 16px;
+        color: var(--fg);
+        width: 50%;
+        box-sizing: border-box;
+        border-top: 1px solid var(--rule);
+      }
+      .hd-nav a.hd-nav-docs { order: 1; }
+      .hd-nav a.hd-nav-theme { order: 2; }
+      .hd-nav a.hd-nav-api { order: 3; }
+      .hd-nav a[href*="pricing"] { order: 4; }
+      .hd-nav a.hd-nav-theme,
+      .hd-nav a[href*="pricing"] {
+        border-left: 1px solid var(--rule);
+      }
+      .hd-nav a::after {
+        content: '\2192';
+        color: var(--mid);
+      }
+      .hd-nav a.hd-nav-docs { display: flex; }
+      .hd-nav a.hd-nav-theme::after { content: none; }
+      .hd-nav a.hd-nav-api { display: flex; }
+      .hd-nav a.hd-nav-signin { display: none; }
+      .hd-nav a:hover { color: var(--fg); }
+      .hd-nav a.hd-cta {
+        order: 99;
+        color: var(--bg);
+        background: var(--fg);
+        padding: 16px var(--gutter);
+        margin-left: 0;
+        width: 100%;
+        border-top: none;
+        border-left: none;
+      }
+      .hd-nav a.hd-cta::after { color: var(--bg); }
+      .hd-nav a.hd-cta:hover { color: var(--bg); }
+
+      .hero { aspect-ratio: 16/8; }
+      .desktop-br { display: none; }
+
+      .pillars { grid-template-columns: 1fr; }
+      .pillar + .pillar {
+        border-left: none;
+        border-top: 1px solid var(--rule);
+      }
+
+      .logo-grid { grid-template-columns: repeat(3, 1fr); }
+      .logo-cell:nth-child(n+2) { border-left: none; }
+      .logo-cell:nth-child(3n+2),
+      .logo-cell:nth-child(3n) { border-left: 1px solid var(--rule); }
+      .logo-cell:nth-child(n+4) { border-top: 1px solid var(--rule); }
+      .logo-cell:last-child { display: none; }
+
+      .features { grid-template-columns: repeat(2, 1fr); }
+      .feature:nth-child(3n+2),
+      .feature:nth-child(3n) { border-left: none; }
+      .feature:nth-child(even) {
+        border-left: 1px solid var(--rule);
+      }
+
+      .plan-grid { grid-template-columns: 1fr; }
+      .plan-cell + .plan-cell {
+        border-left: none;
+        border-top: 1px solid var(--rule);
+      }
+      .plan-enterprise { flex-direction: column; align-items: flex-start; }
+
+      .section-head { flex-direction: column; gap: 4px; }
+
+      .player-layout { grid-template-columns: 1fr; }
+      .player-sidebar {
+        position: static;
+        width: auto;
+        border-left: none;
+        border-top: 1px solid var(--rule);
+      }
+      .player-sidebar .player-transcript { max-height: 200px; }
+      .player-sidebar .player-tag-input .player-search-input { display: block; width: 100%; }
+
+      .player-tag.desktop-only { display: none; }
+      .player-tags { grid-template-columns: 1fr 1fr auto; }
+      .player-tag-input { padding: 16px; }
+      .player-tag-input .player-search-input { display: none; width: 0; }
+      .player-tag-input.expanded {
+        grid-column: 1 / -1;
+        justify-content: flex-start;
+      }
+      .player-tag-input.expanded .player-search-input { display: block; width: 100%; }
+
+      .ft-layout { grid-template-columns: 1fr; }
+      .ft-left {
+        border-right: none;
+        border-bottom: 1px solid var(--rule);
+      }
+      .ft-nav { grid-template-columns: repeat(3, 1fr); }
+    }
 
     @media (max-width: 600px) {
-      .header { padding-top: 24px; }
-      .main { padding-top: 48px; }
-      .nav { gap: 17px; }
-      .section-heading { margin-top: 48px; }
-      .trusted { margin-top: 48px; }
-      .closing { margin-top: 48px; }
-      .footer {
-        flex-direction: column;
-        gap: 12px;
-        padding: 48px 0 32px;
+      :root { --gutter: 16px; }
+
+      .hd-logo img { height: 18px; }
+      .hd-nav a { font-size: 16px; }
+
+      .hero { aspect-ratio: 3/4; max-height: 55vh; }
+      .hero-title { font-size: clamp(28px, 8vw, 42px); }
+      .hero-sub { font-size: var(--text-base); }
+      .logo-grid { grid-template-columns: repeat(2, 1fr); }
+      .logo-cell:nth-child(3n+2),
+      .logo-cell:nth-child(3n) { border-left: none; }
+      .logo-cell:nth-child(even) { border-left: 1px solid var(--rule); }
+      .logo-cell:nth-child(n+3) { border-top: 1px solid var(--rule); }
+      .logo-cell img { max-height: 28px; max-width: 70%; }
+
+      .features { grid-template-columns: 1fr; }
+      .feature,
+      .feature:nth-last-child(-n+3) {
+        border-left: none;
+        border-bottom: 1px solid var(--rule);
+      }
+      .feature:last-child { border-bottom: none; }
+
+      .player-feats { grid-template-columns: repeat(2, 1fr); }
+      .player-transcript { max-height: 120px; }
+      .player-sidebar .player-transcript { max-height: 120px; }
+
+      .ft-bar { flex-direction: column; gap: 10px; align-items: flex-start; }
+      .ft-nav { grid-template-columns: 1fr; }
+      .ft-col + .ft-col {
+        border-left: none;
+        border-top: 1px solid var(--rule);
       }
     }
 
+    @media (max-width: 467px) {
+      .hero-actions { flex-direction: column; }
+      .hero-actions .btn-dark,
+      .hero-actions .btn-ghost { width: 100%; }
+    }
+
     @media (hover: none) {
-      .nav a:hover { color: var(--text-3); }
-      .hero a:hover { text-decoration-color: var(--text-dim); }
-      .hero .cta:hover { text-decoration-color: var(--text-dim); }
-      .closing a:hover { text-decoration-color: var(--text-dim); }
-      .feature-list:hover .feature-row__name,
-      .feature-list:hover .feature-row__desc { color: unset; }
-      .feature-list:hover .feature-row:hover .feature-row__name { color: var(--text); }
-      .feature-list:hover .feature-row:hover .feature-row__desc { color: var(--text-2); }
+      .hd-cta:hover { opacity: 1; }
+      .hd-nav a:hover { color: var(--faint); }
     }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
-        transition-duration: 0.01ms !important;
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
       }
+      .rv, .rv-stagger > * { opacity: 1; transform: none; }
+    }
+    /* ── Password gate ── */
+    .pw-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+      font-family: var(--sans);
+    }
+    .pw-gate input {
+      font-family: var(--sans);
+      font-size: 17px;
+      padding: 10px 16px;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      background: var(--tint);
+      color: var(--fg);
+      outline: none;
+      text-align: center;
+      width: 240px;
+    }
+    .pw-gate input:focus {
+      border-color: var(--faint);
+    }
+    .pw-gate input.pw-error {
+      border-color: #e55;
+      animation: pw-shake .3s;
+    }
+    @keyframes pw-shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+    .pw-gate .pw-label {
+      color: var(--mid);
+      font-size: 15px;
+    }
+    body.pw-locked > *:not(.pw-gate) {
+      display: none !important;
     }
   </style>
 </head>
-<body>
-  <div class="site">
+<body class="pw-locked">
 
+<<<<<<< Updated upstream
     <header class="header">
       <a href="/" class="wordmark">▶ Skiv</a>
       <nav class="nav">
@@ -300,19 +1215,141 @@
         <p class="dim" style="margin-top: 30px">Store everything from lectures to raw footage, and find exactly what you need by searching for what's in the video — speech, text, objects, actions, ideas.</p>
         <p class="dim">Used by universities, creators, and teams who need their video libraries to be searchable, private, and simple.</p>
         <a href="https://skiv.com/join" class="cta">Get started for free</a>
-      </div>
+=======
+<div class="pw-gate">
+  <span class="pw-label">Password</span>
+  <input type="password" id="pw-input" autofocus autocomplete="off" />
+</div>
+<script>
+  (function() {
+    var key = 'skiv_auth';
+    if (sessionStorage.getItem(key) === '1') {
+      document.body.classList.remove('pw-locked');
+      var gate = document.querySelector('.pw-gate');
+      if (gate) gate.remove();
+      return;
+    }
+    var input = document.getElementById('pw-input');
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        if (input.value === 'zimablue') {
+          sessionStorage.setItem(key, '1');
+          document.body.classList.remove('pw-locked');
+          document.querySelector('.pw-gate').remove();
+        } else {
+          input.classList.add('pw-error');
+          input.value = '';
+          setTimeout(function() { input.classList.remove('pw-error'); }, 300);
+        }
+      }
+    });
+  })();
+</script>
 
-      <div class="section-heading">
-        <span class="section-heading__text">Features</span>
-        <div class="section-heading__rule"></div>
-      </div>
-
-      <div class="feature-list">
-        <a href="/search-inside-video" class="feature-row">
-          <div>
-            <span class="feature-row__name">AI video search</span>
-            <div class="feature-row__desc">Search inside your videos for speech, text, people, objects, and abstract ideas. Go beyond keywords.</div>
+<!-- ── Header ── -->
+<header class="hd">
+  <div class="hd-inner">
+    <a href="/" class="hd-logo"><img src="/static/imgs/logo_skiv.svg" alt="Skiv"></a>
+    <div class="hd-actions">
+      <a href="/join" class="hd-join">Join</a>
+      <a href="/login" class="hd-login">Login</a>
+      <button class="hd-toggle" aria-label="Menu" aria-controls="nav" aria-expanded="false">Menu</button>
+    </div>
+    <nav id="nav" class="hd-nav">
+      <div class="hd-parent" data-dropdown="usecases">Use Cases<i class="icon-m-caret-small"></i>
+        <div class="hd-dropdown">
+          <div class="hd-dropdown-grid">
+            <a href="/video-courses-and-education" class="hd-dropdown-cell">
+              <i class="icon-m-bulb"></i>
+              <h3>Courses &amp; education</h3>
+              <p>Deliver courses with searchable, chaptered video your students can actually navigate.</p>
+            </a>
+            <a href="/video-sales-marketing" class="hd-dropdown-cell">
+              <i class="icon-m-price"></i>
+              <h3>Sales &amp; marketing</h3>
+              <p>Embed video anywhere with CTAs and analytics. Zero&nbsp;ads.</p>
+            </a>
+            <a href="/video-events-conferences" class="hd-dropdown-cell">
+              <i class="icon-m-concepts"></i>
+              <h3>Events &amp; conferences</h3>
+              <p>Host recordings with instant search so attendees find the sessions that&nbsp;matter.</p>
+            </a>
+            <a href="/video-team-communication" class="hd-dropdown-cell">
+              <i class="icon-m-team"></i>
+              <h3>Team communication</h3>
+              <p>Share internal video with transcripts and search. No more scrubbing through hour-long&nbsp;recordings.</p>
+            </a>
           </div>
+        </div>
+>>>>>>> Stashed changes
+      </div>
+      <div class="hd-parent" data-dropdown="product">Product<i class="icon-m-caret-small"></i>
+        <div class="hd-dropdown">
+          <div class="hd-dropdown-grid">
+            <a href="/player-to-embed-video-hosting" class="hd-dropdown-cell">
+              <i class="icon-m-play"></i>
+              <h3>Video player</h3>
+              <p>Customizable, ad-free player that loads fast and looks like&nbsp;yours.</p>
+            </a>
+            <a href="/video-hosting" class="hd-dropdown-cell">
+              <i class="icon-m-cloud"></i>
+              <h3>Video hosting</h3>
+              <p>Upload once, play everywhere. 4K, any format, globally&nbsp;delivered.</p>
+            </a>
+            <a href="/search-inside-video" class="hd-dropdown-cell">
+              <i class="icon-m-search"></i>
+              <h3>Video search</h3>
+              <p>Find any moment by what's said, shown, or written on&nbsp;screen.</p>
+            </a>
+            <a href="/tryportals" class="hd-dropdown-cell">
+              <i class="icon-m-portal"></i>
+              <h3>Portals</h3>
+              <p>Launch a branded streaming site with subscriptions and built-in&nbsp;billing.</p>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="hd-parent" data-dropdown="tools">Tools<i class="icon-m-caret-small"></i>
+        <div class="hd-dropdown">
+          <div class="hd-dropdown-grid">
+            <a href="/free-online-screen-recorder" class="hd-dropdown-cell">
+              <i class="icon-m-rec"></i>
+              <h3>Record screen &amp; camera</h3>
+              <p>Record your screen and camera for free. No downloads&nbsp;needed.</p>
+            </a>
+            <a href="/video-audio-transcription" class="hd-dropdown-cell">
+              <i class="icon-m-transcript"></i>
+              <h3>Auto transcriptions</h3>
+              <p>All your videos are automatically transcribed. Edit &amp; download&nbsp;anytime.</p>
+            </a>
+            <a href="/video-labelling-and-tagging" class="hd-dropdown-cell">
+              <i class="icon-m-label"></i>
+              <h3>Label &amp; edit</h3>
+              <p>Refine AI-generated tags or add your own to organize&nbsp;content.</p>
+            </a>
+            <a href="/docs#embed-player" class="hd-dropdown-cell">
+              <i class="icon-m-star"></i>
+              <h3>Player customization</h3>
+              <p>Your logo, your colors, your CTA. Make the player&nbsp;yours.</p>
+            </a>
+            <a href="/docs#cut" class="hd-dropdown-cell">
+              <i class="icon-m-trim"></i>
+              <h3>Clip videos</h3>
+              <p>Pull the best moments from long videos and share&nbsp;them.</p>
+            </a>
+            <a href="/audio" class="hd-dropdown-cell">
+              <i class="icon-m-sound"></i>
+              <h3>For podcasts</h3>
+              <p>Every episode gets a transcript and full-text search&nbsp;automatically.</p>
+            </a>
+            <a href="/video-hosting-for-companies" class="hd-dropdown-cell">
+              <i class="icon-m-popcorn"></i>
+              <h3>Monetize</h3>
+              <p>Earn revenue from your videos with VAST-compatible ad&nbsp;support.</p>
+            </a>
+            <div class="hd-dropdown-cell hd-dropdown-cell--empty"></div>
+          </div>
+<<<<<<< Updated upstream
         </a>
         <a href="/video-hosting" class="feature-row">
           <div>
@@ -356,15 +1393,866 @@
 
       <div class="closing">
         <p>Simple plans, no surprises. <a href="https://skiv.com/pricing">See pricing</a> or <a href="https://skiv.com/join">start for free</a>.</p>
+=======
+        </div>
+      </div>
+      <div class="hd-parent" data-dropdown="ai">AI<i class="icon-m-caret-small"></i>
+        <div class="hd-dropdown">
+          <div class="hd-dropdown-grid hd-dropdown-grid--3">
+            <a href="/video-artificial-intelligence" class="hd-dropdown-cell">
+              <i class="icon-m-brain"></i>
+              <h3>How our AI works</h3>
+              <p>How Skiv sees what's inside your&nbsp;videos.</p>
+            </a>
+            <a href="/api" class="hd-dropdown-cell">
+              <i class="icon-m-dev"></i>
+              <h3>API</h3>
+              <p>Hosting, search, and AI through a simple REST&nbsp;API.</p>
+            </a>
+            <a href="/tools" class="hd-dropdown-cell">
+              <i class="icon-m-external"></i>
+              <h3>Tools &amp; demos</h3>
+              <p>Try video search and transcription right here. No account&nbsp;needed.</p>
+            </a>
+          </div>
+        </div>
+>>>>>>> Stashed changes
+      </div>
+      <div class="hd-parent" data-dropdown="about">About<i class="icon-m-caret-small"></i>
+        <div class="hd-dropdown">
+          <div class="hd-dropdown-grid">
+            <a href="/about" class="hd-dropdown-cell">
+              <i class="icon-m-info"></i>
+              <h3>About</h3>
+              <p>The team and mission behind&nbsp;Skiv.</p>
+            </a>
+            <a href="/blog" class="hd-dropdown-cell">
+              <i class="icon-m-transcript"></i>
+              <h3>Blog</h3>
+              <p>Tutorials, product updates, and how-tos from the&nbsp;team.</p>
+            </a>
+            <a href="/referrals" class="hd-dropdown-cell">
+              <i class="icon-m-concepts"></i>
+              <h3>Referral &amp; Affiliate Program</h3>
+              <p>Share Skiv. Earn&nbsp;commissions.</p>
+            </a>
+            <a href="/integrations" class="hd-dropdown-cell">
+              <i class="icon-m-grid"></i>
+              <h3>Integrations</h3>
+              <p>Connect Skiv with WordPress, Zapier, Slack, and&nbsp;more.</p>
+            </a>
+            <a href="/ai-for-good" class="hd-dropdown-cell">
+              <i class="icon-m-user-channel-filled"></i>
+              <h3>AI for Good</h3>
+              <p>Free or discounted plans for nonprofits and social impact&nbsp;organizations.</p>
+            </a>
+            <a href="/opportunities" class="hd-dropdown-cell">
+              <i class="icon-m-team"></i>
+              <h3>Careers</h3>
+              <p>Join a small team solving hard problems in AI and&nbsp;video.</p>
+            </a>
+            <a href="/brand" class="hd-dropdown-cell">
+              <i class="icon-m-trademark"></i>
+              <h3>Press Kit</h3>
+              <p>Download our logos and product&nbsp;images.</p>
+            </a>
+            <div class="hd-dropdown-cell hd-dropdown-cell--empty"></div>
+          </div>
+        </div>
+      </div>
+      <a href="/pricing">Pricing</a>
+      <a href="/docs" class="hd-nav-docs">Documentation</a>
+      <a href="#" class="hd-nav-theme" onclick="toggleTheme();return false">Theme</a>
+      <a href="/api" class="hd-nav-api">API</a>
+      <a href="/login" class="hd-nav-signin">Sign in</a>
+      <a href="/join" class="hd-cta">Get started</a>
+    </nav>
+  </div>
+</header>
+<div class="hd-overlay"></div>
+
+<main>
+
+  <!-- ── Hero (full-bleed, outside rail) ── -->
+  <section class="hero">
+    <div class="hero__bg" aria-hidden="true">
+      <img class="hero__poster" src="/static/imgs/hero-poster.jpg" alt="" />
+      <div class="muse-video-player" data-video="FvdaoMg" data-search="0" data-links="0"
+           data-logo="0" data-title="0" data-autoplay="1" data-loop="1" data-volume="0"
+           data-coverplayposition="center" data-sizing="cover"></div>
+      <script src="https://skiv.com/static/js/embed-player.min.js"></script>
+      <script>
+        (function () {
+          var el = document.querySelector('.hero__bg .muse-video-player');
+          var poster = document.querySelector('.hero__poster');
+          if (!el || !poster) return;
+          var poll = setInterval(function () {
+            if (el.musePlayer) {
+              clearInterval(poll);
+              el.musePlayer.on('play', function () {
+                requestAnimationFrame(function () {
+                  requestAnimationFrame(function () {
+                    poster.classList.add('is-hidden');
+                  });
+                });
+              });
+            }
+          }, 50);
+          setTimeout(function () { clearInterval(poll); }, 10000);
+        })();
+      </script>
+    </div>
+    <div class="hero__overlay">
+      <h1 class="hero-title">Home for your videos.</h1>
+      <p class="hero-sub">All you need to host, share, and search your videos with AI. Completely ad&#x2011;free.</p>
+      <div class="hero-actions">
+        <a href="/join" class="btn-dark">Start free</a>
+        <a href="#features" class="btn-ghost">See how it works</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ The Rail: continuous bordered frame ═══ -->
+  <div class="rail">
+    <div class="rail-inner">
+
+      <div class="rail-rule"></div>
+
+      <!-- ── Proof ── -->
+      <div class="proof-text rv">Trusted by teams worldwide</div>
+      <div class="logo-grid rv-stagger">
+        <div class="logo-cell">
+          <img src="/static/imgs/website/homepage/logo-nhs.svg" alt="NHS">
+        </div>
+        <div class="logo-cell">
+          <img class="logo-light" src="/static/imgs/website/homepage/logo-nyu.svg" alt="NYU">
+          <img class="logo-dark"  src="/static/imgs/website/homepage/logo-nyu-dark.svg" alt="NYU">
+        </div>
+        <div class="logo-cell">
+          <img class="logo-light" src="/static/imgs/website/homepage/logo-turnitin.svg" alt="Turnitin">
+          <img class="logo-dark"  src="/static/imgs/website/homepage/logo-turnitin-dark.png" alt="Turnitin">
+        </div>
+        <div class="logo-cell">
+          <img src="/static/imgs/website/homepage/logo-asu.svg" alt="Arizona State University">
+        </div>
+        <div class="logo-cell">
+          <img class="logo-light" src="/static/imgs/website/homepage/logo-clickfunnels-light.svg" alt="ClickFunnels">
+          <img class="logo-dark"  src="/static/imgs/website/homepage/logo-clickfunnels.svg" alt="ClickFunnels">
+        </div>
+        <div class="logo-cell logo-mono">
+          <img src="/static/imgs/website/homepage/logo-fortnum.svg" alt="Fortnum & Mason">
+        </div>
+        <div class="logo-cell logo-mono">
+          <img src="/static/imgs/website/homepage/logo-century.svg" alt="Century 21">
+        </div>
       </div>
 
-    </main>
+      <div class="rail-rule"></div>
 
-    <footer class="footer">
-      <span>▶ Skiv</span>
-      <p class="tagline">Search · Knowledge · Internet · Video</p>
-    </footer>
-
+    </div>
   </div>
+
+  <!-- ═══ Rail resumes ═══ -->
+  <div class="rail">
+    <div class="rail-inner">
+
+      <div class="rail-spacer"></div>
+      <div class="rail-rule"></div>
+
+      <!-- ── Value pillars ── -->
+      <div class="section-head rv" id="platform">
+        <div class="section-title">One platform, zero&nbsp;compromises</div>
+        <div class="section-sub">No ads. No limits. No&nbsp;surprises.</div>
+      </div>
+
+      <div class="rail-rule"></div>
+
+      <div class="pillars rv-stagger">
+        <div class="pillar">
+          <i class="pillar-icon icon-m-upload"></i>
+          <div class="pillar-title">Host in 4K, ad&#8209;free</div>
+          <div class="pillar-desc">Your videos play in 4K with auto subtitles, chapters, and transcripts. No ads, no competitor branding. Just your&nbsp;content.</div>
+        </div>
+        <div class="pillar">
+          <i class="pillar-icon icon-m-share"></i>
+          <div class="pillar-title">Embed anywhere</div>
+          <div class="pillar-desc">A player you control: your logo, your colors, your CTA. Or go further and launch a full streaming portal with built-in&nbsp;subscriptions.</div>
+        </div>
+        <div class="pillar">
+          <i class="pillar-icon icon-m-search"></i>
+          <div class="pillar-title">Find any moment</div>
+          <div class="pillar-desc">Search your entire library for a word, a face, or even an abstract idea like "tense&nbsp;moment."</div>
+        </div>
+      </div>
+
+      <div class="rail-rule"></div>
+      <div class="rail-spacer"></div>
+      <div class="rail-rule"></div>
+
+      <!-- ── Player demo ── -->
+      <div class="section-head rv" id="player">
+        <div class="player-tagline">Click a word to find it in the video.</div>
+      </div>
+
+      <div class="rail-rule"></div>
+
+      <div class="player-layout">
+        <div class="player-wrap">
+          <div id="player-earth-moon" class="muse-video-player"></div>
+          <div class="player-unmute" id="player-unmute" onclick="unmutePlayer()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+            Click to unmute
+          </div>
+        </div>
+        <div class="player-sidebar">
+          <div class="player-tags rv-stagger">
+            <div class="player-tag player-tag-input"><i class="icon-m-search"></i> <input type="text" id="player-search-input" class="player-search-input" placeholder="Search the video..." autocomplete="off" spellcheck="false"></div>
+            <div class="player-tag" onclick="searchPlayer('orbit',this)">Orbit</div>
+            <div class="player-tag" onclick="searchPlayer('earth',this)">Earth</div>
+            <div class="player-tag" onclick="searchPlayer('sun',this)">Sun</div>
+            <div class="player-tag-status" id="player-status">
+              <span class="player-tag-nav disabled" id="player-prev" onclick="playerNav(-1)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 12L6 8l4-4"/></svg></span>
+              <span id="player-status-text"></span>
+              <span class="player-tag-nav disabled" id="player-next" onclick="playerNav(1)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l4 4-4 4"/></svg></span>
+            </div>
+          </div>
+          <div class="player-transcript" id="player-transcript">
+            <div class="player-transcript-inner" id="player-transcript-inner"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rail-rule"></div>
+      <div class="rail-spacer"></div>
+      <div class="rail-rule"></div>
+
+      <!-- ── Features header ── -->
+      <div class="section-head rv" id="features">
+        <div class="section-title">See what's possible</div>
+        <div class="section-sub">Every feature, built&nbsp;in.</div>
+      </div>
+
+      <div class="rail-rule"></div>
+
+      <!-- ── Features grid ── -->
+      <div class="features rv-stagger">
+        <div class="feature">
+          <video class="feature-video" autoplay muted loop playsinline data-dark="https://cdn.muse.ai/u/tbe5TJ1/1ded690821a25c01a2cf38d1b79cd12961742c74c1bf6fe7672611900ffa137f/videos/video.mp4" data-light="https://cdn.muse.ai/u/tbe5TJ1/1530589b9b4a54cfccd44410120eef931342abd0dc255c172f0e95abb9907515/videos/video.mp4"></video>
+          <h3 class="feature-title">Upload anything, hit publish</h3>
+          <p class="feature-desc">Drop in any file. We encode it and generate subtitles, chapters, and a full transcript. You just hit&nbsp;publish.</p>
+        </div>
+        <div class="feature">
+          <video class="feature-video" autoplay muted loop playsinline data-dark="https://cdn.muse.ai/u/tbe5TJ1/b2fc00db38449c40efa2b40c9b9b0ac95a80dd256cf5de4fd03e376274294ed2/videos/video.mp4" data-light="https://cdn.muse.ai/u/tbe5TJ1/07e4fc3661f0876b9f51e55ead5e69fc3ef793acbbf120d716ff29139c27c4ae/videos/video.mp4"></video>
+          <h3 class="feature-title">Search inside your videos</h3>
+          <p class="feature-desc">Find the exact moment across hundreds of hours. Search by what's said, shown, or written. Even abstract ideas like "whiteboard&nbsp;diagram."</p>
+        </div>
+        <div class="feature">
+          <video class="feature-video" autoplay muted loop playsinline data-dark="https://cdn.muse.ai/u/tbe5TJ1/9760a94297ea8f833416ad8db248ee5c2b22218f62b74279811a4c5bd6279875/videos/video.mp4" data-light="https://cdn.muse.ai/u/tbe5TJ1/0e953b46a1fa57038f1cc450220a3ffa4b9907b2e277e27cf90c5a0253ac8c02/videos/video.mp4"></video>
+          <h3 class="feature-title">Ask your videos anything</h3>
+          <p class="feature-desc">Ask a question, get a timestamped answer. It's like having a researcher who's watched every second of your&nbsp;footage.</p>
+        </div>
+        <div class="feature">
+          <video class="feature-video" autoplay muted loop playsinline data-dark="https://cdn.muse.ai/u/tbe5TJ1/511615c9c99d9f84213e3698e5079a2a86e211cc0ceee803b5f68851cc6ae7b1/videos/video.mp4" data-light="https://cdn.muse.ai/u/tbe5TJ1/30cf1404b5bae1a9befa3e12698fe638451d8075f67f20fdd101482824a43e99/videos/video.mp4"></video>
+          <h3 class="feature-title">Sell your content</h3>
+          <p class="feature-desc">Turn your video library into a revenue stream. Launch a streaming portal with subscriptions and built-in&nbsp;billing.</p>
+        </div>
+      </div>
+
+      <div class="rail-rule"></div>
+      <div class="rail-spacer"></div>
+      <div class="rail-rule"></div>
+
+      <!-- ── Plans header ── -->
+      <div class="section-head rv" id="plans">
+        <div class="section-title">Plans</div>
+        <div class="section-sub">Free 14-day trial. Cancel&nbsp;anytime.</div>
+      </div>
+
+      <div class="rail-rule"></div>
+
+      <!-- ── Billing toggle ── -->
+      <div class="plan-toggle-wrap rv">
+        <button class="plan-toggle-btn active" data-cycle="yearly">Yearly (50% off)</button>
+        <button class="plan-toggle-btn" data-cycle="monthly">Monthly</button>
+      </div>
+
+      <div class="rail-rule"></div>
+
+      <!-- ── Plans grid ── -->
+      <div class="plan-grid rv-stagger">
+        <div class="plan-cell">
+          <div class="plan-name">Basic</div>
+          <p class="plan-desc">Host, embed, and search your videos. All the&nbsp;essentials.</p>
+          <div class="plan-price"><span class="plan-price-val" data-monthly="16" data-yearly="8">$8</span> / mo</div>
+          <div class="plan-period" data-yearly-only>billed yearly</div>
+          <a href="/join" class="btn-dark plan-cta">Start free</a>
+          <ul class="plan-features">
+            <li>80 GB storage</li>
+            <li>1 seat</li>
+            <li>Unlimited embeds</li>
+            <li>4K playback</li>
+            <li>Portals</li>
+            <li>Email support</li>
+          </ul>
+        </div>
+        <div class="plan-cell plan-cell--featured">
+          <div class="plan-name">Plus <span class="plan-badge">Popular</span></div>
+          <p class="plan-desc">A branded player, privacy controls, and more storage to grow&nbsp;into.</p>
+          <div class="plan-price"><span class="plan-price-val" data-monthly="40" data-yearly="20">$20</span> / mo</div>
+          <div class="plan-period" data-yearly-only>billed yearly</div>
+          <a href="/join" class="btn-dark plan-cta">Start free</a>
+          <ul class="plan-features">
+            <li>Everything in Basic</li>
+            <li>200 GB storage</li>
+            <li>3 seats</li>
+            <li>Geo-restricted playback</li>
+            <li>Expiring links</li>
+            <li>Call-to-action overlays</li>
+            <li>Original file storage</li>
+            <li>Custom player styling</li>
+            <li>Privacy &amp; security controls</li>
+          </ul>
+        </div>
+        <div class="plan-cell">
+          <div class="plan-name">Pro</div>
+          <p class="plan-desc">For teams with large libraries, custom workflows, and priority&nbsp;support.</p>
+          <div class="plan-price"><span class="plan-price-val" data-monthly="100" data-yearly="50">$50</span> / mo</div>
+          <div class="plan-period" data-yearly-only>billed yearly</div>
+          <a href="/join" class="btn-dark plan-cta">Start free</a>
+          <ul class="plan-features">
+            <li>Everything in Plus</li>
+            <li>1 TB storage</li>
+            <li>10 seats</li>
+            <li>VAST ad support</li>
+            <li>Delegated uploads</li>
+            <li>Priority support</li>
+            <li>Custom extensions</li>
+            <li>Custom integrations</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="rail-rule"></div>
+
+      <!-- ── Enterprise row ── -->
+      <div class="plan-enterprise rv">
+        <div>
+          <div class="plan-name">Enterprise</div>
+          <p class="plan-desc">Unlimited storage and seats, a dedicated account manager, and custom&nbsp;builds.</p>
+        </div>
+        <a href="/contact" class="btn-dark plan-cta">Contact us</a>
+      </div>
+
+      <div class="rail-rule"></div>
+      <div class="rail-spacer"></div>
+      <div class="rail-rule"></div>
+
+      <!-- ── Footer ── -->
+      <footer>
+        <div class="ft-layout">
+          <div class="ft-left">
+            <div class="ft-tagline">Home for your videos.</div>
+            <div class="ft-actions">
+              <a href="/join" class="btn-dark">Get started</a>
+              <a href="/pricing" class="btn-ghost">Pricing</a>
+            </div>
+          </div>
+          <nav class="ft-nav">
+            <div class="ft-col">
+              <h4>Product</h4>
+              <a href="/search-inside-video">AI Video Search</a>
+              <a href="/video-hosting">Cloud Storage</a>
+              <a href="/player-to-embed-video-hosting">Player</a>
+              <a href="/docs#portals">Portals</a>
+              <a href="/api">API</a>
+            </div>
+            <div class="ft-col">
+              <h4>Resources</h4>
+              <a href="/docs">Documentation</a>
+              <a href="/pricing">Pricing</a>
+              <a href="/blog">Blog</a>
+              <a href="/contact">Contact</a>
+            </div>
+            <div class="ft-col">
+              <h4>Company</h4>
+              <a href="/about">About</a>
+              <a href="/opportunities">Careers</a>
+              <a href="/integrations">Integrations</a>
+              <a href="/referrals">Referrals</a>
+            </div>
+          </nav>
+        </div>
+
+        <div class="rail-rule"></div>
+
+        <div class="ft-bar">
+          <span>&copy; Skiv &mdash; Search &middot; Knowledge &middot; Internet &middot; Video</span>
+          <div class="ft-links">
+            <a href="/terms">Terms</a>
+            <a href="/privacy">Privacy</a>
+          </div>
+        </div>
+      </footer>
+
+      <div class="rail-rule"></div>
+
+    </div><!-- / rail-inner -->
+  </div><!-- / rail -->
+
+</main>
+
+<script>
+  /* Theme toggle */
+  function toggleTheme() {
+    var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    updateShowcaseVideos();
+  }
+
+  /* Swap showcase videos on theme change */
+  function updateShowcaseVideos() {
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.querySelectorAll('[data-dark][data-light]').forEach(function (v) {
+      var src = dark ? v.dataset.dark : v.dataset.light;
+      if (v.getAttribute('src') !== src) {
+        v.setAttribute('src', src);
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    updateShowcaseVideos();
+  });
+
+  /* Mobile menu */
+  (function () {
+    var btn = document.querySelector('.hd-toggle');
+    var nav = document.getElementById('nav');
+    var hd = document.querySelector('.hd');
+
+    function close() {
+      nav.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+      btn.textContent = 'Menu';
+    }
+
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var open = nav.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open);
+      btn.textContent = open ? 'Close' : 'Menu';
+    });
+
+    /* Close when clicking outside */
+    document.addEventListener('click', function (e) {
+      if (nav.classList.contains('open') && !hd.contains(e.target)) {
+        close();
+      }
+    });
+
+    /* Close when clicking a nav link */
+    nav.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', close);
+    });
+  })();
+
+  /* Desktop dropdown nav */
+  (function () {
+    var parents = document.querySelectorAll('.hd-parent');
+    var overlay = document.querySelector('.hd-overlay');
+    var nav = document.querySelector('.hd-nav');
+    var closeTimer;
+    var activeParent = null;
+    var pinned = false;
+
+    function open(parent) {
+      clearTimeout(closeTimer);
+      if (activeParent === parent) return;
+      parents.forEach(function (p) { p.classList.remove('active'); });
+      parent.classList.add('active');
+      overlay.classList.add('active');
+      activeParent = parent;
+    }
+
+    function close() {
+      if (pinned) return;
+      clearTimeout(closeTimer);
+      parents.forEach(function (p) { p.classList.remove('active'); });
+      overlay.classList.remove('active');
+      activeParent = null;
+    }
+
+    function scheduleClose() {
+      clearTimeout(closeTimer);
+      closeTimer = setTimeout(close, 80);
+    }
+
+    /* Instant switching via mouseover delegation on the whole nav */
+    nav.addEventListener('mouseover', function (e) {
+      var parent = e.target.closest('.hd-parent');
+      if (parent && parent !== activeParent) {
+        open(parent);
+      }
+    });
+
+    /* Only schedule close when mouse truly leaves a parent + its dropdown */
+    parents.forEach(function (parent) {
+      parent.addEventListener('mouseleave', function (e) {
+        var to = e.relatedTarget;
+        /* If moving to another .hd-parent, nav mouseover handles the switch */
+        if (to && to.closest && to.closest('.hd-parent')) return;
+        scheduleClose();
+      });
+
+      /* Toggle on click for touch devices */
+      parent.addEventListener('click', function (e) {
+        if (e.target.closest('.hd-dropdown-cell')) return;
+        e.stopPropagation();
+        if (parent.classList.contains('active')) {
+          pinned = false; close();
+        } else {
+          open(parent);
+        }
+      });
+    });
+
+    /* Click overlay to close */
+    overlay.addEventListener('click', function () { pinned = false; close(); });
+
+    /* Escape key closes */
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { pinned = false; close(); }
+    });
+
+    /* Close when clicking outside header */
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.hd-parent') && !e.target.closest('.hd-overlay')) {
+        pinned = false; close();
+      }
+    });
+  })();
+
+  /* Scroll reveal */
+  (function () {
+    var els = document.querySelectorAll('.rv, .rv-stagger');
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('v'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.08 });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+
+  /* Plans billing toggle */
+  (function () {
+    var btns = document.querySelectorAll('.plan-toggle-btn');
+    if (!btns.length) return;
+    btns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        btns.forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        var yearly = btn.dataset.cycle === 'yearly';
+        document.querySelectorAll('.plan-price-val').forEach(function (el) {
+          el.textContent = '$' + (yearly ? el.dataset.yearly : el.dataset.monthly);
+        });
+        document.querySelectorAll('[data-yearly-only]').forEach(function (el) {
+          el.style.display = yearly ? '' : 'none';
+        });
+      });
+    });
+  })();
+
+
+  /* Player demo — search result tracking */
+  var player1;
+  var searchHits = [];
+  var searchIdx = 0;
+  var searchQuery = '';
+
+  /* Intercept fetch to capture search result timestamps */
+  (function () {
+    var _fetch = window.fetch;
+    window.fetch = function (url) {
+      var p = _fetch.apply(this, arguments);
+      if (typeof url === 'string' && url.indexOf('/api/search/video/') !== -1) {
+        p.then(function (r) { return r.clone().json(); }).then(function (data) {
+          if (data && data.length && data[0] && data[0][1]) {
+            searchHits = data[0][1].slice().sort(function (a, b) { return a - b; });
+          } else {
+            searchHits = [];
+          }
+          searchIdx = 0;
+          renderSearchStatus();
+        }).catch(function () {});
+      }
+      return p;
+    };
+  })();
+
+  function renderSearchStatus() {
+    var el = document.getElementById('player-status-text');
+    var prev = document.getElementById('player-prev');
+    var next = document.getElementById('player-next');
+    if (!el) return;
+    var q = '<span class="q">\u201c' + searchQuery + '\u201d</span>';
+    var sep = '<span class="sep">\u00b7</span>';
+    if (searchHits.length === 0) {
+      el.innerHTML = q + ' ' + sep + ' No results';
+      prev.classList.add('disabled');
+      next.classList.add('disabled');
+    } else {
+      el.innerHTML = q + ' ' + sep + ' Result ' + (searchIdx + 1) + ' of ' + searchHits.length;
+      prev.classList.remove('disabled');
+      next.classList.remove('disabled');
+    }
+  }
+
+  function playerNav(dir) {
+    if (!searchHits.length || !player1) return;
+    searchIdx = (searchIdx + dir + searchHits.length) % searchHits.length;
+    player1.seek(searchHits[searchIdx]);
+    renderSearchStatus();
+  }
+
+  (function () {
+    var el = document.getElementById('player-earth-moon');
+    if (!el || typeof MusePlayer === 'undefined') return;
+    player1 = MusePlayer({
+      container: el,
+      video: '8KsbyKv',
+      width: '100%',
+      lazy: true,
+      subtitles: 'auto',
+      autoplay: 1,
+      volume: 0,
+      loop: 1,
+      start: 17,
+    });
+  })();
+
+  function unmutePlayer() {
+    if (!player1) return;
+    player1.setVolume(100);
+    player1.play();
+    var btn = document.getElementById('player-unmute');
+    if (btn) btn.classList.add('hidden');
+  }
+
+  /* ── Live transcript ── */
+  var transcriptSpans = [];
+  var lastActiveSpan = -1;
+
+  (function loadTranscript() {
+    var container = document.getElementById('player-transcript');
+    var inner = document.getElementById('player-transcript-inner');
+    if (!container || !inner) return;
+
+    fetch('https://skiv.com/api/files/i/speech/8KsbyKv')
+      .then(function (r) {
+        if (!r.ok) throw new Error(r.status);
+        return r.json();
+      })
+      .then(function (words) {
+        if (!words || !words.length) return;
+
+        var frag = document.createDocumentFragment();
+        words.forEach(function (w, i) {
+          var span = document.createElement('span');
+          span.textContent = w[2];
+          span.setAttribute('data-start', w[0]);
+          span.setAttribute('data-end', w[1]);
+          span.addEventListener('click', function () {
+            var clean = w[2].replace(/[^a-zA-Z0-9']/g, '');
+            if (clean) searchPlayer(clean);
+          });
+          frag.appendChild(span);
+          frag.appendChild(document.createTextNode(' '));
+          transcriptSpans.push({ el: span, start: w[0], end: w[1] });
+        });
+
+        inner.appendChild(frag);
+        container.classList.add('loaded');
+        attachTranscriptSync();
+      })
+      .catch(function (e) { console.warn('Transcript:', e); });
+  })();
+
+  function attachTranscriptSync() {
+    if (!player1 || !player1.on) return;
+    player1.on('timeupdate', function (t) {
+      /* Binary search for the active word */
+      var idx = -1, lo = 0, hi = transcriptSpans.length - 1;
+      while (lo <= hi) {
+        var mid = (lo + hi) >> 1;
+        var s = transcriptSpans[mid];
+        if (t >= s.start && t < s.end) { idx = mid; break; }
+        else if (t < s.start) hi = mid - 1;
+        else lo = mid + 1;
+      }
+      if (idx === lastActiveSpan) return;
+      if (lastActiveSpan >= 0 && lastActiveSpan < transcriptSpans.length)
+        transcriptSpans[lastActiveSpan].el.classList.remove('active');
+      if (idx >= 0) {
+        var el = transcriptSpans[idx].el;
+        el.classList.add('active');
+        /* Auto-scroll: keep active word in view */
+        var box = document.getElementById('player-transcript');
+        if (box) {
+          var top = el.offsetTop;
+          var h = el.offsetHeight;
+          if (top < box.scrollTop + 40 || top + h > box.scrollTop + box.clientHeight - 40) {
+            box.scrollTop = top - box.clientHeight / 2 + h / 2;
+          }
+        }
+      }
+      lastActiveSpan = idx;
+    });
+  }
+
+  function searchPlayer(keyword, tagEl) {
+    if (!player1) return;
+    /* Active tag */
+    document.querySelectorAll('.player-tag').forEach(function (t) { t.classList.remove('active'); });
+    if (tagEl) tagEl.classList.add('active');
+    /* Show status bar */
+    searchQuery = keyword;
+    searchHits = [];
+    searchIdx = 0;
+    var status = document.getElementById('player-status');
+    var text = document.getElementById('player-status-text');
+    status.classList.add('active');
+    text.innerHTML = '<span class="q">\u201c' + keyword + '\u201d</span> <span class="sep">\u00b7</span> <span style="opacity:.45">loading\u2026</span>';
+    document.getElementById('player-prev').classList.add('disabled');
+    document.getElementById('player-next').classList.add('disabled');
+    /* Trigger player search */
+    if (player1.video && player1.video.readyState < 1) {
+      player1.video.addEventListener('loadeddata', function () {
+        player1.search(keyword, true);
+      });
+    } else {
+      player1.search(keyword, true);
+    }
+    player1.play();
+  }
+
+  /* Free-form search input */
+  (function () {
+    var input = document.getElementById('player-search-input');
+    if (!input) return;
+    var cell = input.closest('.player-tag');
+
+    /* On mobile the input is hidden; clicking the icon-only cell expands it */
+    cell.addEventListener('click', function () {
+      if (input.offsetWidth === 0) {
+        cell.classList.add('expanded');
+        input.focus();
+      }
+    });
+
+    /* Collapse on blur if empty */
+    input.addEventListener('blur', function () {
+      if (!input.value.trim()) cell.classList.remove('expanded');
+    });
+
+    /* Search on Enter */
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        var val = input.value.trim();
+        if (!val) return;
+        searchPlayer(val);
+        cell.classList.add('active');
+      }
+      if (e.key === 'Escape') {
+        input.value = '';
+        input.blur();
+      }
+    });
+  })();
+
+  /* Logo right-click context menu */
+  (function () {
+    var logo = document.querySelector('.hd-logo');
+    if (!logo) return;
+
+    var iconSVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" fill="#fff"/><polygon points="13,10 13,22 23,16" fill="#1a1a1a"/></svg>';
+    var logoSVG = null;
+
+    var menu = document.createElement('div');
+    menu.style.cssText = 'position:fixed;z-index:99999;background:var(--bg);border:1px solid var(--rule);min-width:180px;font:16px/1 var(--sans);display:none;';
+
+    var copySVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+
+    function makeItem(label) {
+      var btn = document.createElement('div');
+      btn.innerHTML = copySVG + ' ' + label;
+      btn.style.cssText = 'padding:10px 16px;cursor:pointer;color:var(--fg);display:flex;align-items:center;gap:8px;';
+      btn.addEventListener('mouseenter', function () { btn.style.background = 'var(--tint)'; });
+      btn.addEventListener('mouseleave', function () { btn.style.background = 'none'; });
+      return btn;
+    }
+
+    var copyIcon = makeItem('Copy Icon as SVG');
+    var copyLogo = makeItem('Copy Logo as SVG');
+    menu.appendChild(copyIcon);
+    menu.appendChild(copyLogo);
+    document.body.appendChild(menu);
+
+    function hide() { menu.style.display = 'none'; }
+
+    copyIcon.addEventListener('click', function () {
+      navigator.clipboard.writeText(iconSVG);
+      hide();
+    });
+
+    copyLogo.addEventListener('click', function () {
+      if (logoSVG) {
+        navigator.clipboard.writeText(logoSVG);
+        hide();
+        return;
+      }
+      fetch(logo.querySelector('img').src)
+        .then(function (r) { return r.text(); })
+        .then(function (svg) {
+          logoSVG = svg;
+          navigator.clipboard.writeText(svg);
+        });
+      hide();
+    });
+
+    logo.addEventListener('contextmenu', function (e) {
+      e.preventDefault();
+      menu.style.display = 'block';
+      var x = Math.min(e.clientX, window.innerWidth - menu.offsetWidth - 8);
+      var y = Math.min(e.clientY, window.innerHeight - menu.offsetHeight - 8);
+      menu.style.left = x + 'px';
+      menu.style.top = y + 'px';
+    });
+
+    document.addEventListener('click', hide);
+    document.addEventListener('contextmenu', function (e) {
+      if (!logo.contains(e.target)) hide();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') hide();
+    });
+  })();
+
+  /* Smooth scroll */
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var t = document.querySelector(this.getAttribute('href'));
+      if (t) {
+        e.preventDefault();
+        var hd = document.querySelector('.hd');
+        var offset = hd ? hd.offsetHeight : 0;
+        var top = t.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: top, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+
 </body>
 </html>

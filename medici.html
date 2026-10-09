@@ -2,40 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Medici - Palmeirim</title>
-  <meta name="description" content="Source-agnostic zoomable image assembler." />
-  <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="styles/main.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Medici · Tomás Thor Palmeirim</title>
+  <meta name="description" content="Save full-resolution images from zoomable web viewers." />
+  <link rel="canonical" href="https://palmeirim.com/medici" />
+  <link rel="icon" href="/public/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/styles/themes.css" />
+  <link rel="stylesheet" href="/styles/site.css" />
+  <script>
+    // Apply the visit's theme before first paint.
+    try {
+      var t = sessionStorage.getItem("theme") || localStorage.getItem("theme");
+      if (t && t !== "light") document.documentElement.className = t;
+    } catch (_e) {}
+  </script>
 </head>
 <body>
-  <div class="site">
-    <aside class="sidebar">
-      <div class="mobile-header">
-        <a href="index.html" class="mobile-header__name">Palmeirim</a>
-        <div class="mobile-header__actions">
-          <button class="theme-toggle mobile-theme" type="button" aria-label="Cycle theme">Theme</button>
-          <button class="hamburger" type="button" aria-label="Toggle navigation menu" aria-controls="site-nav" aria-expanded="false">Menu</button>
-        </div>
-      </div>
-      <a href="index.html" class="sidebar__name">Palmeirim</a>
-      <nav id="site-nav" class="sidebar__nav" aria-label="Primary">
-        <a href="index.html" class="sidebar__link">About</a>
-        <a href="work.html" class="sidebar__link">Work</a>
-        <!-- <a href="writing.html" class="sidebar__link">Writing</a> -->
-        <a href="reading.html" class="sidebar__link">Reading</a>
-        <a href="contact.html" class="sidebar__link">Contact</a>
-        <button class="theme-toggle sidebar__theme" type="button" aria-label="Cycle theme">Theme</button>
-      </nav>
-      <div class="sidebar__footer">
-        <button class="theme-toggle" type="button" aria-label="Cycle theme">Theme</button>
-      </div>
-    </aside>
+  <header class="bar">
+    <nav class="nav" aria-label="Pages"><a class="chip" href="/"><kbd>1</kbd><span class="chip__label">About</span></a><a class="chip" href="/work" aria-current="page"><kbd>2</kbd><span class="chip__label">Work</span></a><a class="chip" href="/reading"><kbd>3</kbd><span class="chip__label">Reading</span></a><a class="chip" href="/contact"><kbd>4</kbd><span class="chip__label">Contact</span></a></nav>
+  </header>
 
-    <main class="main">
-      <h1 class="page-title">Medici</h1>
-      <p class="page-subtitle">Paste a zoomable image page or manifest.</p>
-
+  <main class="page">
+<section class="intro"><h1><span>Medici</span> <span class="badge">Web tool</span></h1><p>Saves full-resolution images from zoomable web viewers. Paste the page or the image manifest.</p></section>
       <div class="medici-tool" data-medici>
         <form class="medici-form" id="medici-form">
           <label class="medici-label" for="medici-source">URL</label>
@@ -43,6 +31,13 @@
 
           <div class="medici-actions">
             <button id="medici-analyze" class="medici-button" type="submit">Get Image</button>
+            <label class="medici-format">
+              <span class="medici-label">Format</span>
+              <select id="medici-output">
+                <option value="image/jpeg">JPEG</option>
+                <option value="image/png">PNG, lossless</option>
+              </select>
+            </label>
           </div>
         </form>
 
@@ -62,7 +57,7 @@
               <dd id="medici-tiles">-</dd>
             </div>
             <div>
-              <dt>Memory</dt>
+              <dt>Pixels</dt>
               <dd id="medici-memory">-</dd>
             </div>
           </dl>
@@ -72,6 +67,11 @@
               <div id="medici-progress-bar"></div>
             </div>
             <div class="medici-progress-text" id="medici-progress-text">Idle</div>
+          </div>
+
+          <div class="medici-actions medici-actions--run">
+            <button id="medici-save" class="medici-button" type="button" hidden>Save full resolution</button>
+            <button id="medici-stop" class="medici-button" type="button" hidden>Stop</button>
           </div>
         </section>
 
@@ -87,10 +87,16 @@
           <pre id="medici-log" class="medici-log">Ready.</pre>
         </details>
       </div>
-    </main>
-  </div>
 
-  <script src="scripts/main.js" defer></script>
-  <script src="scripts/medici.js" defer></script>
+  </main>
+
+  <footer class="foot">
+    <span class="foot__tools">
+      <button class="foot__set js-theme" type="button"><span class="chip"><kbd>T</kbd><span class="chip__label">Theme</span></span><span class="js-theme-name">light</span></button>
+    </span>
+  </footer>
+
+  <script src="/scripts/site.js" defer></script>
+  <script src="/scripts/medici.js" defer></script>
 </body>
 </html>

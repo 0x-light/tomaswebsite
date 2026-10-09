@@ -2,99 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Work — Tomás Thor Palmeirim</title>
-  <meta name="description" content="Work by Tomás Thor Palmeirim." />
-  <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="styles/main.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Work · Tomás Thor Palmeirim</title>
+  <meta name="description" content="Things Tomás Thor Palmeirim has worked on." />
+  <link rel="canonical" href="https://palmeirim.com/work" />
+  <link rel="icon" href="/public/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/styles/themes.css" />
+  <link rel="stylesheet" href="/styles/site.css" />
+  <script>
+    // Apply the visit's theme before first paint.
+    try {
+      var t = sessionStorage.getItem("theme") || localStorage.getItem("theme");
+      if (t && t !== "light") document.documentElement.className = t;
+    } catch (_e) {}
+  </script>
 </head>
 <body>
-  <div class="site">
-    <aside class="sidebar">
-      <div class="mobile-header">
-        <a href="index.html" class="mobile-header__name">Palmeirim</a>
-        <div class="mobile-header__actions">
-          <button class="theme-toggle mobile-theme" type="button" aria-label="Cycle theme">Theme</button>
-          <button class="hamburger" type="button" aria-label="Toggle navigation menu" aria-controls="site-nav" aria-expanded="false">Menu</button>
-        </div>
-      </div>
-      <a href="index.html" class="sidebar__name">Palmeirim</a>
-      <nav id="site-nav" class="sidebar__nav" aria-label="Primary">
-        <a href="index.html" class="sidebar__link">About</a>
-        <a href="work.html" class="sidebar__link active">Work</a>
-        <!-- <a href="writing.html" class="sidebar__link">Writing</a> -->
-        <a href="reading.html" class="sidebar__link">Reading</a>
-        <a href="contact.html" class="sidebar__link">Contact</a>
-        <button class="theme-toggle sidebar__theme" type="button" aria-label="Cycle theme">Theme</button>
-      </nav>
-      <div class="sidebar__footer">
-        <button class="theme-toggle" type="button" aria-label="Cycle theme">Theme</button>
-      </div>
-    </aside>
+  <header class="bar">
+    <nav class="nav" aria-label="Pages"><a class="chip" href="/"><kbd>1</kbd><span class="chip__label">About</span></a><a class="chip" href="/work" aria-current="page"><kbd>2</kbd><span class="chip__label">Work</span></a><a class="chip" href="/reading"><kbd>3</kbd><span class="chip__label">Reading</span></a><a class="chip" href="/contact"><kbd>4</kbd><span class="chip__label">Contact</span></a></nav>
+  </header>
 
-    <main class="main">
-      <h1 class="page-title">Work</h1>
-      <p class="page-subtitle">Things I've worked on.</p>
+  <main class="page">
+<section class="sec"><h2 class="sec__title">Work</h2><div class="sec__body"><p>Things I've worked on.</p><div class="filter js-filter" hidden><label class="chip" for="filter-work"><kbd>/</kbd><span class="chip__label">Filter</span></label><input class="filter__input" id="filter-work" type="text" autocomplete="off" spellcheck="false" placeholder="Type to narrow the list. Esc clears."></div><table class="tbl tbl--work"><thead><tr><th>Project</th><th>Role</th><th class="col-site">Site</th></tr></thead><tbody class="js-xtable"><tr class="row xrow" data-slug="skiv"><td class="nowrap"><button class="xrow__toggle" type="button" aria-expanded="false" aria-controls="project-skiv">Skiv</button></td><td>Product, Design, Dev</td><td class="col-site">skiv.com</td></tr><tr class="note" id="project-skiv" hidden><td colspan="3">AI-powered video hosting with in-video search. <a href="https://skiv.com/" target="_blank" rel="noopener noreferrer">Open skiv.com</a></td></tr><tr class="row xrow" data-slug="dia"><td class="nowrap"><button class="xrow__toggle" type="button" aria-expanded="false" aria-controls="project-dia">Dia</button></td><td>Solo</td><td class="col-site">palmeirim.com/dia</td></tr><tr class="note" id="project-dia" hidden><td colspan="3">A simple notes, tasks, and calendar app for iOS and macOS. <a href="/dia">Open palmeirim.com/dia</a></td></tr><tr class="row xrow" data-slug="medici"><td class="nowrap"><button class="xrow__toggle" type="button" aria-expanded="false" aria-controls="project-medici">Medici</button></td><td>Solo</td><td class="col-site">palmeirim.com/medici</td></tr><tr class="note" id="project-medici" hidden><td colspan="3">A tool for saving full-resolution images from zoomable web viewers. <a href="/medici">Open palmeirim.com/medici</a></td></tr><tr class="row xrow" data-slug="sentry"><td class="nowrap"><button class="xrow__toggle" type="button" aria-expanded="false" aria-controls="project-sentry">Sentry</button></td><td>Solo</td><td class="col-site">sentry.is</td></tr><tr class="note" id="project-sentry" hidden><td colspan="3">Get the best of your timeline without opening Twitter. <a href="https://sentry.is" target="_blank" rel="noopener noreferrer">Open sentry.is</a></td></tr><tr class="row xrow" data-slug="viewport"><td class="nowrap"><button class="xrow__toggle" type="button" aria-expanded="false" aria-controls="project-viewport">Viewport</button></td><td>Solo</td><td class="col-site">viewport.is</td></tr><tr class="note" id="project-viewport" hidden><td colspan="3">A portfolio tracker for Hyperliquid, Lighter, and on-chain assets. <a href="https://viewport.is" target="_blank" rel="noopener noreferrer">Open viewport.is</a></td></tr><tr class="row xrow" data-slug="three-sigma"><td class="nowrap"><button class="xrow__toggle" type="button" aria-expanded="false" aria-controls="project-three-sigma">Three Sigma</button></td><td>Research</td><td class="col-site">threesigma.xyz</td></tr><tr class="note" id="project-three-sigma" hidden><td colspan="3">Code audits and economic risk consulting for crypto protocols. <a href="https://threesigma.xyz/" target="_blank" rel="noopener noreferrer">Open threesigma.xyz</a></td></tr><tr class="row xrow" data-slug="retryon"><td class="nowrap"><button class="xrow__toggle" type="button" aria-expanded="false" aria-controls="project-retryon">RetryOn</button></td><td>Design</td><td class="col-site">retryon.com</td></tr><tr class="note" id="project-retryon" hidden><td colspan="3">A platform for generating fashion assets without photoshoots. <a href="https://retryon.com/" target="_blank" rel="noopener noreferrer">Open retryon.com</a></td></tr><tr class="row xrow" data-slug="unsu"><td class="nowrap"><button class="xrow__toggle" type="button" aria-expanded="false" aria-controls="project-unsu">Unsu</button></td><td>Product, Design, Dev</td><td class="col-site">unsu.com</td></tr><tr class="note" id="project-unsu" hidden><td colspan="3">A web-based crypto wallet anyone can use. <a href="https://unsu.com" target="_blank" rel="noopener noreferrer">Open unsu.com</a></td></tr><tr class="row xrow" data-slug="guardiao"><td class="nowrap"><button class="xrow__toggle" type="button" aria-expanded="false" aria-controls="project-guardiao">Guardião</button></td><td>Design</td><td class="col-site">stopburla.pt</td></tr><tr class="note" id="project-guardiao" hidden><td colspan="3">Software that detects fraud patterns and alerts citizens to scams. <a href="https://stopburla.pt/" target="_blank" rel="noopener noreferrer">Open stopburla.pt</a></td></tr></tbody></table><p class="empty js-empty" hidden>No projects match.</p><p class="hint"><span class="hint--keys"><kbd>↑</kbd><kbd>↓</kbd> move · <kbd>↵</kbd> details · <kbd>esc</kbd> close · <kbd>/</kbd> filter</span><span class="hint--touch">Tap a project for details.</span></p></div></section>
+  </main>
 
-      <div class="project-list">
-        <a href="dia.html" class="project-row">
-          <div>
-            <span class="project-row__name">Dia</span> <span class="project-row__role">Solo</span>
-            <div class="project-row__desc">A simple notes, tasks, and calendar app for iOS and macOS.</div>
-          </div>
-        </a>
-        <a href="https://skiv.com/" class="project-row" target="_blank" rel="noopener noreferrer">
-          <div>
-            <span class="project-row__name">Skiv</span> <span class="project-row__role">Product, Design, Dev</span>
-            <div class="project-row__desc">AI-powered video hosting with in-video search.</div>
-          </div>
-        </a>
-        <a href="medici.html" class="project-row">
-          <div>
-            <span class="project-row__name">Medici</span> <span class="project-row__role">Solo</span>
-            <div class="project-row__desc">A tool for saving full-resolution images from zoomable web viewers.</div>
-          </div>
-        </a>
-        <a href="https://sentry.is" class="project-row" target="_blank" rel="noopener noreferrer">
-          <div>
-            <span class="project-row__name">Sentry</span> <span class="project-row__role">Solo</span>
-            <div class="project-row__desc">Get the best of your timeline without opening Twitter.</div>
-          </div>
-        </a>
-        <a href="https://viewport.is" class="project-row" target="_blank" rel="noopener noreferrer">
-          <div>
-            <span class="project-row__name">Viewport</span> <span class="project-row__role">Solo</span>
-            <div class="project-row__desc">A portfolio tracker for Hyperliquid, Lighter, and on-chain assets.</div>
-          </div>
-        </a>
-        <a href="https://threesigma.xyz/" class="project-row" target="_blank" rel="noopener noreferrer">
-          <div>
-            <span class="project-row__name">Three Sigma</span> <span class="project-row__role">Research</span>
-            <div class="project-row__desc">Code audits and economic risk consulting for crypto protocols.</div>
-          </div>
-        </a>
-        <a href="https://retryon.com/" class="project-row" target="_blank" rel="noopener noreferrer">
-          <div>
-            <span class="project-row__name">RetryOn</span> <span class="project-row__role">Design</span>
-            <div class="project-row__desc">A platform for generating fashion assets without photoshoots.</div>
-          </div>
-        </a>
-        <a href="https://unsu.com" class="project-row" target="_blank" rel="noopener noreferrer">
-          <div>
-            <span class="project-row__name">Unsu</span> <span class="project-row__role">Product, Design, Dev</span>
-            <div class="project-row__desc">A web-based crypto wallet anyone can use.</div>
-          </div>
-        </a>
-        <a href="https://stopburla.pt/" class="project-row" target="_blank" rel="noopener noreferrer">
-          <div>
-            <span class="project-row__name">Guardião</span> <span class="project-row__role">Design</span>
-            <div class="project-row__desc">Software that detects fraud patterns and alerts citizens to scams.</div>
-          </div>
-        </a>
-      </div>
-    </main>
-  </div>
+  <footer class="foot">
+    <span class="foot__tools">
+      <button class="foot__set js-theme" type="button"><span class="chip"><kbd>T</kbd><span class="chip__label">Theme</span></span><span class="js-theme-name">light</span></button>
+    </span>
+  </footer>
 
-  <script src="scripts/main.js" defer></script>
+  <script src="/scripts/site.js" defer></script>
 </body>
 </html>

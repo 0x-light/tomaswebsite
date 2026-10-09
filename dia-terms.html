@@ -2,51 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Terms of Service — Dia</title>
-  <meta name="description" content="Terms governing the use of Dia for iOS and macOS." />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Terms of Use · Dia</title>
+  <meta name="description" content="Dia is a notes, tasks, and calendar app for iOS and macOS." />
   <link rel="canonical" href="https://palmeirim.com/dia-terms" />
-  <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="icon" href="/public/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/styles/themes.css" />
+  <link rel="stylesheet" href="/styles/site.css" />
+  <script>
+    // Apply the visit's theme before first paint.
+    try {
+      var t = sessionStorage.getItem("theme") || localStorage.getItem("theme");
+      if (t && t !== "light") document.documentElement.className = t;
+    } catch (_e) {}
+  </script>
 </head>
 <body>
-  <div class="site">
-    <aside class="sidebar">
-      <div class="mobile-header">
-        <a href="dia.html" class="mobile-header__name">Dia</a>
-        <div class="mobile-header__actions">
-          <button class="theme-toggle mobile-theme" type="button" aria-label="Cycle theme">Theme</button>
-          <button class="hamburger" type="button" aria-label="Toggle navigation menu" aria-controls="site-nav" aria-expanded="false">Menu</button>
-        </div>
-      </div>
-      <a href="dia.html" class="sidebar__name">Dia</a>
-      <nav id="site-nav" class="sidebar__nav" aria-label="Dia">
-        <a href="dia.html" class="sidebar__link">Overview</a>
-        <a href="dia-privacy.html" class="sidebar__link">Privacy</a>
-        <a href="dia-terms.html" class="sidebar__link active">Terms</a>
-        <a href="dia-support.html" class="sidebar__link">Support</a>
-        <button class="theme-toggle sidebar__theme" type="button" aria-label="Cycle theme">Theme</button>
-      </nav>
-      <div class="sidebar__footer">
-        <button class="theme-toggle" type="button" aria-label="Cycle theme">Theme</button>
-      </div>
-    </aside>
+  <header class="bar">
+    <nav class="nav" aria-label="Pages"><a class="chip" href="/"><kbd>1</kbd><span class="chip__label">About</span></a><a class="chip" href="/work" aria-current="page"><kbd>2</kbd><span class="chip__label">Work</span></a><a class="chip" href="/reading"><kbd>3</kbd><span class="chip__label">Reading</span></a><a class="chip" href="/contact"><kbd>4</kbd><span class="chip__label">Contact</span></a></nav>
+  </header>
 
-    <main class="main">
-      <h1 class="page-title">Terms of Use</h1>
-      <p class="page-subtitle">Effective date: August 22, 2026</p>
+  <main class="page">
+<section class="intro"><h1><span>Dia</span> <span class="badge">iOS · macOS</span></h1><p>Notes, tasks, and calendar for iOS and macOS.</p></section><section class="sec"><h2 class="sec__title">Terms of use</h2><div class="sec__body"><p>Effective August 22, 2026.</p><div class="prose"><p>You may use Dia for lawful, personal purposes. Dia is licensed, not sold. You may not redistribute, sell, disrupt, or misuse the app.</p><p>You own the notes, tasks, and other content you create or import. You are responsible for maintaining appropriate backups.</p><p>Dia may interact with services provided by Apple, Google, and other applications you choose. Those services are governed by their own terms and privacy policies.</p><p>Dia is provided “as is,” without guarantees of uninterrupted or error-free operation. Reminders, notifications, synchronization, and storage can fail, so do not rely on Dia for emergencies or critical deadlines.</p><p>To the extent permitted by law, the Dia team is not liable for data loss or indirect damages arising from your use of Dia. Nothing in these Terms limits consumer rights that cannot legally be limited.</p><p>We may update Dia or these Terms when necessary. Questions: <a href="mailto:tomas@palmeirim.com">tomas@palmeirim.com</a></p></div><ul class="links"><li><a href="/dia"><span class="links__icon" aria-hidden="true">→</span><span>Dia</span></a></li><li><a href="/dia-privacy"><span class="links__icon" aria-hidden="true">→</span><span>Privacy policy</span></a></li><li><a href="/dia-support"><span class="links__icon" aria-hidden="true">→</span><span>Support</span></a></li></ul></div></section>
+  </main>
 
-      <div class="post__body">
-        <p>You may use Dia for lawful, personal purposes. Dia is licensed, not sold. You may not redistribute, sell, disrupt, or misuse the app.</p>
-        <p>You own the notes, tasks, and other content you create or import. You are responsible for maintaining appropriate backups.</p>
-        <p>Dia may interact with services provided by Apple, Google, and other applications you choose. Those services are governed by their own terms and privacy policies.</p>
-        <p>Dia is provided “as is,” without guarantees of uninterrupted or error-free operation. Reminders, notifications, synchronization, and storage can fail, so do not rely on Dia for emergencies or critical deadlines.</p>
-        <p>To the extent permitted by law, the Dia team is not liable for data loss or indirect damages arising from your use of Dia. Nothing in these Terms limits consumer rights that cannot legally be limited.</p>
-        <p>We may update Dia or these Terms when necessary. Questions: <a href="mailto:tomas@palmeirim.com">tomas@palmeirim.com</a></p>
-      </div>
-    </main>
-  </div>
+  <footer class="foot">
+    <span class="foot__tools">
+      <button class="foot__set js-theme" type="button"><span class="chip"><kbd>T</kbd><span class="chip__label">Theme</span></span><span class="js-theme-name">light</span></button>
+    </span>
+  </footer>
 
-  <script src="scripts/main.js" defer></script>
+  <script src="/scripts/site.js" defer></script>
 </body>
 </html>

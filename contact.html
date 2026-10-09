@@ -2,46 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Contact — Tomás Thor Palmeirim</title>
-  <meta name="description" content="Get in touch with Tomás Thor Palmeirim." />
-  <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="styles/main.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact · Tomás Thor Palmeirim</title>
+  <meta name="description" content="How to reach Tomás Thor Palmeirim." />
+  <link rel="canonical" href="https://palmeirim.com/contact" />
+  <link rel="icon" href="/public/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/styles/themes.css" />
+  <link rel="stylesheet" href="/styles/site.css" />
+  <script>
+    // Apply the visit's theme before first paint.
+    try {
+      var t = sessionStorage.getItem("theme") || localStorage.getItem("theme");
+      if (t && t !== "light") document.documentElement.className = t;
+    } catch (_e) {}
+  </script>
 </head>
 <body>
-  <div class="site">
-    <aside class="sidebar">
-      <div class="mobile-header">
-        <a href="index.html" class="mobile-header__name">Palmeirim</a>
-        <div class="mobile-header__actions">
-          <button class="theme-toggle mobile-theme" type="button" aria-label="Cycle theme">Theme</button>
-          <button class="hamburger" type="button" aria-label="Toggle navigation menu" aria-controls="site-nav" aria-expanded="false">Menu</button>
-        </div>
-      </div>
-      <a href="index.html" class="sidebar__name">Palmeirim</a>
-      <nav id="site-nav" class="sidebar__nav" aria-label="Primary">
-        <a href="index.html" class="sidebar__link">About</a>
-        <a href="work.html" class="sidebar__link">Work</a>
-        <!-- <a href="writing.html" class="sidebar__link">Writing</a> -->
-        <a href="reading.html" class="sidebar__link">Reading</a>
-        <a href="contact.html" class="sidebar__link active">Contact</a>
-        <button class="theme-toggle sidebar__theme" type="button" aria-label="Cycle theme">Theme</button>
-      </nav>
-      <div class="sidebar__footer">
-        <button class="theme-toggle" type="button" aria-label="Cycle theme">Theme</button>
-      </div>
-    </aside>
+  <header class="bar">
+    <nav class="nav" aria-label="Pages"><a class="chip" href="/"><kbd>1</kbd><span class="chip__label">About</span></a><a class="chip" href="/work"><kbd>2</kbd><span class="chip__label">Work</span></a><a class="chip" href="/reading"><kbd>3</kbd><span class="chip__label">Reading</span></a><a class="chip" href="/contact" aria-current="page"><kbd>4</kbd><span class="chip__label">Contact</span></a></nav>
+  </header>
 
-    <main class="main">
-      <h1 class="page-title">Contact</h1>
-      <p class="page-subtitle">Get in touch.</p>
+  <main class="page">
+<section class="sec"><h2 class="sec__title">Contact</h2><div class="sec__body"><p>Get in touch.</p><ul class="links"><li><a href="mailto:tomas@palmeirim.com"><span class="links__icon" aria-hidden="true">→</span><span>Write to tomas@palmeirim.com</span></a></li><li><button class="js-copy" type="button"><span class="links__icon" aria-hidden="true">→</span><span class="js-copy-label">Copy my email address</span></button></li><li><a href="https://x.com/0x_light" target="_blank" rel="noopener noreferrer"><span class="links__icon" aria-hidden="true">→</span><span>Follow me on X</span></a></li></ul></div></section>
+  </main>
 
-      <div class="about">
-        <p>You can reach me on <a href="https://x.com/0x_light">X</a> or <a href="mailto:tomas@palmeirim.com">tomas@palmeirim.com</a>.</p>
-      </div>
-    </main>
-  </div>
+  <footer class="foot">
+    <span class="foot__tools">
+      <button class="foot__set js-theme" type="button"><span class="chip"><kbd>T</kbd><span class="chip__label">Theme</span></span><span class="js-theme-name">light</span></button>
+    </span>
+  </footer>
 
-  <script src="scripts/main.js" defer></script>
+  <script src="/scripts/site.js" defer></script>
 </body>
 </html>

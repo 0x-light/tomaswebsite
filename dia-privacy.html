@@ -2,50 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Privacy Policy — Dia</title>
-  <meta name="description" content="How Dia accesses, uses, stores, and shares data, including Google Calendar data." />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy Policy · Dia</title>
+  <meta name="description" content="Dia is a notes, tasks, and calendar app for iOS and macOS." />
   <link rel="canonical" href="https://palmeirim.com/dia-privacy" />
-  <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="icon" href="/public/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/styles/themes.css" />
+  <link rel="stylesheet" href="/styles/site.css" />
+  <script>
+    // Apply the visit's theme before first paint.
+    try {
+      var t = sessionStorage.getItem("theme") || localStorage.getItem("theme");
+      if (t && t !== "light") document.documentElement.className = t;
+    } catch (_e) {}
+  </script>
 </head>
 <body>
-  <div class="site">
-    <aside class="sidebar">
-      <div class="mobile-header">
-        <a href="dia.html" class="mobile-header__name">Dia</a>
-        <div class="mobile-header__actions">
-          <button class="theme-toggle mobile-theme" type="button" aria-label="Cycle theme">Theme</button>
-          <button class="hamburger" type="button" aria-label="Toggle navigation menu" aria-controls="site-nav" aria-expanded="false">Menu</button>
-        </div>
-      </div>
-      <a href="dia.html" class="sidebar__name">Dia</a>
-      <nav id="site-nav" class="sidebar__nav" aria-label="Dia">
-        <a href="dia.html" class="sidebar__link">Overview</a>
-        <a href="dia-privacy.html" class="sidebar__link active">Privacy</a>
-        <a href="dia-terms.html" class="sidebar__link">Terms</a>
-        <a href="dia-support.html" class="sidebar__link">Support</a>
-        <button class="theme-toggle sidebar__theme" type="button" aria-label="Cycle theme">Theme</button>
-      </nav>
-      <div class="sidebar__footer">
-        <button class="theme-toggle" type="button" aria-label="Cycle theme">Theme</button>
-      </div>
-    </aside>
+  <header class="bar">
+    <nav class="nav" aria-label="Pages"><a class="chip" href="/"><kbd>1</kbd><span class="chip__label">About</span></a><a class="chip" href="/work" aria-current="page"><kbd>2</kbd><span class="chip__label">Work</span></a><a class="chip" href="/reading"><kbd>3</kbd><span class="chip__label">Reading</span></a><a class="chip" href="/contact"><kbd>4</kbd><span class="chip__label">Contact</span></a></nav>
+  </header>
 
-    <main class="main">
-      <h1 class="page-title">Privacy Policy</h1>
-      <p class="page-subtitle">Effective date: August 22, 2026</p>
+  <main class="page">
+<section class="intro"><h1><span>Dia</span> <span class="badge">iOS · macOS</span></h1><p>Notes, tasks, and calendar for iOS and macOS.</p></section><section class="sec"><h2 class="sec__title">Privacy policy</h2><div class="sec__body"><p>Effective August 22, 2026.</p><div class="prose"><p>Dia does not collect your personal data. It has no developer-operated servers, accounts, advertising, analytics, tracking, or telemetry.</p><p>Your notes, tasks, preferences, and reminder information stay on your device or in a folder you choose. If you use iCloud Drive, Calendar, Reminders, Maps, or another system service, that service may process or synchronize data under its own privacy policy. Dia’s developer cannot access it.</p><p>If you connect Google Calendar to invite guests, Dia sends the event details and guest email addresses directly to Google. This information is used only to create the event and send invitations. Dia does not read your existing Google Calendar events, and its developer does not receive your Google data. Dia’s use of Google data complies with the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including its Limited Use requirements.</p><p>You control your data through Dia, your selected storage folder, device settings, and connected services. Uninstalling Dia removes app-local data, but may not remove files or events stored separately in iCloud, Calendar, Reminders, or Google Calendar.</p><p>Questions: <a href="mailto:tomas@palmeirim.com">tomas@palmeirim.com</a></p></div><ul class="links"><li><a href="/dia"><span class="links__icon" aria-hidden="true">→</span><span>Dia</span></a></li><li><a href="/dia-terms"><span class="links__icon" aria-hidden="true">→</span><span>Terms of use</span></a></li><li><a href="/dia-support"><span class="links__icon" aria-hidden="true">→</span><span>Support</span></a></li></ul></div></section>
+  </main>
 
-      <div class="post__body">
-        <p>Dia does not collect your personal data. It has no developer-operated servers, accounts, advertising, analytics, tracking, or telemetry.</p>
-        <p>Your notes, tasks, preferences, and reminder information stay on your device or in a folder you choose. If you use iCloud Drive, Calendar, Reminders, Maps, or another system service, that service may process or synchronize data under its own privacy policy. Dia’s developer cannot access it.</p>
-        <p>If you connect Google Calendar to invite guests, Dia sends the event details and guest email addresses directly to Google. This information is used only to create the event and send invitations. Dia does not read your existing Google Calendar events, and its developer does not receive your Google data. Dia’s use of Google data complies with the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including its Limited Use requirements.</p>
-        <p>You control your data through Dia, your selected storage folder, device settings, and connected services. Uninstalling Dia removes app-local data, but may not remove files or events stored separately in iCloud, Calendar, Reminders, or Google Calendar.</p>
-        <p>Questions: <a href="mailto:tomas@palmeirim.com">tomas@palmeirim.com</a></p>
-      </div>
-    </main>
-  </div>
+  <footer class="foot">
+    <span class="foot__tools">
+      <button class="foot__set js-theme" type="button"><span class="chip"><kbd>T</kbd><span class="chip__label">Theme</span></span><span class="js-theme-name">light</span></button>
+    </span>
+  </footer>
 
-  <script src="scripts/main.js" defer></script>
+  <script src="/scripts/site.js" defer></script>
 </body>
 </html>
